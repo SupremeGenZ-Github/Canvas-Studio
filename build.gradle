@@ -1,0 +1,79 @@
+plugins {
+ id 'java-library'
+ id 'net.neoforged.moddev' version '2.0.147'
+}
+version = '1.0.3'
+group = 'studio.canvas'
+base { archivesName = 'canvas-studio-lite-26.3-nf51' }
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+neoForge {
+ version = '26.3.0.51-beta'
+ runs {
+  client { client() }
+  server { server(); programArgument '--nogui' }
+ }
+ mods { canvasstudio { sourceSet(sourceSets.main) } }
+}
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+
+sourceSets {
+ verification {
+  java.srcDir 'verification'
+  compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+  runtimeClasspath += output + compileClasspath
+ }
+}
+tasks.register('verifyCanvas', JavaExec) {
+ dependsOn tasks.named('verificationClasses')
+ classpath = sourceSets.verification.runtimeClasspath
+ mainClass = 'CanvasChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+ systemProperty 'java.awt.headless', 'true'
+}
+tasks.named('check') { dependsOn tasks.named('verifyCanvas') }
+
+// Supplied at runtime by NeoForge's loader; expose the dialog API for compilation.
+dependencies { compileOnly 'org.lwjgl:lwjgl-sdl:3.4.3' }
+
+// Use the project's JDK for development asset tooling too (avoids requiring a second JDK 21).
+tasks.named('downloadAssets') {
+ javaExecutable = javaToolchains.launcherFor {
+  languageVersion = JavaLanguageVersion.of(25)
+ }.map { it.executablePath.asFile.absolutePath }
+}
+
+// These codecs are checked with the unmodified game; NeoForge bootstrap requires FML.
+// Keep this separate from the mod's patched runtime classpath.
+def vanillaValidationJar = layout.buildDirectory.file('vanilla-validation/minecraft-26.3.jar')
+tasks.register('prepareVanillaValidation') {
+ outputs.file(vanillaValidationJar)
+ doLast {
+  def target = vanillaValidationJar.get().asFile
+  target.parentFile.mkdirs()
+  new URI('https://piston-data.mojang.com/v1/objects/e877b6a07acd633fb3bb475002175cec036e7b87/client.jar').toURL().withInputStream { input ->
+   target.withOutputStream { output -> output << input }
+  }
+  def digest = java.security.MessageDigest.getInstance('SHA-1').digest(target.bytes).encodeHex().toString()
+  if (digest != 'e877b6a07acd633fb3bb475002175cec036e7b87') {
+   target.delete()
+   throw new GradleException('Minecraft validation JAR checksum mismatch')
+  }
+ }
+}
+tasks.register('verifyRecipeData', JavaExec) {
+ dependsOn tasks.named('verificationClasses'), tasks.named('prepareVanillaValidation')
+ classpath = files(vanillaValidationJar) + sourceSets.verification.runtimeClasspath
+ mainClass = 'RecipeDataChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+ systemProperty 'java.awt.headless', 'true'
+}
+tasks.named('check') { dependsOn tasks.named('verifyRecipeData') }
+
+tasks.register('verifyCanvasInput', JavaExec) {
+ dependsOn tasks.named('verificationClasses'), tasks.named('prepareVanillaValidation')
+ classpath = files(vanillaValidationJar) + sourceSets.verification.runtimeClasspath
+ mainClass = 'CanvasInputChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+ systemProperty 'java.awt.headless', 'true'
+}
+tasks.named('check') { dependsOn tasks.named('verifyCanvasInput') }

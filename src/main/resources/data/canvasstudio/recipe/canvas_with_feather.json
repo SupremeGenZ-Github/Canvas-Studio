@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:leather",
+    "minecraft:paper",
+    "minecraft:feather"
+  ],
+  "result": {
+    "id": "canvasstudio:canvas",
+    "count": 1
+  }
+}

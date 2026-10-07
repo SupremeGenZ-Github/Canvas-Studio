@@ -1,0 +1,22 @@
+modLoader="javafml"
+loaderVersion="[12,)"
+license="MIT"
+[[mods]]
+modId="canvasstudio"
+version="1.0.3"
+displayName="Canvas Studio Lite"
+authors="SuprixZ"
+description='''Craft a canvas, draw or import your images, then hang your saved art in an item frame.
+- made by SuprixZ'''
+[[dependencies.canvasstudio]]
+modId="neoforge"
+type="required"
+versionRange="[26.3.0.51-beta]"
+ordering="NONE"
+side="BOTH"
+[[dependencies.canvasstudio]]
+modId="minecraft"
+type="required"
+versionRange="[26.3]"
+ordering="NONE"
+side="BOTH"
