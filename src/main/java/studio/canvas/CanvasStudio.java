@@ -27,6 +27,8 @@ public final class CanvasStudio {
         }
     }
     private static void network(RegisterPayloadHandlersEvent event) {
-        event.registrar("1").playToServer(SavePainting.TYPE, SavePainting.CODEC, SavePainting::handle);
+        var registrar = event.registrar("2");
+        registrar.playToServer(SavePainting.TYPE, SavePainting.CODEC, SavePainting::handle);
+        registrar.playToServer(DrawItem.TYPE, DrawItem.CODEC, DrawItem::handle);
     }
 }

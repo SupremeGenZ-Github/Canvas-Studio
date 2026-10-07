@@ -32,12 +32,17 @@ public final class CanvasScreen extends Screen {
     private EditBox titleBox, hexBox;
     private int left, top, scale, side, tools, brush=2, lastX=-1, lastY=-1;
     private byte selected, white;
-    private boolean fillTool, crop, importing;
+    private boolean fillTool, crop, importing, receiveMode;
     private String status = "Left: draw | Right: erase";
     private BufferedImage original;
+    private CompletableFuture<java.util.List<ItemMatcher.Reference>> itemReferences;
+    CompletableFuture<java.util.List<ItemMatcher.Reference>> matchReferences(){
+        if(itemReferences==null)itemReferences=ItemMatchCatalog.load(minecraft.getResourceManager());
+        return itemReferences;
+    }
 
     public CanvasScreen(InteractionHand hand) {
-        super(Component.literal("Canvas Studio Lite - made by SuprixZ")); this.hand = hand;
+        super(Component.literal("Canvas Studio - made by SuprixZ")); this.hand = hand;
         for (int i=4;i<palette.length;i++) {
             // Minecraft 26.3 exposes packed map colors as ARGB, matching the GUI.
             int c = MapColor.getColorFromPackedId(i);
@@ -72,8 +77,10 @@ public final class CanvasScreen extends Screen {
         });
         button(tools,top+126,64,"Undo",()->{if(!undo.isEmpty())System.arraycopy(undo.removeLast(),0,pixels,0,pixels.length);});
         button(tools+68,top+126,64,"Clear",()->{snapshot();Arrays.fill(pixels,white);status="Cleared; Undo restores it.";});
-        button(tools,top+150,132,"Save Painting",()->{
+        button(tools,top+174,132,receiveMode?"Mode: Get Item":"Mode: Painting",()->{receiveMode=!receiveMode;rebuild();});
+        button(tools,top+150,132,receiveMode?"Find Item / Block":"Save Painting",()->{
             if(importing){status="Wait for image import.";return;}
+            if(receiveMode){minecraft.setScreenAndShow(new ItemMatchScreen(this,hand,pixels,palette));return;}
             if(minecraft.player==null || !minecraft.player.getItemInHand(hand).is(studio.canvas.CanvasStudio.CANVAS.get())){status="Hold your Blank Canvas to save.";return;}
             ClientPacketDistributor.sendToServer(new SavePainting(hand,titleBox.getValue(),pixels.clone()));
             draft=null;draftTitle="Custom Painting";minecraft.setScreenAndShow(null);
@@ -81,6 +88,7 @@ public final class CanvasScreen extends Screen {
         button(left,top+side+30,64,"Export",this::exportImage);
         button(left+side-64,top+side+30,64,"Close",this::onClose);
     }
+    void clearDraftAfterExchange(){draft=null;draftTitle="Custom Painting";}
     private void rebuild() {draftTitle=titleBox.getValue();String color=hexBox.getValue();clearWidgets();init();hexBox.setValue(color);}
     private void button(int x,int y,int w,String label,Runnable action) {
         addRenderableWidget(Button.builder(Component.literal(label),b->action.run()).bounds(x,y,w,20).build());
@@ -90,7 +98,7 @@ public final class CanvasScreen extends Screen {
     @Override public void onClose(){if(importing){status="Wait for the image to finish loading.";return;}draft=pixels.clone();draftTitle=titleBox.getValue();super.onClose();}
     @Override public void extractRenderState(GuiGraphicsExtractor g,int mouseX,int mouseY,float partialTick){
         g.fill(0,0,width,height,0xf0181c26);
-        g.centeredText(font,Component.literal("CANVAS STUDIO LITE - made by SuprixZ"),width/2,10,0xfff5ddaa);
+        g.centeredText(font,Component.literal("CANVAS STUDIO - made by SuprixZ"),width/2,10,0xfff5ddaa);
         g.fill(left-2,top-2,left+side+2,top+side+2,0xffaa8050);
         // Coalesce horizontal runs, avoiding a separate draw call for every pixel in flat areas.
         for(int y=0;y<128;y++)for(int x=0;x<128;){

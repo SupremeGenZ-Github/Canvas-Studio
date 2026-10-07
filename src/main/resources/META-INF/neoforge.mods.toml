@@ -3,10 +3,10 @@ loaderVersion="[12,)"
 license="MIT"
 [[mods]]
 modId="canvasstudio"
-version="1.0.3"
-displayName="Canvas Studio Lite"
+version="2.0.0"
+displayName="Canvas Studio"
 authors="SuprixZ"
-description='''Craft a canvas, draw or import your images, then hang your saved art in an item frame.
+description='''Draw, import and save paintings. Match your drawing to the nearest Minecraft inventory items with an offline visual matcher.
 - made by SuprixZ'''
 [[dependencies.canvasstudio]]
 modId="neoforge"

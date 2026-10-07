@@ -1,47 +1,30 @@
-# Release validation
+# Canvas Studio 2.0.0 verification
 
-Target: Minecraft Java Edition 26.3, NeoForge 26.3.0.51-beta, JDK 25.
+Target: Minecraft Java 26.3 / NeoForge 26.3.0.51-beta / JDK 25.
 
-## 1.0.3 input regression check
+## Automated coverage
 
-The actual CanvasScreen handlers were exercised in a headless client shell with Minecraft 26.3's InputConstants. The test failed against the previous 1.0.2 editor because left-click erased instead of drawing. It passes against 1.0.3 at scales 1, 2 and 3: left-click drawing and continuous dragging, right-click erasing and dragging, palette selection, middle-click rejection, and flood fill/erase. The test shell uses Unsafe only in verification code; it is not part of the mod JAR. This is not an interactive desktop test.
+- Full compilation against the exact NeoForge beta.
+- Existing PNG/JPEG import, resize/crop, transparency, unsupported/corrupt/oversize rejection and map quantization checks.
+- Save-painting and draw-item packet encode/decode roundtrips; truncated and wrong-length payload rejection.
+- Actual editor input handlers: left paint/drag, right erase/drag, palette, fill/erase and middle-click rejection at scales 1, 2 and 3.
+- Minecraft 26.3 advancement/recipe codecs, including rejection of the old advancement format.
+- Synthetic matching: distinct sword/apple silhouettes, translated/scaled/rotated drawings, closed black outline, blank drawing rejection, unique item IDs and bounded similarity.
+- Actual Minecraft 26.3 asset catalogue: 1,198 distinct inventory items/block items. All nine sampled map-palette item sprites appeared in their own top-three matches: diamond, diamond sword, apple, stick, bread, iron pickaxe, golden apple, emerald and bow. This is a sprite roundtrip check, not a measurement of freehand recognition accuracy.
+- Minecraft registry item validation accepts diamond sword and stone; rejects air, nonexistent IDs, other namespaces, malformed IDs and null.
+- Draw-item validation rejects empty canvases, invalid palette IDs and incorrect bitmap length. Its blank color matches the editor's actual map palette.
+- Archive metadata and resources checked before delivery. Verification fixtures are not packaged in the mod JAR.
 
-## 1.0.2 advancement regression check
+## Limits and in-game acceptance
 
-Minecraft 26.3's actual Advancement.CODEC accepts all three corrected advancement JSON files and rejects copies with the old singular recipe condition. Each recipe also parses through Recipe.DIRECT_CODEC with vanilla stand-in item IDs, since standalone bootstrap freezes the item registry. This verifies data format, not runtime registration or interactive world loading.
+No interactive Minecraft client or multiplayer session was used. Native import dialog, actual rendered result cards, server reward execution and resource-pack reload interaction still require in-game acceptance.
 
-## Passed for 1.0.3
+The input fixture allocates a headless test client shell without starting Minecraft; Unsafe is confined to verification. Game-codec and asset fixtures place the checksum-verified unmodified game JAR first on their classpath because patched NeoForge bootstrap requires a running FML loader.
 
-- Compiled the complete mod against the exact requested NeoForge beta and its patched Minecraft 26.3 API.
-- Gradle `build` including `verifyCanvas`, `verifyRecipeData` and `verifyCanvasInput`.
-- PNG and JPEG decoding; fit and centre-crop resizing; transparency flattened onto white.
-- Rejection of GIF, corrupt files, files above 16 MiB, and image dimensions above 8192 pixels.
-- Quantization to a fixed 16384-byte image.
-- Save-packet encode/decode roundtrip including hand and painting title.
-- Truncated and incorrect-length payload rejection.
-- Actual Minecraft 26.3 map palette alpha and ARGB channel order.
-- Recipe/model/language JSON syntax, metadata and archive contents.
-- Finished JAR requires exactly NeoForge 26.3.0.51-beta; mod author and editor/description credit SuprixZ.
-- Compiled SDL 3.4.3 file dialog integration; old TinyFD references removed. Actual desktop dialog interaction remains unverified.
+Matching is local visual comparison with a supported vanilla texture catalogue, not a semantic AI model. The client selects a match. The server validates the vanilla item ID, held canvas and drawing data and performs the one-for-one exchange; it does not recompute visual recognition against client resource packs. Receiving items this way is the enabled gameplay feature.
 
-## Partial / not verified
+In-game checks: draw a colored sword and a cube; inspect the nearest result and alternatives; confirm one canvas becomes exactly one chosen item in both main and off hand; confirm another click cannot duplicate it; return to drawing without spending the canvas; confirm normal Save Painting still produces item-frame artwork; repeat on a server with the same full version.
 
-- This upgraded release was not launched in a Minecraft world or dedicated server.
-- No interactive Minecraft client was available. Mouse editing, the new SDL file picker appearance, item-frame display, multiplayer synchronization, and save/reload persistence need an in-game check before treating this as a production release.
-- Windows/macOS native dialogs and modpack compatibility have not been exercised.
+## Build environment
 
-## Build environment notes
-
-The isolated build environment hides the process command from Java's ProcessHandle API. NeoForm Runtime's build-time process lookup was locally given a JDK-path fallback to complete dependency generation. This workaround touched build tooling only; it is not present in the delivered mod or source project. Minecraft's EULA was not accepted and no world was started.
-
-## In-game acceptance checklist
-
-1. Craft Quill from Feather + Ink Sac; craft Canvas from Leather + Paper + Quill.
-2. Open Canvas while aiming into the air; test brush, eraser, fill, undo and clear.
-3. Import PNG and JPEG from a local path; test fit/crop and a transparent PNG.
-4. Export; close/reopen; reimport the export into a second canvas.
-5. Save; confirm one canvas becomes one named map and no duplicate appears.
-6. Place it in a normal and glowing item frame; confirm colors match the preview.
-7. Exit and reload the world; verify art remains.
-8. Join a dedicated server with a second modded client; verify both see the artwork.
-9. Repeat with the canvas in the off-hand, in another dimension and with GUI Scale adjusted.
+NeoForm Runtime's local process-command lookup needed the same sandbox-only JDK-path fallback used for earlier builds. This modifies build tooling only and is absent from the source project and mod JAR. No world was started or Minecraft EULA accepted.
