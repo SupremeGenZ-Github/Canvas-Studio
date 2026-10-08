@@ -6,6 +6,7 @@ modId="canvasstudio"
 version="1.0.4"
 displayName="Canvas Studio Lite"
 authors="SuprixZ"
+logoFile="canvas-studio-icon.png"
 description='''Craft a canvas, draw or import your images, then hang your saved art in an item frame.
 - made by SuprixZ'''
 [[dependencies.canvasstudio]]
