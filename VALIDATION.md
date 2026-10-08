@@ -1,51 +1,85 @@
-# Canvas Studio Lite 1.0.4 compatibility update
+# Canvas Studio — combined validation
 
-This update changes mod version and dependency metadata only. The compiled class files and other gameplay resources are byte-identical to 1.0.3; the earlier checks below remain relevant but were not rerun on every NeoForge version. See COMPATIBILITY.md for the new version-range and binary linkage audit. No new interactive Minecraft world or multiplayer tests were performed.
+**- made by SuprixZ**
 
-# Release validation
+This document covers **Canvas Studio Lite** and **Canvas Studio**. It separates completed checks from checks still needed and provides a validation process for future releases. A project description or broad dependency range is not proof that every game or loader version works.
 
-Target: Minecraft Java Edition 26.3, NeoForge 26.3.0.51-beta, JDK 25.
+## Release evidence
 
-## 1.0.3 input regression check
+| Edition and release | Evidence | Scope |
+| --- | --- | --- |
+| Lite 1.0.3 | Compilation and automated painting, image, packet, recipe and input checks passed | Minecraft 26.3 / NeoForge 26.3.0.51-beta / JDK 25 |
+| Canvas Studio 2.0.0 | Compilation, shared editor checks, item matching and exchange validation checks passed | Same baseline; includes full-edition checks |
+| Lite 1.0.4 | Version-range audit and NeoForge binary API signature audit passed; gameplay bytes unchanged from 1.0.3 | 56 published NeoForge 26.3 builds through 26.3.0.57-beta |
+| Canvas Studio 2.0.1 | Same compatibility audits passed; gameplay bytes unchanged from 2.0.0 | Same 56-build audit |
 
-The actual CanvasScreen handlers were exercised in a headless client shell with Minecraft 26.3's InputConstants. The test failed against the previous 1.0.2 editor because left-click erased instead of drawing. It passes against 1.0.3 at scales 1, 2 and 3: left-click drawing and continuous dragging, right-click erasing and dragging, palette selection, middle-click rejection, and flood fill/erase. The test shell uses Unsafe only in verification code; it is not part of the mod JAR. This is not an interactive desktop test.
+The compatibility audit was recorded on **8 October 2026**. The 56 published builds run from 26.3.0.0-beta through 26.3.0.57-beta, with gaps in the published sequence. See `verification/compatibility-audit.json` on either branch for the actual version list, artifact hashes and per-build results. See `verification/range-audit.json` for range tests.
 
-## 1.0.2 advancement regression check
+The 1.0.4 and 2.0.1 JARs were compared with their predecessors: every ZIP entry except `META-INF/neoforge.mods.toml` has identical bytes. No fresh compilation or interactive gameplay matrix was performed for this metadata-only update. Original source snapshots and release notes remain available in earlier tags.
 
-Minecraft 26.3's actual Advancement.CODEC accepts all three corrected advancement JSON files and rejects copies with the old singular recipe condition. Each recipe also parses through Recipe.DIRECT_CODEC with vanilla stand-in item IDs, since standalone bootstrap freezes the item registry. This verifies data format, not runtime registration or interactive world loading.
+## Completed shared automated checks
 
-## Passed for 1.0.3
+- PNG/JPEG decoding, fit and center-crop resizing, white transparency flattening and map-palette quantization to a 16,384-byte image.
+- Rejection of unsupported/corrupt images, files above 16 MiB and image dimensions above 8,192 pixels.
+- Save-painting packet roundtrips, including painting title and hand; truncated and incorrect-length payload rejection.
+- Actual editor input handlers in a headless client shell at scales 1, 2 and 3: painting/dragging, erasing/dragging, palette selection, fill/erase and middle-click rejection.
+- Minecraft 26.3 recipe and advancement codec checks, including rejection of the former advancement format. Standalone recipe fixtures use vanilla stand-in item IDs; this does not test runtime registration.
+- Resource JSON syntax, map-palette channel order, archive resources, mod metadata and SuprixZ credit.
 
-- Compiled the complete mod against the exact requested NeoForge beta and its patched Minecraft 26.3 API.
-- Gradle `build` including `verifyCanvas`, `verifyRecipeData` and `verifyCanvasInput`.
-- PNG and JPEG decoding; fit and centre-crop resizing; transparency flattened onto white.
-- Rejection of GIF, corrupt files, files above 16 MiB, and image dimensions above 8192 pixels.
-- Quantization to a fixed 16384-byte image.
-- Save-packet encode/decode roundtrip including hand and painting title.
-- Truncated and incorrect-length payload rejection.
-- Actual Minecraft 26.3 map palette alpha and ARGB channel order.
-- Recipe/model/language JSON syntax, metadata and archive contents.
-- Finished JAR requires exactly NeoForge 26.3.0.51-beta; mod author and editor/description credit SuprixZ.
-- Compiled SDL 3.4.3 file dialog integration; old TinyFD references removed. Actual desktop dialog interaction remains unverified.
+The input regression check failed against Lite 1.0.2 and passed against 1.0.3 after the mouse-button correction. The headless input fixture uses Unsafe only in verification code; fixtures are not packaged in the mod JAR.
 
-## Partial / not verified
+## Completed full-edition automated checks
 
-- This upgraded release was not launched in a Minecraft world or dedicated server.
-- No interactive Minecraft client was available. Mouse editing, the new SDL file picker appearance, item-frame display, multiplayer synchronization, and save/reload persistence need an in-game check before treating this as a production release.
-- Windows/macOS native dialogs and modpack compatibility have not been exercised.
+- Draw-item packet roundtrips and invalid/truncated payload rejection.
+- Synthetic shape matching for sword/apple silhouettes, translated/scaled/rotated drawings, closed black outlines, empty drawings, distinct item IDs and bounded scores.
+- A catalogue of 1,198 supported vanilla inventory item/block candidates. Nine sampled item sprites each appeared in their own top three matches: diamond, diamond sword, apple, stick, bread, iron pickaxe, golden apple, emerald and bow. Sprite roundtrips do not measure freehand recognition accuracy.
+- Registry validation accepts supported vanilla items and rejects air, nonexistent or malformed IDs, other namespaces and null.
+- Drawing validation rejects empty canvases, invalid palette IDs and incorrect bitmap lengths.
 
-## Build environment notes
+The client selects a visual match. The server validates the vanilla item ID, held canvas and drawing data before the one-for-one exchange. It does not repeat visual recognition using the client's resource pack. Actual reward execution still needs an in-game test.
 
-The isolated build environment hides the process command from Java's ProcessHandle API. NeoForm Runtime's build-time process lookup was locally given a JDK-path fallback to complete dependency generation. This workaround touched build tooling only; it is not present in the delivered mod or source project. Minecraft's EULA was not accepted and no world was started.
+## NeoForge compatibility audit
 
-## In-game acceptance checklist
+Current compatibility releases use NeoForge range `[26.3-alpha,26.4-alpha)` and Minecraft range `[26.3]`. Range tests accept the 26.3 beta series and reject 26.4, including prereleases, as well as earlier series.
 
-1. Craft Quill from Feather + Ink Sac; craft Canvas from Leather + Paper + Quill.
-2. Open Canvas while aiming into the air; test brush, eraser, fill, undo and clear.
-3. Import PNG and JPEG from a local path; test fit/crop and a transparent PNG.
-4. Export; close/reopen; reimport the export into a second canvas.
-5. Save; confirm one canvas becomes one named map and no duplicate appears.
-6. Place it in a normal and glowing item frame; confirm colors match the preview.
-7. Exit and reload the world; verify art remains.
-8. Join a dedicated server with a second modded client; verify both see the artwork.
-9. Repeat with the canvas in the off-hand, in another dimension and with GUI Scale adjusted.
+The binary audit resolves 12 referenced NeoForge classes and 18 method/field references per edition against each published universal JAR and its declared FML/event-bus dependencies. Inherited Minecraft interface methods are resolved against the vanilla Minecraft 26.3 baseline. All audited builds declare NeoForm 26.3-1.
+
+This checks class and member signature availability. It does not validate every Minecraft patch difference, bootstrap behavior, native library, mod interaction or gameplay path. Future 26.3 builds are accepted but remain unverified until checked. Other Minecraft versions and NeoForge series need compatible code, dependencies and new evidence before support is claimed.
+
+## In-game acceptance still required
+
+No interactive Minecraft client or dedicated-server gameplay session was used for the recorded checks. Windows/macOS dialogs, resource-pack reloads, modpack interactions and save/reload persistence remain unverified.
+
+For **both editions**:
+
+1. Confirm the mod is listed and a new world finishes preparing; repeat with an existing world.
+2. Craft Quill and Blank Canvas, then open a canvas while aiming into the air.
+3. Test color selection, brush sizes, left-click/drag, right-click/drag, fill, undo and clear at different GUI scales.
+4. Import PNG/JPEG and transparent PNG; test fit/crop, export, reopen and reimport.
+5. Save a painting; confirm one canvas becomes one named map and repeated clicks do not duplicate it.
+6. Check artwork in normal/glowing item frames, leave and reload the world, and verify persistence.
+7. Repeat with an off-hand canvas and another dimension.
+8. Join a dedicated server with a second client using the same edition/release; verify both see the artwork.
+
+For **Canvas Studio full edition**, additionally:
+
+1. Draw a sword and a block; inspect the suggested result cards and alternatives.
+2. Choose a result while that item is absent from the inventory. Confirm one canvas becomes exactly one new selected item, in either hand.
+3. Confirm repeated clicks cannot duplicate rewards, and invalid requests do not consume the canvas or grant an item.
+4. Return to drawing without spending a canvas; verify Save Painting still works.
+5. Repeat the exchange on a dedicated server and after a resource-pack reload.
+
+## Process for future releases
+
+1. Record the exact mod release, edition, Minecraft/NeoForge versions, Java version, operating system and relevant resource packs/mods.
+2. Compile each edition against the intended supported API; run `./gradlew build` with its required JDK. Current sources also accept `-PneoForgeVersion=<26.3 build>`.
+3. Repeat the dependency-range and binary API audits for every published loader build in the claimed range. Rebuild or adapt code when references change.
+4. Run the in-game acceptance checks on the oldest and newest supported builds and on intermediate builds with relevant changes, including a dedicated server.
+5. Inspect both release JARs, keep verification fixtures out, record checksums and update this evidence table with actual results and limitations.
+6. On Modrinth, select the game versions and loader verified for each uploaded file. Do not mark unrelated game versions as supported just because this project overview is reusable.
+
+Keep this document as a living record. Mark new checks as pending until they pass; a future release must supply its own results rather than inherit an unqualified compatibility claim.
+
+## Build-environment note
+
+Earlier compilation required a sandbox-only JDK-path fallback in NeoForm Runtime's process-command lookup. It changed build tooling only and is absent from the source project and mod JARs. No Minecraft EULA was accepted and no world was started in that environment.
