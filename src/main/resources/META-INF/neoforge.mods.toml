@@ -6,6 +6,7 @@ modId="canvasstudio"
 version="2.0.1"
 displayName="Canvas Studio"
 authors="SuprixZ"
+logoFile="canvas-studio-icon.png"
 description='''Draw, import and save paintings. Match your drawing to the nearest Minecraft inventory items with an offline visual matcher.
 - made by SuprixZ'''
 [[dependencies.canvasstudio]]

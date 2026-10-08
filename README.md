@@ -1,5 +1,7 @@
 # Canvas Studio
 
+<p align="center"><img src="docs/canvas-studio-icon.png" alt="Canvas Studio icon" width="192"></p>
+
 **- made by SuprixZ**
 
 Draw your own artwork, import images, and turn them into custom paintings in Minecraft. Choose **Canvas Studio Lite** for painting, or **Canvas Studio** for painting plus an offline item/block finder that turns a drawing into a matching inventory item.
