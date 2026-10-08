@@ -1,3 +1,7 @@
+# Canvas Studio 2.0.1 compatibility update
+
+This update changes mod version and dependency metadata only. The compiled class files and other gameplay resources are byte-identical to 2.0.0; the earlier checks below remain relevant but were not rerun on every NeoForge version. See COMPATIBILITY.md for the new version-range and binary linkage audit. No new interactive Minecraft world or multiplayer tests were performed.
+
 # Canvas Studio 2.0.0 verification
 
 Target: Minecraft Java 26.3 / NeoForge 26.3.0.51-beta / JDK 25.

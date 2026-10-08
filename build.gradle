@@ -2,12 +2,12 @@ plugins {
  id 'java-library'
  id 'net.neoforged.moddev' version '2.0.147'
 }
-version = '2.0.0'
+version = '2.0.1'
 group = 'studio.canvas'
-base { archivesName = 'canvas-studio-26.3-nf51' }
+base { archivesName = 'canvas-studio-26.3' }
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 neoForge {
- version = '26.3.0.51-beta'
+ version = providers.gradleProperty('neoForgeVersion').getOrElse('26.3.0.51-beta')
  runs {
   client { client() }
   server { server(); programArgument '--nogui' }

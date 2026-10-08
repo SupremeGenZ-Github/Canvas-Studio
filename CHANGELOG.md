@@ -1,3 +1,10 @@
+# Canvas Studio 2.0.1
+
+- Accept all NeoForge 26.3.x releases, including beta builds.
+- Keep Minecraft exactly 26.3 and preserve all edition features and SuprixZ credit.
+- Add binary API compatibility evidence for all currently published 26.3 builds.
+- Allow the development compile target to be selected with -PneoForgeVersion.
+
 # Canvas Studio 2.0.0
 
 - Added Painting / Get Item mode in the canvas editor.

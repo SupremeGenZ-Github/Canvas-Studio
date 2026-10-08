@@ -4,12 +4,12 @@
 
 Canvas Studio is a Minecraft mod for drawing, importing images, and saving custom paintings. The full edition can also turn your drawing into the nearest matching Minecraft item or block.
 
-> **Currently available only for NeoForge 26.3.0.51 (26.3.0.51-beta), on Minecraft Java Edition 26.3.**
-> Java 25 is required. Fabric, Forge, and other Minecraft or NeoForge versions are not currently supported.
+> **Supports NeoForge 26.3.x on Minecraft Java Edition 26.3, including the 26.3 beta builds.**
+> Java 25 is required. Fabric, Forge, NeoForge 26.4+, and other Minecraft versions are not supported.
 
 ## History
 
-Canvas Studio Lite 1.0.3 provides the painting editor. Canvas Studio 2.0.0 builds on that editor and adds an offline item finder and draw-to-item mode. Both editions are maintained in this repository and published as separate releases.
+Canvas Studio Lite 1.0.4 provides the painting editor. Canvas Studio 2.0.1 builds on that editor and adds an offline item finder and draw-to-item mode. Both editions are maintained in this repository and published as separate releases.
 
 ## Downloads
 
@@ -17,10 +17,16 @@ Download the JAR for your preferred edition from [GitHub Releases](../../release
 
 | Release | Edition | Painting and image import | Item/block finder |
 | --- | --- | --- | --- |
-| [1.0.3](../../releases/tag/v1.0.3) | **Canvas Studio Lite** | Yes | No |
-| [2.0.0](../../releases/tag/v2.0.0) | **Canvas Studio** | Yes | Yes |
+| [1.0.4](../../releases/tag/v1.0.4) | **Canvas Studio Lite** | Yes | No |
+| [2.0.1](../../releases/tag/v2.0.1) | **Canvas Studio** | Yes | Yes |
 
 Install **one edition at a time**. Both share the `canvasstudio` mod ID so existing canvases and saved paintings remain compatible. Multiplayer clients and servers must use the same edition and version.
+
+## NeoForge compatibility
+
+The dependency range now accepts the entire **26.3.x** series, rather than only 26.3.0.51-beta. Binary API references were checked against every published 26.3 build available on 8 October 2026 (26.3.0.0-beta through 26.3.0.57-beta). See [COMPATIBILITY.md](COMPATIBILITY.md). Future 26.3 builds are accepted, but future API changes cannot be guaranteed before those builds exist. No interactive world/multiplayer tests were run across the version matrix.
+
+Older Lite 1.0.3 and full 2.0.0 downloads remain available in Releases and keep their original 26.3.0.51-beta requirement.
 
 ## Features
 
@@ -33,7 +39,7 @@ Install **one edition at a time**. Both share the `canvasstudio` mod ID so exist
 - Save named paintings as locked maps and display them in normal or glowing item frames.
 - Keep the artwork when the world is saved and reopened through vanilla map data.
 
-### Canvas Studio 2.0.0
+### Canvas Studio 2.0.1
 
 - Switch between **Painting** and **Get Item** modes.
 - Draw an item or block, then find the closest visual matches.
@@ -45,8 +51,8 @@ The default Minecraft 26.3 catalogue contains 1,198 supported vanilla inventory 
 
 ## Installation
 
-1. Install Minecraft Java **26.3** with **NeoForge 26.3.0.51-beta** and Java **25**.
-2. Download either Canvas Studio Lite 1.0.3 or Canvas Studio 2.0.0 from Releases.
+1. Install Minecraft Java **26.3** with **NeoForge 26.3.x** and Java **25**.
+2. Download either Canvas Studio Lite 1.0.4 or Canvas Studio 2.0.1 from Releases.
 3. Put the JAR in that instance's `mods` folder. Remove earlier Canvas Studio JARs first.
 4. Launch the NeoForge instance. For multiplayer, install the same release on the server and every client.
 
@@ -60,17 +66,17 @@ Recipes are shapeless and consume their ingredients. Canvas and Quill are also a
 
 Hold a Blank Canvas and use it to open the editor. **Left-click/drag draws**, **right-click/drag erases**, and clicking a color swatch selects that color. Import/export and drawing tools are available in both editions. Save Painting creates a named map for an item frame.
 
-In Canvas Studio 2.0.0, switch to **Mode: Get Item**, draw an item/block, and click **Find Item / Block**. Choose **Get closest** or another candidate. The held canvas becomes **one plain item/block**; no custom NBT or enchantments are copied. Back to drawing lets you revise without spending the canvas.
+In Canvas Studio 2.0.1, switch to **Mode: Get Item**, draw an item/block, and click **Find Item / Block**. Choose **Get closest** or another candidate. The held canvas becomes **one plain item/block**; no custom NBT or enchantments are copied. Back to drawing lets you revise without spending the canvas.
 
 ## Other versions and source
 
-- `main`: Canvas Studio 2.0.0, with item finder.
-- `lite`: Canvas Studio Lite 1.0.3, without item finder.
-- `v1.0.3` and `v2.0.0`: source snapshots for the corresponding releases.
+- `main`: Canvas Studio 2.0.1, with item finder.
+- `lite`: Canvas Studio Lite 1.0.4, without item finder.
+- `v1.0.4` and `v2.0.1`: source snapshots for the corresponding releases.
 
 ## Building
 
-Use a JDK 25:
+Use a JDK 25. The default development compile target remains 26.3.0.51-beta; it does not restrict the supported runtime range. To build against another 26.3 release, use `./gradlew build -PneoForgeVersion=26.3.0.57-beta`.
 
 ```bash
 ./gradlew build

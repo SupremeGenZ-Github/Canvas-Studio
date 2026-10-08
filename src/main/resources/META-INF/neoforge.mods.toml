@@ -3,7 +3,7 @@ loaderVersion="[12,)"
 license="MIT"
 [[mods]]
 modId="canvasstudio"
-version="2.0.0"
+version="2.0.1"
 displayName="Canvas Studio"
 authors="SuprixZ"
 description='''Draw, import and save paintings. Match your drawing to the nearest Minecraft inventory items with an offline visual matcher.
@@ -11,7 +11,7 @@ description='''Draw, import and save paintings. Match your drawing to the neares
 [[dependencies.canvasstudio]]
 modId="neoforge"
 type="required"
-versionRange="[26.3.0.51-beta]"
+versionRange="[26.3-alpha,26.4-alpha)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.canvasstudio]]
