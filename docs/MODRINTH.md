@@ -60,16 +60,12 @@ Choosing a result exchanges one held Blank Canvas for **one newly created plain 
 
 Matching runs locally without an API key or cloud service. It compares shape, outline, color and orientation against supported vanilla inventory textures. It is approximate: rough drawings, similar shapes and unsupported special models can produce unexpected results. Scores measure visual similarity, not probability. Modded items are outside the current finder catalogue.
 
-## Source, building and validation
+## Validation and support
 
-The `main` branch contains the full edition; `lite` contains the painting edition. Release tags preserve each published source snapshot. Both branches share this overview and the combined validation document.
+Both editions share automated editor and image checks; the full edition adds item matching and exchange validation. Current compatibility releases passed API signature checks across 56 published NeoForge 26.3 builds. Interactive gameplay across that matrix has not been tested.
 
-Use the JDK required by the selected source release. For the current sources, use JDK 25 and run `./gradlew build` (`gradlew.bat build` on Windows). Build artifacts appear in `build/libs`.
+Read the [combined validation report](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/VALIDATION.md) for completed checks, limitations and future-release validation.
 
-The default development target is NeoForge 26.3.0.51-beta. Select another 26.3 development target with `./gradlew build -PneoForgeVersion=26.3.0.57-beta`. This selects the build dependency; it does not automatically prove compatibility with another Minecraft version.
+Report bugs in [GitHub Issues](https://github.com/SupremeGenZ-Github/Canvas-Studio/issues), including your edition/release, Minecraft and NeoForge versions, and reproduction steps.
 
-## Help and license
-
-Report problems in [GitHub Issues](https://github.com/SupremeGenZ-Github/Canvas-Studio/issues). Include the edition and release, Minecraft and NeoForge versions, reproduction steps, and `logs/latest.log` after removing private information.
-
-Licensed under [MIT](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/LICENSE).
+**- made by SuprixZ** · [MIT license](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/LICENSE)
