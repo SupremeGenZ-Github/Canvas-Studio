@@ -43,11 +43,11 @@ public class ItemMatchChecks {
   check(!DrawItem.validDrawing(new byte[3]),"Incorrect size rejected");
   var b=new RegistryFriendlyByteBuf(Unpooled.buffer(),RegistryAccess.EMPTY);
   try{
-   var p=new DrawItem(InteractionHand.OFF_HAND,"minecraft:diamond_sword",pixels);DrawItem.CODEC.encode(b,p);var d=DrawItem.CODEC.decode(b);
-   check(d.hand()==p.hand()&&d.item().equals(p.item())&&Arrays.equals(d.pixels(),pixels)&&b.readableBytes()==0,"Reward packet roundtrip");
-   b.clear();b.writeBoolean(false);b.writeUtf("minecraft:stone");b.writeByte(4);
+   var p=new DrawItem(InteractionHand.OFF_HAND,"minecraft:diamond_sword",pixels,UUID.randomUUID());DrawItem.CODEC.encode(b,p);var d=DrawItem.CODEC.decode(b);
+   check(d.token().equals(p.token())&&d.hand()==p.hand()&&d.item().equals(p.item())&&Arrays.equals(d.pixels(),pixels)&&b.readableBytes()==0,"Reward packet roundtrip");
+   b.clear();b.writeBoolean(false);b.writeUUID(UUID.randomUUID());b.writeUtf("minecraft:stone");b.writeByte(4);
    try{DrawItem.CODEC.decode(b);throw new AssertionError("Truncated payload accepted");}catch(IndexOutOfBoundsException expected){}
-   try{DrawItem.CODEC.encode(b,new DrawItem(InteractionHand.MAIN_HAND,"minecraft:stone",new byte[1]));throw new AssertionError("Wrong length encoded");}catch(IllegalArgumentException expected){}
+   try{DrawItem.CODEC.encode(b,new DrawItem(InteractionHand.MAIN_HAND,"minecraft:stone",new byte[1],UUID.randomUUID()));throw new AssertionError("Wrong length encoded");}catch(IllegalArgumentException expected){}
   }finally{b.release();}
   System.out.println("PASS matcher: shape/color, scale/translation, blank rejection, distinct/bounded results, cube reference, exchange drawing validation and packet codec");
  }

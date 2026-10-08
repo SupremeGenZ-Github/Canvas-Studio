@@ -1,4 +1,8 @@
 {
   "item.canvasstudio.canvas": "Blank Canvas",
-  "item.canvasstudio.quill": "Quill"
+  "item.canvasstudio.quill": "Quill",
+  "item.canvasstudio.molder_canvas": "Molder Canvas",
+  "item.canvasstudio.infinity_canvas": "Infinity Canvas",
+  "item.canvasstudio.molder_quill": "Molder Quill",
+  "item.canvasstudio.infinity_quill": "Infinity Quill"
 }

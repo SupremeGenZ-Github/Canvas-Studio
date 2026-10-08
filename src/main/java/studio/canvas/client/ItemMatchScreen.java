@@ -22,10 +22,11 @@ public final class ItemMatchScreen extends Screen {
  private final BufferedImage drawing;
  private List<ItemMatcher.Match> matches=List.of();
  private String status="Reading Minecraft item textures...";
- private boolean started;
+ private boolean started, pending;
+ private java.util.UUID submitted;
  private int x,y,rowHeight,panelWidth;
  public ItemMatchScreen(CanvasScreen parent,InteractionHand hand,byte[] pixels,int[] palette){
-  super(Component.literal("Canvas Studio - Get Item"));this.parent=parent;this.hand=hand;this.pixels=pixels.clone();
+  super(Component.literal("Canvas Studio+ - Get Item"));this.parent=parent;this.hand=hand;this.pixels=pixels.clone();
   drawing=new BufferedImage(128,128,BufferedImage.TYPE_INT_RGB);
   for(int p=0;p<pixels.length;p++)drawing.setRGB(p%128,p/128,palette[Byte.toUnsignedInt(pixels[p])]);
  }
@@ -48,15 +49,26 @@ public final class ItemMatchScreen extends Screen {
   }
  }
  private void receive(ItemMatcher.Match match){
-  if(minecraft.player==null||!minecraft.player.getItemInHand(hand).is(CanvasStudio.CANVAS.get())){status="Hold a Blank Canvas to get the item.";return;}
-  ClientPacketDistributor.sendToServer(new DrawItem(hand,match.id(),pixels.clone()));
-  parent.clearDraftAfterExchange();minecraft.setScreenAndShow(null);
+  if(pending)return;
+  if(parent.exchangeToken==null){status="Waiting for server. Reopen the canvas if needed.";return;}
+  if(minecraft.player==null||CanvasStudio.tier(minecraft.player.getItemInHand(hand))!=parent.tier||!parent.tier.canExchange()){status="Hold your Molder or Infinity Canvas.";return;}
+  pending=true;submitted=parent.exchangeToken;
+  ClientPacketDistributor.sendToServer(new DrawItem(hand,match.id(),pixels.clone(),submitted));
+  status="Waiting for server exchange...";
  }
- @Override public void onClose(){minecraft.setScreenAndShow(parent);}
+ void reply(studio.canvas.CanvasReply reply){
+  parent.reply(reply);
+  if(!pending||!reply.request().equals(submitted))return;
+  pending=false;status=reply.message();
+  if(reply.code()==1){parent.clearDraftAfterExchange();minecraft.setScreenAndShow(null);}
+  else if(reply.code()==2){parent.exchangeToken=reply.token();}
+  else {parent.exchangeToken=null;}
+ }
+ @Override public void onClose(){if(!pending)minecraft.setScreenAndShow(parent);}
  @Override public boolean isPauseScreen(){return false;}
  @Override public void extractRenderState(GuiGraphicsExtractor g,int mx,int my,float tick){
   g.fill(0,0,width,height,0xf0181c26);
-  g.centeredText(font,"CANVAS STUDIO - DRAW TO ITEM",width/2,12,0xfff5ddaa);
+  g.centeredText(font,"CANVAS STUDIO+ - DRAW TO ITEM",width/2,12,0xfff5ddaa);
   g.centeredText(font,font.plainSubstrByWidth(status,width-16),width/2,30,0xffffffff);
   for(int i=0;i<matches.size();i++){
    var match=matches.get(i);int ry=y+i*rowHeight;var item=new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.parse(match.id())));
@@ -64,7 +76,7 @@ public final class ItemMatchScreen extends Screen {
    g.item(item,x+8,ry+9);g.text(font,font.plainSubstrByWidth(item.getHoverName().getString(),Math.max(24,panelWidth-132)),x+30,ry+8,0xffffffff,false);
    g.text(font,"Similarity: "+Math.round(match.similarity()*100)+"%",x+30,ry+21,0xffbec8d8,false);
   }
-  g.centeredText(font,"Costs 1 Blank Canvas. Receive 1 item/block.",width/2,height-48,0xffbec8d8);
+  g.centeredText(font,parent.tier==studio.canvas.CanvasTier.MOLDER?"Consumes Molder Canvas on success. Receive 1 item.":"Infinity Canvas retained. Receive 1 item per request.",width/2,height-48,0xffbec8d8);
   super.extractRenderState(g,mx,my,tick);
  }
 }

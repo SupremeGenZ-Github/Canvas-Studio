@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "MMM",
+    "MQM",
+    "MMM"
+  ],
+  "key": {
+    "M": "minecraft:diamond",
+    "Q": "canvasstudio:quill"
+  },
+  "result": {
+    "id": "canvasstudio:infinity_quill",
+    "count": 1
+  }
+}

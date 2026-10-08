@@ -12,12 +12,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** One canvas is atomically exchanged for one plain item; no custom NBT is accepted. */
-public record DrawItem(InteractionHand hand,String item,byte[] pixels) implements CustomPacketPayload {
+/** Server authorizes one plain item per one-use capability; no custom NBT is accepted. */
+public record DrawItem(InteractionHand hand,String item,byte[] pixels,java.util.UUID token) implements CustomPacketPayload {
  public static final Type<DrawItem> TYPE=new Type<>(Identifier.fromNamespaceAndPath(CanvasStudio.ID,"draw_item"));
  public static final StreamCodec<RegistryFriendlyByteBuf,DrawItem> CODEC=new StreamCodec<>(){
-  public DrawItem decode(RegistryFriendlyByteBuf b){var hand=b.readBoolean()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND;String item=b.readUtf(256);byte[] pixels=new byte[SavePainting.PIXELS];b.readBytes(pixels);return new DrawItem(hand,item,pixels);}
-  public void encode(RegistryFriendlyByteBuf b,DrawItem p){if(p.pixels.length!=SavePainting.PIXELS)throw new IllegalArgumentException("Invalid canvas size");b.writeBoolean(p.hand==InteractionHand.OFF_HAND);b.writeUtf(p.item,256);b.writeBytes(p.pixels);}
+  public DrawItem decode(RegistryFriendlyByteBuf b){var hand=b.readBoolean()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND;var token=b.readUUID();String item=b.readUtf(256);byte[] pixels=new byte[SavePainting.PIXELS];b.readBytes(pixels);return new DrawItem(hand,item,pixels,token);}
+  public void encode(RegistryFriendlyByteBuf b,DrawItem p){if(p.pixels.length!=SavePainting.PIXELS)throw new IllegalArgumentException("Invalid canvas size");b.writeBoolean(p.hand==InteractionHand.OFF_HAND);b.writeUUID(p.token);b.writeUtf(p.item,256);b.writeBytes(p.pixels);}
  };
  public Type<? extends CustomPacketPayload> type(){return TYPE;}
  public static boolean validDrawing(byte[] pixels){
@@ -29,11 +29,23 @@ public record DrawItem(InteractionHand hand,String item,byte[] pixels) implement
  public static void handle(DrawItem p,IPayloadContext context){
   if(!(context.player() instanceof ServerPlayer player))return;
   ItemStack held=player.getItemInHand(p.hand);
-  if(!held.is(CanvasStudio.CANVAS.get())||held.getCount()!=1||!validDrawing(p.pixels)||!validItem(p.item))return;
-  // Matching is local visual similarity against client resource-pack textures.
-  // Receiving vanilla items is the intentionally enabled gameplay feature.
-  ItemStack reward=new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.parse(p.item)),1);
-  player.setItemInHand(p.hand,reward);player.inventoryMenu.broadcastChanges();
-  player.sendSystemMessage(Component.literal("Canvas Studio: received ").append(reward.getHoverName()),false);
+  CanvasTier tier=CanvasStudio.tier(held);
+  var session=OpenCanvas.SESSIONS.get(player);
+  if(!CanvasExchange.authorize(session,held,p.hand==InteractionHand.OFF_HAND,tier,held.getCount(),p.token,p.pixels,validItem(p.item),player.level().getGameTime())){
+   context.reply(new CanvasReply(p.token,CanvasReply.NONE,3,"Request rejected. Reopen the held Molder or Infinity Canvas."));return;
+  }
+  // Preserve the existing vanilla-ID rules and local texture-based matching catalogue.
+  ItemStack reward=CanvasExchange.createReward(p.item);
+  Component rewardName=reward.getHoverName();
+  boolean delivered=CanvasExchange.deliver(tier,reward,new CanvasExchange.RewardTarget(){
+   public void replaceHeld(ItemStack item){player.setItemInHand(p.hand,item);}
+   public boolean add(ItemStack item){return player.getInventory().add(item);}
+   public boolean drop(ItemStack item){return player.drop(item,false,net.minecraft.util.Prediction.SERVER_ONLY)!=null;}
+  });
+  if(!delivered){context.reply(new CanvasReply(p.token,CanvasReply.NONE,3,"Reward could not be dropped. Canvas retained; reopen to retry."));return;}
+  if(tier==CanvasTier.MOLDER)OpenCanvas.SESSIONS.remove(player);
+  player.inventoryMenu.broadcastChanges();
+  context.reply(new CanvasReply(p.token,session.token()==null?CanvasReply.NONE:session.token(),tier==CanvasTier.MOLDER?1:2,"Received 1 "+rewardName.getString()));
+  player.sendSystemMessage(Component.literal("Canvas Studio: received ").append(rewardName),false);
  }
 }

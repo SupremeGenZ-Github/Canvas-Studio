@@ -9,3 +9,5 @@ logs/
 .settings/
 *.log
 release-assets/
+
+.compat-cache/

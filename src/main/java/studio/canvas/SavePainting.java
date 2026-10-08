@@ -28,7 +28,7 @@ public record SavePainting(InteractionHand hand, String title, byte[] pixels) im
             return new SavePainting(hand, title, pixels);
         }
         public void encode(RegistryFriendlyByteBuf b, SavePainting p) {
-            if (p.pixels.length != PIXELS) throw new IllegalArgumentException("Invalid canvas size");
+            if (p.pixels == null || p.pixels.length != PIXELS) throw new IllegalArgumentException("Invalid canvas size");
             b.writeBoolean(p.hand == InteractionHand.OFF_HAND);
             b.writeUtf(p.title, 64); b.writeBytes(p.pixels);
         }
@@ -37,7 +37,7 @@ public record SavePainting(InteractionHand hand, String title, byte[] pixels) im
     public static void handle(SavePainting p, IPayloadContext context) {
         if (!(context.player() instanceof ServerPlayer player)) return;
         ItemStack held = player.getItemInHand(p.hand);
-        if (!held.is(CanvasStudio.CANVAS.get()) || held.getCount() != 1 || p.pixels.length != PIXELS) return;
+        if (!CanvasStudio.isCanvas(held) || held.getCount() != 1 || p.pixels == null || p.pixels.length != PIXELS) return;
         // Color ids 0..3 are transparent; reject invalid palette entries before allocating map data.
         for (byte color : p.pixels) if (Byte.toUnsignedInt(color) > 247) return;
         ItemStack painting = MapItem.create(player.level(), 0, 0, (byte)0, false, false);
@@ -51,6 +51,7 @@ public record SavePainting(InteractionHand hand, String title, byte[] pixels) im
         painting.set(DataComponents.CUSTOM_NAME, Component.literal(name.isEmpty() ? "Custom Painting" : name));
         // Replacing the held canvas is atomic on the server thread and prevents packet duplication.
         player.setItemInHand(p.hand, painting);
+        OpenCanvas.SESSIONS.remove(player);
         player.inventoryMenu.broadcastChanges();
         player.sendSystemMessage(Component.literal("Painting saved! Place it in an item frame."), false);
     }

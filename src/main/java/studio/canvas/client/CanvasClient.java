@@ -15,12 +15,17 @@ public final class CanvasClient {
     public CanvasClient(IEventBus bus) {
         NeoForge.EVENT_BUS.addListener(CanvasClient::rightClick);
     }
+    public static void reply(studio.canvas.CanvasReply reply){
+        var screen=Minecraft.getInstance().gui.screen();
+        if(screen instanceof CanvasScreen canvas)canvas.reply(reply);
+        else if(screen instanceof ItemMatchScreen matches)matches.reply(reply);
+    }
     private static void rightClick(PlayerInteractEvent.RightClickItem event) {
         Minecraft mc = Minecraft.getInstance();
-        if (event.getEntity() == mc.player && event.getItemStack().is(CanvasStudio.CANVAS.get())) {
+        if (event.getEntity() == mc.player && CanvasStudio.isCanvas(event.getItemStack())) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
-            mc.setScreenAndShow(new CanvasScreen(event.getHand()));
+            mc.setScreenAndShow(new CanvasScreen(event.getHand(),CanvasStudio.tier(event.getItemStack())));
         }
     }
 }

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "MMM",
+    "MQM",
+    "MMM"
+  ],
+  "key": {
+    "M": "minecraft:iron_nugget",
+    "Q": "canvasstudio:quill"
+  },
+  "result": {
+    "id": "canvasstudio:molder_quill",
+    "count": 1
+  }
+}

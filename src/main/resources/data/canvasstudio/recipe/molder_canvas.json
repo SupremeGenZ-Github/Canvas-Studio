@@ -4,10 +4,10 @@
   "ingredients": [
     "minecraft:leather",
     "minecraft:paper",
-    "minecraft:feather"
+    "canvasstudio:molder_quill"
   ],
   "result": {
-    "id": "canvasstudio:canvas",
+    "id": "canvasstudio:molder_canvas",
     "count": 1
   }
 }

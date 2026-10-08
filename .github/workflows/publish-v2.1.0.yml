@@ -1,0 +1,31 @@
+name: Publish Canvas Studio+ 2.1.0
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'release-assets/v2.1.0/**'
+      - '.github/workflows/publish-v2.1.0.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish verified release files
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if gh release view v2.1.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo 'Release v2.1.0 already exists; leaving it unchanged.'
+            exit 0
+          fi
+          mkdir -p assets
+          for file in canvas-studio-plus-26.3-2.1.0.jar Canvas-Studio-Plus-2.1.0-source.zip; do
+            gh api "repos/$GITHUB_REPOSITORY/contents/release-assets/v2.1.0/$file?ref=$GITHUB_SHA" --jq .content | base64 --decode > "assets/$file"
+          done
+          gh api "repos/$GITHUB_REPOSITORY/contents/VALIDATION.md?ref=$GITHUB_SHA" --jq .content | base64 --decode > assets/VALIDATION.md
+          gh api "repos/$GITHUB_REPOSITORY/contents/docs/releases/v2.1.0.md?ref=$GITHUB_SHA" --jq .content | base64 --decode > release-notes.md
+          echo 'd0d485fe8163076e9c82456760f72b5c5e9e40481ab2ad41e57efe519c12eefa  assets/canvas-studio-plus-26.3-2.1.0.jar' | sha256sum --check
+          gh release create v2.1.0 assets/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title 'Canvas Studio+ 2.1.0' --notes-file release-notes.md

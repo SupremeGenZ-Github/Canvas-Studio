@@ -2,9 +2,9 @@ plugins {
  id 'java-library'
  id 'net.neoforged.moddev' version '2.0.147'
 }
-version = '2.0.1'
+version = '2.1.0'
 group = 'studio.canvas'
-base { archivesName = 'canvas-studio-26.3' }
+base { archivesName = 'canvas-studio-plus-26.3' }
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 neoForge {
  version = providers.gradleProperty('neoForgeVersion').getOrElse('26.3.0.51-beta')
@@ -95,3 +95,21 @@ tasks.register('verifyVanillaItemMatch', JavaExec) {
  systemProperty 'java.awt.headless', 'true'
 }
 tasks.named('check') { dependsOn tasks.named('verifyVanillaItemMatch') }
+
+tasks.register('verifyCanvasExchange', JavaExec) {
+ dependsOn tasks.named('verificationClasses')
+ classpath = sourceSets.verification.runtimeClasspath
+ mainClass = 'CanvasExchangeChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+ systemProperty 'java.awt.headless', 'true'
+}
+tasks.named('check') { dependsOn tasks.named('verifyCanvasExchange') }
+
+tasks.register('verifyRewardDelivery', JavaExec) {
+ dependsOn tasks.named('verificationClasses'), tasks.named('prepareVanillaValidation')
+ classpath = files(vanillaValidationJar) + sourceSets.verification.runtimeClasspath
+ mainClass = 'RewardDeliveryChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+ systemProperty 'java.awt.headless', 'true'
+}
+tasks.named('check') { dependsOn tasks.named('verifyRewardDelivery') }

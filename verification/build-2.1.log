@@ -1,0 +1,79 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.2.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :compileJava
+> Task :processResources UP-TO-DATE
+> Task :classes
+> Task :jarJar NO-SOURCE
+> Task :jar
+> Task :assemble
+> Task :compileTestJava NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+
+> Task :compileVerificationJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :processVerificationResources NO-SOURCE
+> Task :verificationClasses
+
+> Task :verifyCanvas
+PASS: PNG/JPEG decode, fit/crop, transparency, GIF/corrupt/oversize rejection, map quantization.
+PASS: payload roundtrip, truncated/wrong-length payload rejection, actual Minecraft palette ARGB.
+
+> Task :verifyCanvasExchange
+PASS server authorization: both hands, Blank locked, Molder one use, Infinity 1000 uses, duplicate/replay, wrong hand/stack/tier/count/token, expiry, invalid drawing/item and cancellation retention.
+
+> Task :verifyCanvasInput
+PASS editor input at scale 1: left draw/drag, right erase/drag, palette, middle-click rejection, fill
+PASS editor input at scale 2: left draw/drag, right erase/drag, palette, middle-click rejection, fill
+PASS editor input at scale 3: left draw/drag, right erase/drag, palette, middle-click rejection, fill
+
+> Task :verifyItemMatch
+PASS matcher: shape/color, scale/translation, blank rejection, distinct/bounded results, cube reference, exchange drawing validation and packet codec
+
+> Task :verifyRecipeData
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by org.joml.MemUtil$MemUtilUnsafe (file:/root/.gradle/caches/modules-2/files-2.1/org.joml/joml/1.10.9/438e036486bad66b189bff385dd07dea4f74a146/joml-1.10.9.jar)
+WARNING: Please consider reporting this to the maintainers of class org.joml.MemUtil$MemUtilUnsafe
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+[09:31:26] [main/INFO]: [STDOUT]: PASS game codecs + old-schema rejection: canvas
+[09:31:26] [main/INFO]: [STDOUT]: PASS game codecs + old-schema rejection: molder_canvas
+[09:31:26] [main/INFO]: [STDOUT]: PASS game codecs + old-schema rejection: infinity_canvas
+[09:31:26] [main/INFO]: [STDOUT]: PASS game codecs + old-schema rejection: quill
+[09:31:26] [main/INFO]: [STDOUT]: PASS game codecs + old-schema rejection: molder_quill
+[09:31:26] [main/INFO]: [STDOUT]: PASS game codecs + old-schema rejection: infinity_quill
+
+> Task :verifyRewardDelivery
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by org.joml.MemUtil$MemUtilUnsafe (file:/root/.gradle/caches/modules-2/files-2.1/org.joml/joml/1.10.9/438e036486bad66b189bff385dd07dea4f74a146/joml-1.10.9.jar)
+WARNING: Please consider reporting this to the maintainers of class org.joml.MemUtil$MemUtilUnsafe
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+[09:31:30] [main/INFO]: [STDOUT]: PASS production reward delivery with headless inventory: both hands, fresh plain items without ownership, Molder replacement, Infinity reuse, full inventory drop, rejected drop retains canvas.
+
+> Task :verifyVanillaItemMatch
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by org.joml.MemUtil$MemUtilUnsafe (file:/root/.gradle/caches/modules-2/files-2.1/org.joml/joml/1.10.9/438e036486bad66b189bff385dd07dea4f74a146/joml-1.10.9.jar)
+WARNING: Please consider reporting this to the maintainers of class org.joml.MemUtil$MemUtilUnsafe
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+[09:31:39] [main/INFO]: [STDOUT]: Vanilla texture catalogue: 1198 distinct inventory items, 2394 references
+[09:31:39] [main/INFO]: [STDOUT]: diamond in top 3: true -> [Match[id=minecraft:diamond, similarity=1.0], Match[id=minecraft:structure_void, similarity=0.9162114364512811], Match[id=minecraft:heart_of_the_sea, similarity=0.9105838148577556]]
+[09:31:39] [main/INFO]: [STDOUT]: diamond_sword in top 3: true -> [Match[id=minecraft:diamond_sword, similarity=1.0], Match[id=minecraft:wooden_sword, similarity=0.8582165605095542], Match[id=minecraft:iron_sword, similarity=0.8581276785714286]]
+[09:31:39] [main/INFO]: [STDOUT]: apple in top 3: true -> [Match[id=minecraft:apple, similarity=1.0], Match[id=minecraft:pig_spawn_egg, similarity=0.8747906188733153], Match[id=minecraft:crimson_stem, similarity=0.8554720857890552]]
+[09:31:39] [main/INFO]: [STDOUT]: stick in top 3: true -> [Match[id=minecraft:stick, similarity=1.0], Match[id=minecraft:wooden_shovel, similarity=0.8297387950682102], Match[id=minecraft:copper_shovel, similarity=0.8216062414619725]]
+[09:31:39] [main/INFO]: [STDOUT]: bread in top 3: true -> [Match[id=minecraft:bread, similarity=1.0], Match[id=minecraft:music_disc_relic, similarity=0.8935973262301459], Match[id=minecraft:brown_candle, similarity=0.8931634578209633]]
+[09:31:39] [main/INFO]: [STDOUT]: iron_pickaxe in top 3: true -> [Match[id=minecraft:iron_pickaxe, similarity=1.0], Match[id=minecraft:stone_pickaxe, similarity=0.9920864060979911], Match[id=minecraft:wooden_pickaxe, similarity=0.9767999391402913]]
+[09:31:39] [main/INFO]: [STDOUT]: golden_apple in top 3: true -> [Match[id=minecraft:golden_apple, similarity=1.0], Match[id=minecraft:sulfur_cube_spawn_egg, similarity=0.9087677455511229], Match[id=minecraft:cake, similarity=0.8743812460732003]]
+[09:31:40] [main/INFO]: [STDOUT]: emerald in top 3: true -> [Match[id=minecraft:emerald, similarity=1.0], Match[id=minecraft:ender_eye, similarity=0.8284619957767074], Match[id=minecraft:slime_ball, similarity=0.8227440850738468]]
+[09:31:40] [main/INFO]: [STDOUT]: bow in top 3: true -> [Match[id=minecraft:bow, similarity=1.0], Match[id=minecraft:fishing_rod, similarity=0.8459038103520303], Match[id=minecraft:carrot_on_a_stick, similarity=0.8029449916975641]]
+[09:31:40] [main/INFO]: [STDOUT]: PASS actual vanilla asset indexing/matching and server item whitelist validation
+
+> Task :check
+> Task :build
+
+[Incubating] Problems report is available at: file:///workspace/scratch/f5b60aa4f41f/canvas-studio-v2.1/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 31s
+11 actionable tasks: 10 executed, 1 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.2.1/userguide/configuration_cache_enabling.html

@@ -25,6 +25,15 @@ public final class CanvasScreen extends Screen {
     private static byte[] draft;
     private static String draftTitle = "Custom Painting";
     private final InteractionHand hand;
+    final studio.canvas.CanvasTier tier;
+    private final java.util.UUID openRequest=java.util.UUID.randomUUID();
+    java.util.UUID exchangeToken;
+    private boolean sessionRequested;
+    void reply(studio.canvas.CanvasReply reply){
+        if(!reply.request().equals(openRequest))return;
+        if(reply.code()==0)exchangeToken=reply.token();
+        status=reply.message();
+    }
     private final int[] palette = new int[248];
     private final byte[] pixels;
     private final ArrayDeque<byte[]> undo = new ArrayDeque<>();
@@ -41,8 +50,9 @@ public final class CanvasScreen extends Screen {
         return itemReferences;
     }
 
-    public CanvasScreen(InteractionHand hand) {
-        super(Component.literal("Canvas Studio - made by SuprixZ")); this.hand = hand;
+    public CanvasScreen(InteractionHand hand) {this(hand,studio.canvas.CanvasTier.BLANK);}
+    public CanvasScreen(InteractionHand hand,studio.canvas.CanvasTier tier) {
+        super(Component.literal("Canvas Studio+ - made by SuprixZ")); this.hand = hand; this.tier=tier;
         for (int i=4;i<palette.length;i++) {
             // Minecraft 26.3 exposes packed map colors as ARGB, matching the GUI.
             int c = MapColor.getColorFromPackedId(i);
@@ -77,11 +87,13 @@ public final class CanvasScreen extends Screen {
         });
         button(tools,top+126,64,"Undo",()->{if(!undo.isEmpty())System.arraycopy(undo.removeLast(),0,pixels,0,pixels.length);});
         button(tools+68,top+126,64,"Clear",()->{snapshot();Arrays.fill(pixels,white);status="Cleared; Undo restores it.";});
-        button(tools,top+174,132,receiveMode?"Mode: Get Item":"Mode: Painting",()->{receiveMode=!receiveMode;rebuild();});
+        Button modeButton=button(tools,top+174,132,tier.canExchange()?(receiveMode?"Mode: Get Item":"Mode: Painting"):"Get Item: locked",()->{receiveMode=!receiveMode;rebuild();});
+        modeButton.active=tier.canExchange();
+        modeButton.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(tier.availability)));
         button(tools,top+150,132,receiveMode?"Find Item / Block":"Save Painting",()->{
             if(importing){status="Wait for image import.";return;}
-            if(receiveMode){minecraft.setScreenAndShow(new ItemMatchScreen(this,hand,pixels,palette));return;}
-            if(minecraft.player==null || !minecraft.player.getItemInHand(hand).is(studio.canvas.CanvasStudio.CANVAS.get())){status="Hold your Blank Canvas to save.";return;}
+            if(receiveMode && tier.canExchange()){minecraft.setScreenAndShow(new ItemMatchScreen(this,hand,pixels,palette));return;}
+            if(minecraft.player==null || !studio.canvas.CanvasStudio.isCanvas(minecraft.player.getItemInHand(hand))){status="Hold your canvas to save.";return;}
             ClientPacketDistributor.sendToServer(new SavePainting(hand,titleBox.getValue(),pixels.clone()));
             draft=null;draftTitle="Custom Painting";minecraft.setScreenAndShow(null);
         });
@@ -90,15 +102,15 @@ public final class CanvasScreen extends Screen {
     }
     void clearDraftAfterExchange(){draft=null;draftTitle="Custom Painting";}
     private void rebuild() {draftTitle=titleBox.getValue();String color=hexBox.getValue();clearWidgets();init();hexBox.setValue(color);}
-    private void button(int x,int y,int w,String label,Runnable action) {
-        addRenderableWidget(Button.builder(Component.literal(label),b->action.run()).bounds(x,y,w,20).build());
+    private Button button(int x,int y,int w,String label,Runnable action) {
+        return addRenderableWidget(Button.builder(Component.literal(label),b->action.run()).bounds(x,y,w,20).build());
     }
     private void snapshot(){if(undo.size()==10)undo.removeFirst();undo.addLast(pixels.clone());}
     @Override public boolean isPauseScreen(){return false;}
     @Override public void onClose(){if(importing){status="Wait for the image to finish loading.";return;}draft=pixels.clone();draftTitle=titleBox.getValue();super.onClose();}
     @Override public void extractRenderState(GuiGraphicsExtractor g,int mouseX,int mouseY,float partialTick){
         g.fill(0,0,width,height,0xf0181c26);
-        g.centeredText(font,Component.literal("CANVAS STUDIO - made by SuprixZ"),width/2,10,0xfff5ddaa);
+        g.centeredText(font,Component.literal("CANVAS STUDIO+ - made by SuprixZ"),width/2,10,0xfff5ddaa);
         g.fill(left-2,top-2,left+side+2,top+side+2,0xffaa8050);
         // Coalesce horizontal runs, avoiding a separate draw call for every pixel in flat areas.
         for(int y=0;y<128;y++)for(int x=0;x<128;){
@@ -111,6 +123,7 @@ public final class CanvasScreen extends Screen {
             g.fill(x,y,x+15,y+11,swatches[i]==selected?0xffffffff:0xff363b48);
             g.fill(x+1,y+1,x+14,y+10,palette[Byte.toUnsignedInt(swatches[i])]);
         }
+        g.text(font,font.plainSubstrByWidth(tier.label+" | "+tier.availability,width-16),8,height-26,0xffbec8d8,false);
         g.text(font,font.plainSubstrByWidth(status,width-16),8,height-13,0xffdddddd,false);
         super.extractRenderState(g,mouseX,mouseY,partialTick);
     }
@@ -164,6 +177,7 @@ public final class CanvasScreen extends Screen {
         dialogReturned=false;
     }
     @Override public void tick(){
+        if(!sessionRequested && tier.canExchange()){sessionRequested=true;ClientPacketDistributor.sendToServer(new studio.canvas.OpenCanvas(hand,openRequest));}
         // Linux portal dialogs require SDL event processing. Never block Minecraft.
         if(imageDialog!=null){
             org.lwjgl.sdl.SDLEvents.SDL_PumpEvents();

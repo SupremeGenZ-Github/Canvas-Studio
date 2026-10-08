@@ -1,77 +1,68 @@
-# Canvas Studio
+# Canvas Studio+
 
 <p align="center"><img src="docs/canvas-studio-icon.png" alt="Canvas Studio icon" width="192"></p>
 
-**- made by SuprixZ**
+**made by SuprixZ**
 
-Draw your own artwork, import images, and turn them into custom paintings in Minecraft. Choose **Canvas Studio Lite** for painting, or **Canvas Studio** for painting plus an offline item/block finder that turns a drawing into a matching inventory item.
+Canvas Studio+ **2.1.0** lets you draw, import PNG/JPEG images, export PNG artwork, save custom paintings, and match drawings to Minecraft items and blocks offline.
 
-This README covers both editions. Use the compatibility information for the specific file you download when installing a current or future release.
+## Download 2.1.0
 
-## Choose your edition
+[Release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v2.1.0) · [JAR](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v2.1.0/canvas-studio-plus-26.3-2.1.0.jar) · [Source ZIP](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v2.1.0/Canvas-Studio-Plus-2.1.0-source.zip)
 
-| Feature | Canvas Studio Lite | Canvas Studio |
-| --- | --- | --- |
-| Canvas and quill crafting | Yes | Yes |
-| Drawing, colors, brushes, eraser and fill | Yes | Yes |
-| Undo, clear and PNG/JPEG import | Yes | Yes |
-| PNG export and saved paintings | Yes | Yes |
-| Item/block matching and three suggested results | No | Yes |
-| Exchange a canvas for a selected item/block | No | Yes |
+## Requirements and installation
 
-Both editions use the `canvasstudio` mod ID. **Install one edition only.** Clients and servers must use the same edition and release.
+Minecraft Java **26.3**, **Java 25**, and **NeoForge 26.3.x**, including alpha/beta builds accepted by the dependency range `[26.3-alpha,26.4-alpha)`. The development target is **26.3.0.51-beta**. Other Minecraft versions, Forge, Fabric, and NeoForge 26.4+ are unsupported. Future 26.3 builds are accepted by metadata; compatibility with future API changes is not guaranteed. See [VALIDATION.md](VALIDATION.md) for actual checks.
 
-## Compatibility
+Put the JAR in your instance's `mods` folder. Remove previous Canvas Studio JARs first. Install **one edition only**: Canvas Studio Lite, Canvas Studio, and Canvas Studio+ all use `canvasstudio`. Servers and clients require the same release; 2.1.0 uses network protocol 3 and cannot mix with 2.0.x.
 
-The current compatibility releases are **Lite 1.0.4** and **Canvas Studio 2.0.1**. They require **Minecraft Java 26.3**, **NeoForge 26.3.x**, and **Java 25**. The NeoForge range includes beta builds. Fabric, Forge, other Minecraft versions and NeoForge 26.4+ are outside this release's support.
+Canvas Studio Lite 1.0.4 remains the painting-only edition on the `lite` branch. This update changes the full edition on `main`; older releases remain available in [GitHub Releases](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases).
 
-Future NeoForge builds within the 26.3 series are accepted by these files' dependency metadata. Compatibility with unreleased API changes cannot be guaranteed. Future Minecraft versions or NeoForge series require a separately validated release; editing a description does not add runtime support.
+## Crafting
 
-For future mod releases, check the selected file's game version, loader and release notes. On Modrinth, choose a file marked for your Minecraft version and NeoForge. Each release's metadata takes precedence over this general project overview. Older Lite 1.0.3 and full 2.0.0 files retain their exact NeoForge 26.3.0.51-beta requirement.
+| Result | Ingredients | Recipe type | Get Item |
+| --- | --- | --- | --- |
+| Quill | Feather + Ink Sac | Shapeless | — |
+| Blank Canvas | Leather + Paper + Quill | Shapeless | Locked |
+| Molder Quill | Quill in center; eight Iron Nuggets surrounding it | Shaped, all nine slots | — |
+| Infinity Quill | Quill in center; eight Diamonds surrounding it | Shaped, all nine slots | — |
+| Molder Canvas | Leather + Paper + Molder Quill | Shapeless | One successful exchange |
+| Infinity Canvas | Leather + Paper + Infinity Quill | Shapeless | Unlimited successful exchanges |
 
-See [combined validation](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/VALIDATION.md) for tested versions and remaining checks.
+The former Leather + Paper + Feather shortcut has been removed, including its advancement. The normal Quill recipe remains.
 
-## Download and install
+## Painting
 
-Get your edition from [GitHub Releases](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases), or the corresponding project's Versions tab on Modrinth when available.
+Use any canvas in either hand to open the editor. Left-click/drag to draw; right-click/drag to erase. Colors, brushes, fill, undo, clear, PNG/JPEG import, fit/crop, and PNG export remain available on all three tiers. The editor shows your canvas type and Get Item availability.
 
-1. Create a Minecraft instance with the game version, NeoForge version and Java version listed for your chosen release.
-2. Download the edition's **JAR**. Source ZIPs are for development.
-3. Remove older Canvas Studio JARs and place the chosen JAR in the instance's `mods` folder.
-4. Launch the instance. For multiplayer, install the same edition and release on the server and every client.
+**Save Painting** exchanges the held canvas for a named, locked Minecraft map, as in earlier releases. Place it in a normal/glowing item frame. This applies to all canvas tiers: Infinity's unlimited reuse applies to **Get Item**, not to saving maps. PNG exports appear under `canvasstudio/exports` in your game folder.
 
-## Crafting and painting
+Existing paintings retain Minecraft's saved map data. Existing Blank Canvas items retain the ID `canvasstudio:canvas` and remain usable for painting; their Get Item mode is now locked. No world conversion is needed.
 
-Recipes are shapeless:
+## Draw to item
 
-| Result | Ingredients |
-| --- | --- |
-| Quill | Feather + Ink Sac |
-| Blank Canvas | Leather + Paper + Quill |
-| Blank Canvas, alternative recipe | Leather + Paper + Feather |
+With a Molder or Infinity Canvas, select **Mode: Get Item**, draw an item/block, then select **Find Item / Block**. Compare up to three suggestions and choose a result. The reward is **one newly created plain item/block**, even if you do not own it. Enchantments/custom data are not copied.
 
-Hold a Blank Canvas and use it to open the editor. Left-click and drag to paint; right-click and drag to erase. Select a color and brush size, or use fill, undo and clear.
+A successful Molder exchange replaces the held canvas with the reward. Infinity keeps the canvas and inserts the reward into your inventory; if full, the reward drops beside you. Each confirmed Infinity request grants one item, and you may choose again or return to drawing.
 
-Import a PNG or JPEG and choose fit or crop. Transparent areas are flattened onto white. Export your artwork as a PNG, or use **Save Painting** to turn the canvas into a named map. Display the map in a normal or glowing item frame. Saved artwork uses Minecraft's map data.
+Returning to drawing, cancelling, failed matching, or rejected requests do not consume a canvas. Blank Canvas shows Get Item as locked and explains that Molder or Infinity is required. Exchange buttons wait for server confirmation. Each server-issued token works once and is bound to the held stack, hand and tier; it expires after 6,000 game ticks. Reopen the canvas to renew an expired session.
 
-## Draw an item or block
+The existing finder catalogue and visual rules are unchanged: supported vanilla inventory textures, shape/outline, color and orientation. Matching is approximate, local, and requires no cloud service/API key. Scores describe visual similarity, not certainty. Modded items and unsupported special models are outside the catalogue. As in 2.0.1, server ID validation accepts registered non-air vanilla items; the server does not recompute client texture rankings.
 
-In the full edition, switch to **Mode: Get Item**, draw an item or block, then click **Find Item / Block**. Compare up to three suggested results and choose **Get closest** or another candidate. Returning to drawing lets you revise without spending the canvas.
+## Build and verify
 
-Choosing a result exchanges one held Blank Canvas for **one newly created plain item/block**. You do not need that item in your inventory. Custom data and enchantments are not copied.
+Use JDK 25:
 
-Matching runs locally without an API key or cloud service. It compares shape, outline, color and orientation against supported vanilla inventory textures. It is approximate: rough drawings, similar shapes and unsupported special models can produce unexpected results. Scores measure visual similarity, not probability. Modded items are outside the current finder catalogue.
+```sh
+./gradlew build
+# Optional alternate development dependency:
+./gradlew build -PneoForgeVersion=26.3.0.57-beta
+```
 
-## Source, building and validation
-
-The `main` branch contains the full edition; `lite` contains the painting edition. Release tags preserve each published source snapshot. Both branches share this overview and the combined validation document.
-
-Use the JDK required by the selected source release. For the current sources, use JDK 25 and run `./gradlew build` (`gradlew.bat build` on Windows). Build artifacts appear in `build/libs`.
-
-The default development target is NeoForge 26.3.0.51-beta. Select another 26.3 development target with `./gradlew build -PneoForgeVersion=26.3.0.57-beta`. This selects the build dependency; it does not automatically prove compatibility with another Minecraft version.
+JARs appear in `build/libs`. `check` runs image, palette, packet, editor-input, recipe/advancement codec, matching, and server authorization checks. See [VALIDATION.md](VALIDATION.md) for scope and in-game checks still needed, and [CHANGELOG.md](CHANGELOG.md) for changes.
 
 ## Help and license
 
-Report problems in [GitHub Issues](https://github.com/SupremeGenZ-Github/Canvas-Studio/issues). Include the edition and release, Minecraft and NeoForge versions, reproduction steps, and `logs/latest.log` after removing private information.
+[Issue tracker](https://github.com/SupremeGenZ-Github/Canvas-Studio/issues): include release, Minecraft/NeoForge versions, reproduction steps, and `logs/latest.log` with private information removed.
 
-Licensed under [MIT](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/LICENSE).
+[MIT license](LICENSE).

@@ -1,3 +1,18 @@
+# Changelog
+
+## Canvas Studio+ 2.1.0
+
+- Based on the full Canvas Studio 2.0.1 source; preserves painting, import/export, saving and the existing offline item matcher.
+- Blank Canvas keeps its existing item ID and painting features; Get Item is locked.
+- Adds single-use Molder Canvas and reusable Infinity Canvas, plus Molder and Infinity Quills.
+- Adds shapeless canvas recipes and nine-slot shaped quill recipes, names, textures, tooltips, recipe unlock advancements and creative entries.
+- Removes the feather shortcut recipe and its advancement.
+- Server-issued, one-use exchange tokens validate the held stack, hand, tier, count, item ID and drawing. Tokens rotate for Infinity and reject duplicate/replayed requests.
+- Infinity grants one new plain item per successful request without consuming its canvas; full inventories drop the reward nearby. Molder is exchanged only on success.
+- Editor displays the canvas tier, availability and server response; repeated clicks while awaiting confirmation are ignored.
+- Existing Blank Canvas items and saved Minecraft map paintings remain compatible.
+- Retains “made by SuprixZ”, Minecraft 26.3 and NeoForge 26.3.x metadata including prereleases.
+
 # Canvas Studio 2.0.1
 
 - Accept all NeoForge 26.3.x releases, including beta builds.

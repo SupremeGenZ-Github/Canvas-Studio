@@ -6,7 +6,7 @@
       "conditions": {
         "items": [
           {
-            "items": "minecraft:paper"
+            "items": "canvasstudio:quill"
           }
         ]
       }
@@ -15,7 +15,7 @@
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
         "recipes": [
-          "canvasstudio:canvas_with_feather"
+          "canvasstudio:molder_quill"
         ]
       }
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "canvasstudio:canvas_with_feather"
+      "canvasstudio:molder_quill"
     ]
   }
 }
