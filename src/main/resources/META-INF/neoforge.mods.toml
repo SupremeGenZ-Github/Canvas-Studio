@@ -3,7 +3,7 @@ loaderVersion="[12,)"
 license="MIT"
 [[mods]]
 modId="canvasstudio"
-version="1.0.3"
+version="1.0.4"
 displayName="Canvas Studio Lite"
 authors="SuprixZ"
 description='''Craft a canvas, draw or import your images, then hang your saved art in an item frame.
@@ -11,7 +11,7 @@ description='''Craft a canvas, draw or import your images, then hang your saved 
 [[dependencies.canvasstudio]]
 modId="neoforge"
 type="required"
-versionRange="[26.3.0.51-beta]"
+versionRange="[26.3-alpha,26.4-alpha)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.canvasstudio]]

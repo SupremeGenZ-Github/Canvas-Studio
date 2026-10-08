@@ -1,3 +1,7 @@
+# Canvas Studio Lite 1.0.4 compatibility update
+
+This update changes mod version and dependency metadata only. The compiled class files and other gameplay resources are byte-identical to 1.0.3; the earlier checks below remain relevant but were not rerun on every NeoForge version. See COMPATIBILITY.md for the new version-range and binary linkage audit. No new interactive Minecraft world or multiplayer tests were performed.
+
 # Release validation
 
 Target: Minecraft Java Edition 26.3, NeoForge 26.3.0.51-beta, JDK 25.

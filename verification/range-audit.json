@@ -1,0 +1,18 @@
+{
+  "range": "[26.3-alpha,26.4-alpha)",
+  "comparator": "org.apache.maven:maven-artifact:3.9.16",
+  "accepted": [
+    "26.3.0.0-beta",
+    "26.3.0.51-beta",
+    "26.3.0.57-beta",
+    "26.3.1",
+    "26.3.99-beta"
+  ],
+  "rejected": [
+    "26.4-alpha",
+    "26.4.0.0-beta",
+    "26.4",
+    "26.2.99-beta"
+  ],
+  "passed": true
+}

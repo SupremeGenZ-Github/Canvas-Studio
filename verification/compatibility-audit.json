@@ -1,0 +1,633 @@
+{
+  "checked_at": "2026-10-08",
+  "scope": "Binary class and method/field reference audit; not Minecraft launch/gameplay validation",
+  "versions": [
+    {
+      "neoforge": "26.3.0.0-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "bd08fb94587abd25ea9111ee148e61a7ce5d77e307e1ced4aeee1a2c6e8913c5",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.1-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "13e9da116fc34d10cc2422451fc99be4e2a1f50041968b0402d19c4be48350b4",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.2-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "d6e3dea851c6c7e62a4907697f29e5beb9521d46286a02e83b30e2d85c985ed7",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.3-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "aaa046382294676df9b905a7c435f2c30675b91f73cefd2df7c149685d203a81",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.4-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "779300e599956869807cebc0ad093ce301bc857a2f3a4a0023b89757150b4c3a",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.5-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "fb16c20aea5adba2fa48264369fcf0335114f2926d1df2aac64734f4a46ae885",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.6-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "be635f39666115fc0c8c85545e62174f359e6ebea275afc29e477c440cdaf444",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.7-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "cb315f4f26aa6af0020be791f99887c97803cdbbba1f65866d31d60cf00c7b91",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.8-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "24a4ff980a958477da8a1fd887f95e13552b4621e55fc1d525a69bc2cc8976b7",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.9-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "37488a97de566c82071a17d5c9a2837c2ec9e5c0597a3da16f871a3d47091310",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.10-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "b459959a4743d2ece57d48f6f66c227c7a05addaab07bcadad1318c1ecbc7680",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.11-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "f133acb6a9d51ec2a934407b6326eb165e6147cd5e30ead427b2cc6331434253",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.12-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "aa5c98012b4013e6ad6bbc253fbd1057b40483f19a430b53f71a65ea0f8decbd",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.13-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "1b4a39372b54c00365c6a0dcd91c0ec8ad8760c85aa64e891a15481849214463",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.14-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "8845fe01e7dbadb7a5ced7f35ed13c9e1526e7c955466a385d5742cfd9504ddd",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.16-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "a780d56120737cc924b42f1f721ac755125162d35a621edd1772b83361452836",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.17-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "c02df231d96a8ecde160c4def524928a5d992c4ce0ec86636697e7a48ca62c69",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.18-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "7625779dc375956b673d983dae3603a0d0c89ccbc8b61ee3d7dd3a8329cab5fb",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.19-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "91cafb389169377813d5c39945b569a167cfa7cd450fa98352729307bdc70a3f",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.20-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "f17750582c6e32febebe3fc5457c3f6288d737e73c5ca60c2068f85a43be56ff",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.21-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "426d4716a5d3e5ada7b54ec99f66b3e585105d72ee1856821192116c623538a6",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.22-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "f73a3c64427a43cbc9a12d180e879c67980e3bfd624abeb0f4e8a7ffd3219786",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.23-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "7d1b395a88a5e284b5de9d028a436f15bbb57b2fb278bbdcecd287e50b3c4cfe",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.24-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "dea5fc2831b2972490c24272c96b06c736984bec10adf441110613a3102fa476",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.25-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.0",
+      "bus": "8.0.5",
+      "sha256": "9831042247e10bcfa3cd77af63e61b3eb5833e3949ee012f56affab8ccc2fd72",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.26-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.1",
+      "bus": "8.0.5",
+      "sha256": "98a5ab546e319b5e624e273dd734ff098449fe55ca0bd3b98f7d1c72fa1b09e9",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.27-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.1",
+      "bus": "8.0.5",
+      "sha256": "f21685d41988c155d7d0c30b9e956de6c7bdc4f7f5b7e95fb6856801965d36ab",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.28-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.1",
+      "bus": "8.0.5",
+      "sha256": "338b4e54f9500d68744e48d01d526211378457732a30d5ef4c6eb440f1f8bf0a",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.29-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.1",
+      "bus": "8.0.5",
+      "sha256": "8914b506b7f2dc14ceb79be60244b575157ac7d24d3de7d597f6da64f310c6d6",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.30-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.1",
+      "bus": "8.0.5",
+      "sha256": "8621730f5b952746a2839296915bf7efc59fe5710afdf18df3c6152b69640438",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.31-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.3",
+      "bus": "8.0.5",
+      "sha256": "45d2b8fd070d1649512fd8fdec5106aa9c69977c1be98f9b97610ca202d357e8",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.33-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.3",
+      "bus": "8.0.5",
+      "sha256": "f1cb31336c6a0251b13e8bbed95fdee3726b8baa49e6fa4228bc3df624a8432d",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.34-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.3",
+      "bus": "8.0.5",
+      "sha256": "c7c598e3140e5111ed0d56957f7fc4085595e7296d64aec2b6a48241b2eb5285",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.35-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.7",
+      "bus": "8.0.5",
+      "sha256": "621037e9583422ff1b27bf56581d4a7314c996b855183dfc4cb64a01d8931e9c",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.36-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.7",
+      "bus": "8.0.5",
+      "sha256": "e0b9a45a9e693cbe13bf544055a3666d6ea0ad99a8ba20d9d8bd70f43b7b1a87",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.37-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "130e01c01ea04e96d38263ee7eb1fc33df3c0050a45f06d15f067f23acd34e0d",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.38-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "ad6463d0b42bbef51777204bf78f00ffed41d3bbcfad50b40d06bed02d8ec2fa",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.39-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "406729f0fcec45741a3e0b4ef3ca7e61ec91192bca10e983f357bad12c3eb198",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.40-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "3d21d609d458244bdcc9a012270c8a7b56b2834e2cabda23f9c13b672b09f67e",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.41-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "82881e01019974c979a518d2001e908f4363ad2f378e4817b010373c971c3839",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.42-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "8f46e5da5bac97b1533978f049473a2491ceeb4851de2e8d6f178fa6586a39b1",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.43-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "4da3219d01c08b3905b261062f9d91b2f82535b7abd28c73a74009613d632118",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.44-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "82eec371e3c0bc11c49580855b800be77ce319c243e2dbabec3830a1b2ddb072",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.45-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "f3ee95178bf6640073be35efd5852df7c2a5a31f8e4ce4cde0a1955c642e27cc",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.46-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "eb2d6034bc8c4c602f530d1268abdf013cf830539beb4d8d664ce5272f50c81b",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.47-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "f051ac6bb910921ae66865a99296bce1924f0430495f888c6466ca4fd6e746de",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.48-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "7a9d1f8196c8bb9b0c5a9c42f81c275463b82a25375a5a07222e0b9f4c5803fc",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.49-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "d057a24eba4507469667a8a0263028a18454f61513522ec4ad948ff12cda59b6",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.50-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "949253239b5ca0c65c9018d4e615c0fd6ca74e8884c4723a3ccf790ab7659ce8",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.51-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "116d470a662b546aff646adc236d0dac45ad57aac59a750a614e11a67e9450d9",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.52-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.8",
+      "bus": "8.0.5",
+      "sha256": "6b9b2e0aeffeaf16d90a2d87724967e7f2ef5d2c947279ff31e820e2226f018f",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.53-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.9",
+      "bus": "8.0.5",
+      "sha256": "7ecda3bbcedc95661b9c884455aaa5fd4cc87124e0bb3a6fb0b0af750ff1b26f",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.54-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.9",
+      "bus": "8.0.5",
+      "sha256": "851978524c315c629e35371fd2ee4b71a06af50396b8c43cf87f09c039eaca6e",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.55-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.9",
+      "bus": "8.0.5",
+      "sha256": "29183e0c53b1e6a4891efb9f9f962b3735fb509d6a620d056973edc59e203767",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.56-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.9",
+      "bus": "8.0.5",
+      "sha256": "c4c4e0a6298782789789cd60c02340b8ac711ac15080bbe287de2f7d4982cbb9",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    },
+    {
+      "neoforge": "26.3.0.57-beta",
+      "neoform": "26.3-1",
+      "loader": "12.0.9",
+      "bus": "8.0.5",
+      "sha256": "d2dba65f59fab3c563f9504810df067bfe3d8d0008221a550893a8cababf1472",
+      "missing_references": {
+        "lite": [],
+        "full": []
+      }
+    }
+  ],
+  "reference_counts": {
+    "lite": {
+      "members": 18,
+      "classes": 12
+    },
+    "full": {
+      "members": 18,
+      "classes": 12
+    }
+  },
+  "passed": true
+}

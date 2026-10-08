@@ -1,3 +1,10 @@
+# Canvas Studio Lite 1.0.4
+
+- Accept all NeoForge 26.3.x releases, including beta builds.
+- Keep Minecraft exactly 26.3 and preserve all edition features and SuprixZ credit.
+- Add binary API compatibility evidence for all currently published 26.3 builds.
+- Allow the development compile target to be selected with -PneoForgeVersion.
+
 # Canvas Studio Lite 1.0.3
 
 - Fixed drawing, erasing and palette selection using Minecraft 26.3 mouse button constants. Left-click previously erased; right-click and palette clicks were ignored.
