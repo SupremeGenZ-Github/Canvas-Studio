@@ -50,7 +50,7 @@ public class RecipeDataChecks {
    }else if(recipe instanceof ShapelessRecipe shapeless){
     for(var ingredient:object.getAsJsonArray("ingredients"))grid.add(new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.parse(ingredient.getAsString()))));
     while(grid.size()<9)grid.add(ItemStack.EMPTY);
-    for(int slot=0;slot<3;slot++){var missing=new ArrayList<>(grid);missing.set(slot,ItemStack.EMPTY);check(!shapeless.matches(CraftingInput.of(3,3,missing),null),"All shapeless ingredients required "+name);}
+    for(int slot=0;slot<object.getAsJsonArray("ingredients").size();slot++){var missing=new ArrayList<>(grid);missing.set(slot,ItemStack.EMPTY);check(!shapeless.matches(CraftingInput.of(3,3,missing),null),"All shapeless ingredients required "+name);}
     for(int rotation=0;rotation<9;rotation++){Collections.rotate(grid,1);var input=CraftingInput.of(3,3,grid);check(shapeless.matches(input,null),"Shapeless placement "+name);check(shapeless.assemble(input).getCount()==1,"One crafted output");}
     if(name.endsWith("canvas")||name.equals("canvas")){
      var shortcut=CraftingInput.of(3,1,List.of(new ItemStack(Items.LEATHER),new ItemStack(Items.PAPER),new ItemStack(Items.FEATHER)));
