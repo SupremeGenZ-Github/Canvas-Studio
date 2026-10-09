@@ -19,7 +19,7 @@ public class RecipeDataChecks {
  static void check(boolean v,String s){if(!v)throw new AssertionError(s);}
  public static void main(String[] args) throws Exception {
   SharedConstants.tryDetectVersion(); Bootstrap.bootStrap();
-  // 26.3 normally binds item components during world registry loading. Minimal
+  // 26.2 normally binds item components during world registry loading. Minimal
   // stand-in defaults suffice for headless crafting; no world is loaded here.
   var defaults=net.minecraft.core.component.DataComponentMap.builder().set(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE,64).build();
   BuiltInRegistries.ITEM.listElements().forEach(holder -> holder.bindComponents(defaults));
@@ -30,7 +30,7 @@ public class RecipeDataChecks {
   for(String name:new String[]{"canvas","molder_canvas","infinity_canvas","quill","molder_quill","infinity_quill"}) {
    // Recipes use vanilla stand-in items because standalone bootstrap freezes items.
    var json=JsonParser.parseString(standIns(Files.readString(root.resolve("recipe/"+name+".json"))));
-   var recipe=Recipe.DIRECT_CODEC.parse(ops,json).getOrThrow();
+   var recipe=Recipe.CODEC.parse(ops,json).getOrThrow();
    var object=json.getAsJsonObject();
    List<ItemStack> grid=new ArrayList<>();
    if(recipe instanceof ShapedRecipe shaped){
@@ -72,9 +72,9 @@ public class RecipeDataChecks {
    Advancement.CODEC.parse(ops,json).getOrThrow();
    var old=json.deepCopy();
    var conditions=old.getAsJsonObject("criteria").getAsJsonObject("has_the_recipe").getAsJsonObject("conditions");
-   conditions.remove("recipes");conditions.addProperty("recipe","canvasstudio:"+name);
-   if(Advancement.CODEC.parse(ops,old).isSuccess())throw new AssertionError("Old schema unexpectedly accepted");
-   System.out.println("PASS game codecs + old-schema rejection: "+name);
+   conditions.remove("recipe");var futureRecipes=new com.google.gson.JsonArray();futureRecipes.add("canvasstudio:"+name);conditions.add("recipes",futureRecipes);
+   if(Advancement.CODEC.parse(ops,old).isSuccess())throw new AssertionError("26.3 schema unexpectedly accepted");
+   System.out.println("PASS game codecs + 26.3-schema rejection: "+name);
   }
  }
 }

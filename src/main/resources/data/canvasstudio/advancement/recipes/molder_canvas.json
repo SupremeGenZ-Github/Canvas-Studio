@@ -14,9 +14,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": [
-          "canvasstudio:molder_canvas"
-        ]
+        "recipe": "canvasstudio:molder_canvas"
       }
     }
   },

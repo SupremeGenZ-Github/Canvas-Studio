@@ -6,7 +6,7 @@ This is a separately compiled port, with 26.2-specific build dependencies and Mi
 
 ## Automated verification
 
-Eight Java suites cover real 26.2 recipe/advancement codecs, exact quill layouts and shapeless progression, painting input including colors/drag/fill at three GUI scales, image processing, packet validation, real vanilla item texture matching, server authorization, single-use Molten/infinite Infinity rewards through test inventory adapters, and texture size/transparency. Python artifact checks inspect version, exact target metadata, recipes, credits, unchanged matcher/image-processing source and texture hashes. Historical 26.3 logs/audits do not count as port results.
+Uses 26.2 Recipe.CODEC and singular `recipe` advancement conditions, checked against actual 26.2 vanilla data. Eight Java suites cover real 26.2 recipe/advancement codecs, exact quill layouts and shapeless progression, painting input including colors/drag/fill at three GUI scales, image processing, packet validation, real vanilla item texture matching, server authorization, single-use Molten/infinite Infinity rewards through test inventory adapters, and texture size/transparency. Python artifact checks inspect version, exact target metadata, recipes, credits, unchanged matcher/image-processing source and texture hashes. Historical 26.3 logs/audits do not count as port results.
 
 The port removes all SDL references and uses TinyFD 3.4.1 supplied by Minecraft 26.2. Native picker cancellation and exceptions retain the canvas, while selection/decoding run off the game thread. Native picker operation is source-reviewed; an interactive dialog has not been tested here.
 
