@@ -4,17 +4,17 @@
 
 **made by SuprixZ**
 
-Canvas Studio+ **2.1.1** lets you draw, import PNG/JPEG images, export PNG artwork, save custom paintings, and match drawings to Minecraft items and blocks offline.
+Canvas Studio+ **2.1.2** lets you draw, import PNG/JPEG images, export PNG artwork, save custom paintings, and match drawings to Minecraft items and blocks offline.
 
-## Download 2.1.1
+## Download 2.1.2
 
-[Release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v2.1.1) · [JAR](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v2.1.1/canvas-studio-plus-26.3-2.1.1.jar) · [Source ZIP](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v2.1.1/Canvas-Studio-Plus-2.1.1-source.zip)
+[Release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v2.1.2) · [JAR](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v2.1.2/canvas-studio-plus-26.3-2.1.2.jar) · [Source ZIP](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v2.1.2/Canvas-Studio-Plus-2.1.2-source.zip)
 
 ## Requirements and installation
 
 Minecraft Java **26.3**, **Java 25**, and **NeoForge 26.3.x**, including alpha/beta builds accepted by the dependency range `[26.3-alpha,26.4-alpha)`. The development target is **26.3.0.51-beta**. Other Minecraft versions, Forge, Fabric, and NeoForge 26.4+ are unsupported. Future 26.3 builds are accepted by metadata; compatibility with future API changes is not guaranteed. See [VALIDATION.md](VALIDATION.md) for actual checks.
 
-Put the JAR in your instance's `mods` folder. Remove previous Canvas Studio JARs first. Install **one edition only**: Canvas Studio Lite, Canvas Studio, and Canvas Studio+ all use `canvasstudio`. Servers and clients require the same release; 2.1.1 uses network protocol 3 and cannot mix with 2.0.x.
+Put the JAR in your instance's `mods` folder. Remove previous Canvas Studio JARs first. Install **one edition only**: Canvas Studio Lite, Canvas Studio, and Canvas Studio+ all use `canvasstudio`. Servers and clients require the same release; 2.1.2 uses network protocol 3 and cannot mix with 2.0.x.
 
 Canvas Studio Lite 1.0.4 remains the painting-only edition on the `lite` branch. This update changes the full edition on `main`; older releases remain available in [GitHub Releases](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases).
 
@@ -49,7 +49,7 @@ Use any canvas in either hand to open the editor. Left-click/drag to draw; right
 
 **Save Painting** exchanges the held canvas for a named, locked Minecraft map, as in earlier releases. Place it in a normal/glowing item frame. This applies to all canvas tiers: Infinity's unlimited reuse applies to **Get Item**, not to saving maps. PNG exports appear under `canvasstudio/exports` in your game folder.
 
-Existing paintings retain Minecraft's saved map data. Existing Blank Canvas items retain the ID `canvasstudio:canvas` and remain usable for painting; their Get Item mode is now locked. No world conversion is needed. Existing Molder Canvas/Quill items now display as **Molten Canvas/Quill**. Their internal `molder_canvas`/`molder_quill` IDs are intentionally preserved for saved-world compatibility; textures are unchanged in 2.1.1.
+Existing paintings retain Minecraft's saved map data. Existing Blank Canvas items retain the ID `canvasstudio:canvas` and remain usable for painting; their Get Item mode is now locked. No world conversion is needed. Existing Molder Canvas/Quill items now display as **Molten Canvas/Quill**. Their internal `molder_canvas`/`molder_quill` IDs are intentionally preserved for saved-world compatibility; 2.1.2 adds new Molten textures and an Infinity Quill texture.
 
 ## Draw to item
 

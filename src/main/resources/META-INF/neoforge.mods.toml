@@ -3,7 +3,7 @@ loaderVersion="[12,)"
 license="MIT"
 [[mods]]
 modId="canvasstudio"
-version="2.1.1"
+version="2.1.2"
 displayName="Canvas Studio+"
 authors="SuprixZ"
 logoFile="canvas-studio-icon.png"

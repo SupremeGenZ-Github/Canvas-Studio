@@ -1,5 +1,13 @@
 # Changelog
 
+## Canvas Studio+ 2.1.2
+
+- Refreshes Molten Canvas and Quill with molten gold/amber and iron accents.
+- Refreshes Infinity Quill with lapis blue, echo teal and diamond-cyan accents.
+- Normal Quill, Blank Canvas and Infinity Canvas textures remain unchanged. Recipes, IDs, Java gameplay code and networking are identical to 2.1.1.
+- Adds automated texture size/transparency checks.
+
+
 ## Canvas Studio+ 2.1.1
 
 - Renames Molder Canvas/Quill to Molten throughout names, tooltips and editor messages. Legacy item IDs remain for existing worlds.

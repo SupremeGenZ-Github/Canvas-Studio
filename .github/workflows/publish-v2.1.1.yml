@@ -1,12 +1,5 @@
 name: Build and publish Canvas Studio+ 2.1.1
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'src/**'
-      - 'build.gradle'
-      - 'verification/**'
-      - '.github/workflows/publish-v2.1.1.yml'
   workflow_dispatch:
 permissions:
   contents: write
