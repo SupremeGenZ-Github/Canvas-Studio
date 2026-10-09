@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 /** Exercises the game codecs, including the old-format regression from the user's log. */
 public class RecipeDataChecks {
- static String standIns(String s){return s.replace("canvasstudio:molder_canvas","minecraft:iron_ingot").replace("canvasstudio:infinity_canvas","minecraft:diamond").replace("canvasstudio:molder_quill","minecraft:iron_nugget").replace("canvasstudio:infinity_quill","minecraft:diamond_sword").replace("canvasstudio:canvas","minecraft:brick").replace("canvasstudio:quill","minecraft:stick");}
+ static String standIns(String s){return s.replace("canvasstudio:molder_canvas","minecraft:amethyst_shard").replace("canvasstudio:infinity_canvas","minecraft:diamond").replace("canvasstudio:molder_quill","minecraft:blaze_rod").replace("canvasstudio:infinity_quill","minecraft:diamond_sword").replace("canvasstudio:canvas","minecraft:brick").replace("canvasstudio:quill","minecraft:stick");}
  static void check(boolean v,String s){if(!v)throw new AssertionError(s);}
  public static void main(String[] args) throws Exception {
   SharedConstants.tryDetectVersion(); Bootstrap.bootStrap();
@@ -40,14 +40,25 @@ public class RecipeDataChecks {
     var input=CraftingInput.of(3,3,grid);check(shaped.matches(input,null),"Shaped craft "+name);
     check(shaped.assemble(input).getCount()==1,"One quill output");
     for(int slot=0;slot<9;slot++){var missing=new ArrayList<>(grid);missing.set(slot,ItemStack.EMPTY);check(!shaped.matches(CraftingInput.of(3,3,missing),null),"All nine slots required "+name);}
-    Collections.swap(grid,0,4);check(!shaped.matches(CraftingInput.of(3,3,grid),null),"Quill must be centered");
+    for(int slot=0;slot<9;slot++) {
+     var wrong=new ArrayList<>(grid);wrong.set(slot,new ItemStack(Items.DIRT));
+     check(!shaped.matches(CraftingInput.of(3,3,wrong),null),"Exact material at slot "+slot+" "+name);
+    }
+    for(int slot=0;slot<9;slot++)if(slot!=4){var moved=new ArrayList<>(grid);Collections.swap(moved,slot,4);check(!shaped.matches(CraftingInput.of(3,3,moved),null),"Quill centered "+name);}
+    var cheap=CraftingInput.of(3,3,List.of(new ItemStack(Items.IRON_NUGGET),new ItemStack(Items.IRON_NUGGET),new ItemStack(Items.IRON_NUGGET),new ItemStack(Items.IRON_NUGGET),new ItemStack(Items.STICK),new ItemStack(Items.IRON_NUGGET),new ItemStack(Items.IRON_NUGGET),new ItemStack(Items.IRON_NUGGET),new ItemStack(Items.IRON_NUGGET)));
+    check(!shaped.matches(cheap,null),"Old cheap quill recipe rejected");
    }else if(recipe instanceof ShapelessRecipe shapeless){
     for(var ingredient:object.getAsJsonArray("ingredients"))grid.add(new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.parse(ingredient.getAsString()))));
     while(grid.size()<9)grid.add(ItemStack.EMPTY);
+    for(int slot=0;slot<3;slot++){var missing=new ArrayList<>(grid);missing.set(slot,ItemStack.EMPTY);check(!shapeless.matches(CraftingInput.of(3,3,missing),null),"All shapeless ingredients required "+name);}
     for(int rotation=0;rotation<9;rotation++){Collections.rotate(grid,1);var input=CraftingInput.of(3,3,grid);check(shapeless.matches(input,null),"Shapeless placement "+name);check(shapeless.assemble(input).getCount()==1,"One crafted output");}
     if(name.endsWith("canvas")||name.equals("canvas")){
      var shortcut=CraftingInput.of(3,1,List.of(new ItemStack(Items.LEATHER),new ItemStack(Items.PAPER),new ItemStack(Items.FEATHER)));
      check(!shapeless.matches(shortcut,null),"Feather shortcut rejected");
+     if(!name.equals("canvas")) {
+      var old=CraftingInput.of(3,1,List.of(new ItemStack(Items.LEATHER),new ItemStack(Items.PAPER),new ItemStack(name.equals("molder_canvas")?Items.BLAZE_ROD:Items.DIAMOND_SWORD)));
+      check(!shapeless.matches(old,null),"Old leather/paper upgrade rejected "+name);
+     }
     }
    }else throw new AssertionError("Unexpected recipe type");
    Registry.register(recipes,Identifier.fromNamespaceAndPath("canvasstudio",name),recipe);

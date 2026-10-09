@@ -7,7 +7,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** 0 = session ready; 1 = Molder success; 2 = Infinity success; 3 = rejected. */
+/** 0 = session ready; 1 = Molten success; 2 = Infinity success; 3 = rejected. */
 public record CanvasReply(UUID request,UUID token,int code,String message) implements CustomPacketPayload {
  public static final UUID NONE=new UUID(0,0);
  public static final Type<CanvasReply> TYPE=new Type<>(Identifier.fromNamespaceAndPath(CanvasStudio.ID,"canvas_reply"));

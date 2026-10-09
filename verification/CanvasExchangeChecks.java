@@ -12,20 +12,20 @@ public class CanvasExchangeChecks {
    Object stack=new Object();byte[] p=drawing();
    var blank=new ExchangeSession<>(stack,off,CanvasTier.BLANK,0);
    check(!request(blank,stack,off,CanvasTier.BLANK,1,blank.token(),p,true,1),"Blank locked");
-   var molder=new ExchangeSession<>(stack,off,CanvasTier.MOLDER,0);UUID token=molder.token();
-   check(!request(molder,stack,off,CanvasTier.MOLDER,1,token,p,false,1),"Invalid item rejected");
-   check(!request(molder,stack,off,CanvasTier.MOLDER,1,token,new byte[1],true,1),"Invalid drawing rejected");
-   check(!request(molder,new Object(),off,CanvasTier.MOLDER,1,token,p,true,1),"Held stack switch rejected");
-   check(!request(molder,stack,!off,CanvasTier.MOLDER,1,token,p,true,1),"Wrong hand rejected");
+   var molder=new ExchangeSession<>(stack,off,CanvasTier.MOLTEN,0);UUID token=molder.token();
+   check(!request(molder,stack,off,CanvasTier.MOLTEN,1,token,p,false,1),"Invalid item rejected");
+   check(!request(molder,stack,off,CanvasTier.MOLTEN,1,token,new byte[1],true,1),"Invalid drawing rejected");
+   check(!request(molder,new Object(),off,CanvasTier.MOLTEN,1,token,p,true,1),"Held stack switch rejected");
+   check(!request(molder,stack,!off,CanvasTier.MOLTEN,1,token,p,true,1),"Wrong hand rejected");
    check(!request(molder,stack,off,CanvasTier.INFINITY,1,token,p,true,1),"Tier spoof rejected");
-   check(!request(molder,stack,off,CanvasTier.MOLDER,2,token,p,true,1),"Stack count rejected");
-   check(!request(molder,stack,off,CanvasTier.MOLDER,1,UUID.randomUUID(),p,true,1),"Wrong token rejected");
+   check(!request(molder,stack,off,CanvasTier.MOLTEN,2,token,p,true,1),"Stack count rejected");
+   check(!request(molder,stack,off,CanvasTier.MOLTEN,1,UUID.randomUUID(),p,true,1),"Wrong token rejected");
    check(token.equals(molder.token()),"Rejected requests retain capability");
    // Cancellation and failed matching send no exchange; opening alone leaves the token valid.
-   check(molder.matches(stack,off,CanvasTier.MOLDER,2),"Cancellation retains held canvas");
-   check(request(molder,stack,off,CanvasTier.MOLDER,1,token,p,true,2),"One successful Molder exchange");
-   check(molder.token()==null,"Molder capability consumed");
-   check(!request(molder,stack,off,CanvasTier.MOLDER,1,token,p,true,2),"Molder duplicate rejected");
+   check(molder.matches(stack,off,CanvasTier.MOLTEN,2),"Cancellation retains held canvas");
+   check(request(molder,stack,off,CanvasTier.MOLTEN,1,token,p,true,2),"One successful Molten exchange");
+   check(molder.token()==null,"Molten capability consumed");
+   check(!request(molder,stack,off,CanvasTier.MOLTEN,1,token,p,true,2),"Molten duplicate rejected");
    var infinity=new ExchangeSession<>(stack,off,CanvasTier.INFINITY,0);
    UUID first=infinity.token();int rewards=0;
    for(int i=0;i<1000;i++){
@@ -40,6 +40,6 @@ public class CanvasExchangeChecks {
    check(last.equals(infinity.token()),"Expiry does not consume canvas");
    check(!request(null,stack,off,CanvasTier.INFINITY,1,last,p,true,1),"Missing session rejected");
   }
-  System.out.println("PASS server authorization: both hands, Blank locked, Molder one use, Infinity 1000 uses, duplicate/replay, wrong hand/stack/tier/count/token, expiry, invalid drawing/item and cancellation retention.");
+  System.out.println("PASS server authorization: both hands, Blank locked, Molten one use, Infinity 1000 uses, duplicate/replay, wrong hand/stack/tier/count/token, expiry, invalid drawing/item and cancellation retention.");
  }
 }

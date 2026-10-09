@@ -1,21 +1,13 @@
-# Modrinth release information — Canvas Studio+ 2.1.0
+# Canvas Studio+ 2.1.1 — made by SuprixZ
 
-**made by SuprixZ**
+Minecraft Java 26.3; NeoForge 26.3.x including betas; Java 25. Target: 26.3.0.51-beta. Future 26.3 API changes are not guaranteed compatible. Install one edition only, using the same release on client and server.
 
-Loader: **NeoForge**. Game version: **Minecraft Java 26.3**. Java: **25**.
-NeoForge dependency range: `[26.3-alpha,26.4-alpha)`, including beta builds.
-Development/build target: **26.3.0.51-beta**. Future 26.3 API changes may require an update; other Minecraft versions are unsupported.
+Draw, import/export images, and save paintings with any canvas. Blank Canvas locks Get Item; Molten grants one newly created selected item/block and is consumed only on success; Infinity grants one per successful request and stays reusable. Matching and server validation are unchanged.
 
-Upload only the built 2.1.0 JAR as the primary version file. Attach source/validation as optional supporting downloads. Install one Canvas Studio edition only; client and server must use 2.1.0 together.
+Quill: Feather + Ink Sac. Blank Canvas: Leather + Paper + Quill. Both are shapeless.
 
-## Description
+Molten Quill: centered Quill, Iron Ingots in all four corners, Gold Ingots at all four edge centers. Infinity Quill: centered Molten Quill, Echo Shards in corners, Lapis Blocks left/right, Diamond Blocks top/bottom. Both require the full 3×3 grid.
 
-Draw paintings, import PNG/JPEG images, export PNG artwork, and save custom map paintings. Use a Molder Canvas to turn one drawing into one newly created Minecraft item/block, or Infinity Canvas to do it repeatedly. Blank Canvas supports painting with Get Item locked. The existing offline finder suggests up to three visually similar vanilla items/blocks.
+Molten Canvas: Blank Canvas + Molten Quill + Compass. Infinity Canvas: Molten Canvas + Infinity Quill + Recovery Compass. Both are shapeless.
 
-Canvas recipes are shapeless: Leather + Paper + the corresponding Quill. Normal Quill uses Feather + Ink Sac. Molder Quill uses a centered Quill surrounded by eight Iron Nuggets; Infinity Quill uses eight Diamonds. Both upgrades fill all nine crafting slots. The former feather canvas shortcut is removed.
-
-Molder is consumed only on successful exchange. Infinity is retained, granting one item per confirmed request; full inventories drop the reward. Saving a painting converts any canvas into a locked map. Old Blank Canvas items and saved paintings remain compatible. Cancelling, failed matches and rejected exchanges do not consume canvases.
-
-[README](../README.md) · [Changelog](../CHANGELOG.md) · [Validation](../VALIDATION.md) · [Issues](https://github.com/SupremeGenZ-Github/Canvas-Studio/issues)
-
-Do not label automated headless checks as in-game testing. Use the validation report's exact build/test scope for this release.
+Molder is renamed Molten. Existing Molder items remain valid through preserved internal IDs. Textures unchanged in 2.1.1. Saving any canvas converts it to a locked map. See README and VALIDATION for details and actual test scope.

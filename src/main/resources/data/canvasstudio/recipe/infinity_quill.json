@@ -2,13 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "MMM",
-    "MQM",
-    "MMM"
+    "EDE",
+    "LQL",
+    "EDE"
   ],
   "key": {
-    "M": "minecraft:diamond",
-    "Q": "canvasstudio:quill"
+    "E": "minecraft:echo_shard",
+    "D": "minecraft:diamond_block",
+    "L": "minecraft:lapis_block",
+    "Q": "canvasstudio:molder_quill"
   },
   "result": {
     "id": "canvasstudio:infinity_quill",

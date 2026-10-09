@@ -13,7 +13,7 @@ public final class CanvasExchange {
   return new net.minecraft.world.item.ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.parse(item)),1);
  }
  public static boolean deliver(CanvasTier tier,net.minecraft.world.item.ItemStack reward,RewardTarget target){
-  if(tier==CanvasTier.MOLDER){target.replaceHeld(reward);return true;}
+  if(tier==CanvasTier.MOLTEN){target.replaceHeld(reward);return true;}
   if(tier==CanvasTier.INFINITY)return target.add(reward)||target.drop(reward);
   return false;
  }

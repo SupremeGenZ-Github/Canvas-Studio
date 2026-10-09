@@ -51,7 +51,7 @@ public final class ItemMatchScreen extends Screen {
  private void receive(ItemMatcher.Match match){
   if(pending)return;
   if(parent.exchangeToken==null){status="Waiting for server. Reopen the canvas if needed.";return;}
-  if(minecraft.player==null||CanvasStudio.tier(minecraft.player.getItemInHand(hand))!=parent.tier||!parent.tier.canExchange()){status="Hold your Molder or Infinity Canvas.";return;}
+  if(minecraft.player==null||CanvasStudio.tier(minecraft.player.getItemInHand(hand))!=parent.tier||!parent.tier.canExchange()){status="Hold your Molten or Infinity Canvas.";return;}
   pending=true;submitted=parent.exchangeToken;
   ClientPacketDistributor.sendToServer(new DrawItem(hand,match.id(),pixels.clone(),submitted));
   status="Waiting for server exchange...";
@@ -76,7 +76,7 @@ public final class ItemMatchScreen extends Screen {
    g.item(item,x+8,ry+9);g.text(font,font.plainSubstrByWidth(item.getHoverName().getString(),Math.max(24,panelWidth-132)),x+30,ry+8,0xffffffff,false);
    g.text(font,"Similarity: "+Math.round(match.similarity()*100)+"%",x+30,ry+21,0xffbec8d8,false);
   }
-  g.centeredText(font,parent.tier==studio.canvas.CanvasTier.MOLDER?"Consumes Molder Canvas on success. Receive 1 item.":"Infinity Canvas retained. Receive 1 item per request.",width/2,height-48,0xffbec8d8);
+  g.centeredText(font,parent.tier==studio.canvas.CanvasTier.MOLTEN?"Consumes Molten Canvas on success. Receive 1 item.":"Infinity Canvas retained. Receive 1 item per request.",width/2,height-48,0xffbec8d8);
   super.extractRenderState(g,mx,my,tick);
  }
 }

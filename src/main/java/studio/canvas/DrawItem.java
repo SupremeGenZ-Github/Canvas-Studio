@@ -32,7 +32,7 @@ public record DrawItem(InteractionHand hand,String item,byte[] pixels,java.util.
   CanvasTier tier=CanvasStudio.tier(held);
   var session=OpenCanvas.SESSIONS.get(player);
   if(!CanvasExchange.authorize(session,held,p.hand==InteractionHand.OFF_HAND,tier,held.getCount(),p.token,p.pixels,validItem(p.item),player.level().getGameTime())){
-   context.reply(new CanvasReply(p.token,CanvasReply.NONE,3,"Request rejected. Reopen the held Molder or Infinity Canvas."));return;
+   context.reply(new CanvasReply(p.token,CanvasReply.NONE,3,"Request rejected. Reopen the held Molten or Infinity Canvas."));return;
   }
   // Preserve the existing vanilla-ID rules and local texture-based matching catalogue.
   ItemStack reward=CanvasExchange.createReward(p.item);
@@ -43,9 +43,9 @@ public record DrawItem(InteractionHand hand,String item,byte[] pixels,java.util.
    public boolean drop(ItemStack item){return player.drop(item,false,net.minecraft.util.Prediction.SERVER_ONLY)!=null;}
   });
   if(!delivered){context.reply(new CanvasReply(p.token,CanvasReply.NONE,3,"Reward could not be dropped. Canvas retained; reopen to retry."));return;}
-  if(tier==CanvasTier.MOLDER)OpenCanvas.SESSIONS.remove(player);
+  if(tier==CanvasTier.MOLTEN)OpenCanvas.SESSIONS.remove(player);
   player.inventoryMenu.broadcastChanges();
-  context.reply(new CanvasReply(p.token,session.token()==null?CanvasReply.NONE:session.token(),tier==CanvasTier.MOLDER?1:2,"Received 1 "+rewardName.getString()));
+  context.reply(new CanvasReply(p.token,session.token()==null?CanvasReply.NONE:session.token(),tier==CanvasTier.MOLTEN?1:2,"Received 1 "+rewardName.getString()));
   player.sendSystemMessage(Component.literal("Canvas Studio: received ").append(rewardName),false);
  }
 }

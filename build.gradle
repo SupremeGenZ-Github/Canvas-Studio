@@ -2,7 +2,7 @@ plugins {
  id 'java-library'
  id 'net.neoforged.moddev' version '2.0.147'
 }
-version = '2.1.0'
+version = '2.1.1'
 group = 'studio.canvas'
 base { archivesName = 'canvas-studio-plus-26.3' }
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)

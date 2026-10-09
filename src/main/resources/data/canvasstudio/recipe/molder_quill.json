@@ -2,12 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "MMM",
-    "MQM",
-    "MMM"
+    "IGI",
+    "GQG",
+    "IGI"
   ],
   "key": {
-    "M": "minecraft:iron_nugget",
+    "I": "minecraft:iron_ingot",
+    "G": "minecraft:gold_ingot",
     "Q": "canvasstudio:quill"
   },
   "result": {

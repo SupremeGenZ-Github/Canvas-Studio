@@ -6,7 +6,7 @@
       "conditions": {
         "items": [
           {
-            "items": "canvasstudio:molder_quill"
+            "items": "canvasstudio:canvas"
           }
         ]
       }

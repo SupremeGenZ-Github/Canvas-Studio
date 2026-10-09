@@ -2,9 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "minecraft:leather",
-    "minecraft:paper",
-    "canvasstudio:infinity_quill"
+    "canvasstudio:molder_canvas",
+    "canvasstudio:infinity_quill",
+    "minecraft:recovery_compass"
   ],
   "result": {
     "id": "canvasstudio:infinity_canvas",

@@ -26,7 +26,7 @@ public class RewardDeliveryChecks {
    var first=CanvasExchange.createReward("minecraft:diamond");var second=CanvasExchange.createReward("minecraft:diamond");
    check(first!=second&&first.is(Items.DIAMOND)&&first.getCount()==1&&first.getComponentsPatch().isEmpty(),"New plain reward of count one");
    check(!CanvasExchange.deliver(CanvasTier.BLANK,first,inventory)&&inventory.hands[hand]==canvas&&inventory.items.isEmpty(),"Blank cannot receive reward");
-   check(CanvasExchange.deliver(CanvasTier.MOLDER,first,inventory)&&inventory.hands[hand]==first&&inventory.hands[1-hand]==other,"Molder exchanges only held hand");
+   check(CanvasExchange.deliver(CanvasTier.MOLTEN,first,inventory)&&inventory.hands[hand]==first&&inventory.hands[1-hand]==other,"Molten exchanges only held hand");
    inventory.hands[hand]=canvas;
    for(int i=0;i<20;i++)check(CanvasExchange.deliver(CanvasTier.INFINITY,CanvasExchange.createReward("minecraft:stone"),inventory),"Infinity delivery succeeds");
    check(inventory.hands[hand]==canvas&&inventory.items.size()==20&&inventory.items.stream().allMatch(s->s.is(Items.STONE)&&s.getCount()==1),"Infinity retained, one block per delivery");
@@ -35,6 +35,6 @@ public class RewardDeliveryChecks {
    inventory.rejectDrop=true;
    check(!CanvasExchange.deliver(CanvasTier.INFINITY,CanvasExchange.createReward("minecraft:diamond"),inventory)&&inventory.hands[hand]==canvas&&inventory.drops.size()==1,"Rejected drop retains canvas and reports failure");
   }
-  System.out.println("PASS production reward delivery with headless inventory: both hands, fresh plain items without ownership, Molder replacement, Infinity reuse, full inventory drop, rejected drop retains canvas.");
+  System.out.println("PASS production reward delivery with headless inventory: both hands, fresh plain items without ownership, Molten replacement, Infinity reuse, full inventory drop, rejected drop retains canvas.");
  }
 }

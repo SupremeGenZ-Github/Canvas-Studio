@@ -19,14 +19,15 @@ public final class CanvasStudio {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(ID);
     public static final DeferredItem<Item> CANVAS = ITEMS.registerSimpleItem("canvas", p -> p.stacksTo(1).component(DataComponents.LORE, lore("Draw, import and save paintings", CanvasTier.BLANK.availability)));
     public static final DeferredItem<Item> QUILL = ITEMS.registerSimpleItem("quill", p -> p.component(DataComponents.LORE, lore("Crafts a Blank Canvas")));
-    public static final DeferredItem<Item> MOLDER_CANVAS = ITEMS.registerSimpleItem("molder_canvas", p -> p.stacksTo(1).component(DataComponents.LORE, lore("Draw, import and save paintings", CanvasTier.MOLDER.availability)));
+    // Preserve 2.1.0 registry IDs so saved Molder items become Molten without migration.
+    public static final DeferredItem<Item> MOLTEN_CANVAS = ITEMS.registerSimpleItem("molder_canvas", p -> p.stacksTo(1).component(DataComponents.LORE, lore("Draw, import and save paintings", CanvasTier.MOLTEN.availability)));
     public static final DeferredItem<Item> INFINITY_CANVAS = ITEMS.registerSimpleItem("infinity_canvas", p -> p.stacksTo(1).component(DataComponents.LORE, lore("Draw, import and save paintings", CanvasTier.INFINITY.availability)));
-    public static final DeferredItem<Item> MOLDER_QUILL = ITEMS.registerSimpleItem("molder_quill", p -> p.component(DataComponents.LORE, lore("Crafts a single-use Molder Canvas")));
+    public static final DeferredItem<Item> MOLTEN_QUILL = ITEMS.registerSimpleItem("molder_quill", p -> p.component(DataComponents.LORE, lore("Crafts a single-use Molten Canvas")));
     public static final DeferredItem<Item> INFINITY_QUILL = ITEMS.registerSimpleItem("infinity_quill", p -> p.component(DataComponents.LORE, lore("Crafts a reusable Infinity Canvas")));
     private static ItemLore lore(String... lines){return new ItemLore(java.util.Arrays.stream(lines).map(Component::literal).map(c -> (Component)c).toList());}
     public static CanvasTier tier(ItemStack stack){
         if(stack.is(CANVAS.get()))return CanvasTier.BLANK;
-        if(stack.is(MOLDER_CANVAS.get()))return CanvasTier.MOLDER;
+        if(stack.is(MOLTEN_CANVAS.get()))return CanvasTier.MOLTEN;
         if(stack.is(INFINITY_CANVAS.get()))return CanvasTier.INFINITY;
         return null;
     }
@@ -38,8 +39,8 @@ public final class CanvasStudio {
     }
     private static void creative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            event.accept(CANVAS); event.accept(MOLDER_CANVAS); event.accept(INFINITY_CANVAS);
-            event.accept(QUILL); event.accept(MOLDER_QUILL); event.accept(INFINITY_QUILL);
+            event.accept(CANVAS); event.accept(MOLTEN_CANVAS); event.accept(INFINITY_CANVAS);
+            event.accept(QUILL); event.accept(MOLTEN_QUILL); event.accept(INFINITY_QUILL);
         }
     }
     private static void network(RegisterPayloadHandlersEvent event) {

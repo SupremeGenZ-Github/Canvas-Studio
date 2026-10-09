@@ -22,7 +22,7 @@ public record OpenCanvas(InteractionHand hand,UUID request) implements CustomPac
  public static void handle(OpenCanvas p,IPayloadContext context){
   if(!(context.player() instanceof ServerPlayer player))return;
   ItemStack held=player.getItemInHand(p.hand);CanvasTier tier=CanvasStudio.tier(held);
-  if(tier==null||!tier.canExchange()||held.getCount()!=1){context.reply(new CanvasReply(p.request,CanvasReply.NONE,3,"Molder or Infinity Canvas required."));return;}
+  if(tier==null||!tier.canExchange()||held.getCount()!=1){context.reply(new CanvasReply(p.request,CanvasReply.NONE,3,"Molten or Infinity Canvas required."));return;}
   long now=player.level().getGameTime();boolean off=p.hand==InteractionHand.OFF_HAND;
   var session=SESSIONS.get(player);
   if(session==null||!session.matches(held,off,tier,now)||session.token()==null){session=new ExchangeSession<>(held,off,tier,now);SESSIONS.put(player,session);}

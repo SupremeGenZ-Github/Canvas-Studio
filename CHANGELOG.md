@@ -1,5 +1,15 @@
 # Changelog
 
+## Canvas Studio+ 2.1.1
+
+- Renames Molder Canvas/Quill to Molten throughout names, tooltips and editor messages. Legacy item IDs remain for existing worlds.
+- Molten Quill: centered Quill, four Iron Ingots in corners and four Gold Ingots at edge centers.
+- Molten Canvas: shapeless Blank Canvas + Molten Quill + Compass.
+- Infinity Quill: centered Molten Quill, Echo Shards in corners, Lapis Blocks left/right and Diamond Blocks top/bottom.
+- Infinity Canvas: shapeless Molten Canvas + Infinity Quill + Recovery Compass.
+- Updates recipe-book unlocks, documentation and crafting checks. Existing textures, painting, matching and server exchange rules remain unchanged.
+
+
 ## Canvas Studio+ 2.1.0
 
 - Based on the full Canvas Studio 2.0.1 source; preserves painting, import/export, saving and the existing offline item matcher.
