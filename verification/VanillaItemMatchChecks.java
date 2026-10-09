@@ -23,7 +23,7 @@ public class VanillaItemMatchChecks {
   check(!DrawItem.validItem(null),"Null item rejected");
   int[] palette=new int[248];for(int i=4;i<248;i++)palette[i]=MapColor.getColorFromPackedId(i);
   check(Byte.toUnsignedInt(ImageImport.nearest(0xffffff,palette))==34,"Exchange blank canvas color agrees with editor");
-  try(var jar=new ZipFile("build/vanilla-validation/minecraft-26.3.jar")){
+  try(var jar=new ZipFile("build/vanilla-validation/minecraft-26.2.jar")){
    Map<Identifier,Resource> assets=new HashMap<>();var entries=jar.entries();
    while(entries.hasMoreElements()){
     var e=entries.nextElement();String path=e.getName();
@@ -36,8 +36,8 @@ public class VanillaItemMatchChecks {
     public Set<String> getNamespaces(){return Set.of("minecraft");}
     public Optional<Resource> getResource(Identifier id){return Optional.ofNullable(assets.get(id));}
     public List<Resource> getResourceStack(Identifier id){return getResource(id).stream().toList();}
-    public Map<Identifier,Resource> listResources(String path,ResourceManager.Selector selector){var out=new HashMap<Identifier,Resource>();assets.forEach((id,r)->{if(id.getPath().startsWith(path+"/")&&selector.isIncluded(id))out.put(id,r);});return out;}
-    public Map<Identifier,List<Resource>> listResourceStacks(String path,ResourceManager.Selector selector){return Map.of();}
+    public Map<Identifier,Resource> listResources(String path,java.util.function.Predicate<Identifier> selector){var out=new HashMap<Identifier,Resource>();assets.forEach((id,r)->{if(id.getPath().startsWith(path+"/")&&selector.test(id))out.put(id,r);});return out;}
+    public Map<Identifier,List<Resource>> listResourceStacks(String path,java.util.function.Predicate<Identifier> selector){return Map.of();}
     public Stream<PackResources> listPacks(){return Stream.empty();}
    };
    var refs=ItemMatchCatalog.load(resources).get(90,TimeUnit.SECONDS);

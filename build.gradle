@@ -4,10 +4,10 @@ plugins {
 }
 version = '2.1.2'
 group = 'studio.canvas'
-base { archivesName = 'canvas-studio-plus-26.3' }
+base { archivesName = 'canvas-studio-plus-26.2' }
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 neoForge {
- version = providers.gradleProperty('neoForgeVersion').getOrElse('26.3.0.51-beta')
+ version = providers.gradleProperty('neoForgeVersion').getOrElse('26.2.0.88')
  runs {
   client { client() }
   server { server(); programArgument '--nogui' }
@@ -33,7 +33,7 @@ tasks.register('verifyCanvas', JavaExec) {
 tasks.named('check') { dependsOn tasks.named('verifyCanvas') }
 
 // Supplied at runtime by NeoForge's loader; expose the dialog API for compilation.
-dependencies { compileOnly 'org.lwjgl:lwjgl-sdl:3.4.3' }
+dependencies { compileOnly 'org.lwjgl:lwjgl-tinyfd:3.4.1' }
 
 // Use the project's JDK for development asset tooling too (avoids requiring a second JDK 21).
 tasks.named('downloadAssets') {
@@ -44,17 +44,17 @@ tasks.named('downloadAssets') {
 
 // These codecs are checked with the unmodified game; NeoForge bootstrap requires FML.
 // Keep this separate from the mod's patched runtime classpath.
-def vanillaValidationJar = layout.buildDirectory.file('vanilla-validation/minecraft-26.3.jar')
+def vanillaValidationJar = layout.buildDirectory.file('vanilla-validation/minecraft-26.2.jar')
 tasks.register('prepareVanillaValidation') {
  outputs.file(vanillaValidationJar)
  doLast {
   def target = vanillaValidationJar.get().asFile
   target.parentFile.mkdirs()
-  new URI('https://piston-data.mojang.com/v1/objects/e877b6a07acd633fb3bb475002175cec036e7b87/client.jar').toURL().withInputStream { input ->
+  new URI('https://piston-data.mojang.com/v1/objects/2dc72797acbc1b63fc16a11c4ac393605f453754/client.jar').toURL().withInputStream { input ->
    target.withOutputStream { output -> output << input }
   }
   def digest = java.security.MessageDigest.getInstance('SHA-1').digest(target.bytes).encodeHex().toString()
-  if (digest != 'e877b6a07acd633fb3bb475002175cec036e7b87') {
+  if (digest != '2dc72797acbc1b63fc16a11c4ac393605f453754') {
    target.delete()
    throw new GradleException('Minecraft validation JAR checksum mismatch')
   }

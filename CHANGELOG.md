@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.1.2 — Minecraft 26.2 port
+
+- Builds against NeoForge 26.2.0.88 / Minecraft 26.2 / FML 11 / Java 25.
+- Uses TinyFD native image selection shipped with Minecraft 26.2.
+- Adapts server item drop and resource selector APIs for 26.2.
+- Keeps all 2.1.2 recipes, tier permissions, item IDs, textures and painting features.
+- Rebuilds and validates against actual Minecraft 26.2 resources; separate JAR and GitHub release.
+
+
 ## Canvas Studio+ 2.1.2
 
 - Refreshes Molten Canvas and Quill with molten gold/amber and iron accents.

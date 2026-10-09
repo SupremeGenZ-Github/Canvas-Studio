@@ -4,19 +4,19 @@
 
 **made by SuprixZ**
 
-Canvas Studio+ **2.1.2** lets you draw, import PNG/JPEG images, export PNG artwork, save custom paintings, and match drawings to Minecraft items and blocks offline.
+Canvas Studio+ **2.1.2 for Minecraft 26.2** lets you draw, import PNG/JPEG images, export PNG artwork, save custom paintings, and match drawings to Minecraft items and blocks offline.
 
-## Download 2.1.2
+## Download 2.1.2 for Minecraft 26.2
 
-[Release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v2.1.2) · [JAR](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v2.1.2/canvas-studio-plus-26.3-2.1.2.jar) · [Source ZIP](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v2.1.2/Canvas-Studio-Plus-2.1.2-source.zip)
+[Release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v2.1.2-mc26.2) · [JAR](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v2.1.2-mc26.2/canvas-studio-plus-26.2-2.1.2.jar) · [Source ZIP](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v2.1.2-mc26.2/Canvas-Studio-Plus-2.1.2-MC26.2-source.zip)
 
 ## Requirements and installation
 
-Minecraft Java **26.3**, **Java 25**, and **NeoForge 26.3.x**, including alpha/beta builds accepted by the dependency range `[26.3-alpha,26.4-alpha)`. The development target is **26.3.0.51-beta**. Other Minecraft versions, Forge, Fabric, and NeoForge 26.4+ are unsupported. Future 26.3 builds are accepted by metadata; compatibility with future API changes is not guaranteed. See [VALIDATION.md](VALIDATION.md) for actual checks.
+Minecraft Java **26.2**, **Java 25**, and **NeoForge 26.2.0.88**. This separate port targets that exact NeoForge version; 26.3 users should use the original 26.3 JAR. Other loaders and Minecraft versions are unsupported. Source lives on the `minecraft-26.2` branch. See [VALIDATION.md](VALIDATION.md) for actual checks.
 
 Put the JAR in your instance's `mods` folder. Remove previous Canvas Studio JARs first. Install **one edition only**: Canvas Studio Lite, Canvas Studio, and Canvas Studio+ all use `canvasstudio`. Servers and clients require the same release; 2.1.2 uses network protocol 3 and cannot mix with 2.0.x.
 
-Canvas Studio Lite 1.0.4 remains the painting-only edition on the `lite` branch. This update changes the full edition on `main`; older releases remain available in [GitHub Releases](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases).
+Canvas Studio Lite 1.0.4 remains the painting-only edition on the `lite` branch. This port lives on `minecraft-26.2`; the 26.3 edition remains on `main`; older releases remain available in [GitHub Releases](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases).
 
 ## Crafting
 
@@ -67,8 +67,7 @@ Use JDK 25:
 
 ```sh
 ./gradlew build
-# Optional alternate development dependency:
-./gradlew build -PneoForgeVersion=26.3.0.57-beta
+# This port defaults to NeoForge 26.2.0.88.
 ```
 
 JARs appear in `build/libs`. `check` runs image, palette, packet, editor-input, recipe/advancement codec, matching, and server authorization checks. See [VALIDATION.md](VALIDATION.md) for scope and in-game checks still needed, and [CHANGELOG.md](CHANGELOG.md) for changes.

@@ -2,7 +2,7 @@
 from pathlib import Path
 import json,zipfile,hashlib
 root=Path(__file__).resolve().parents[1]
-jar=root/'build/libs/canvas-studio-plus-26.3-2.1.2.jar'
+jar=root/'build/libs/canvas-studio-plus-26.2-2.1.2.jar'
 names=['canvas','molder_canvas','infinity_canvas','quill','molder_quill','infinity_quill']
 with zipfile.ZipFile(jar) as z:
  assert z.testzip() is None
@@ -40,7 +40,7 @@ with zipfile.ZipFile(jar) as z:
   assert (actual==expected) if name in ('canvas','quill','infinity_canvas') else (actual!=expected)
  assert not any('canvas_with_feather' in f for f in files)
  metadata=z.read('META-INF/neoforge.mods.toml').decode()
- for required in ['version="2.1.2"','displayName="Canvas Studio+"','made by SuprixZ','[26.3-alpha,26.4-alpha)','[26.3]']:assert required in metadata
+ for required in ['version="2.1.2"','displayName="Canvas Studio+"','made by SuprixZ','[26.2.0.88]','[26.2]','[11,12)']:assert required in metadata
  assert 'canvas-studio-icon.png' in files
  for n in files:
   if n.endswith('.class'):assert int.from_bytes(z.read(n)[6:8],'big')==69, 'Java 25 class target'

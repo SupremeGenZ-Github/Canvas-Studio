@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[12,)"
+loaderVersion="[11,12)"
 license="MIT"
 [[mods]]
 modId="canvasstudio"
@@ -12,12 +12,12 @@ description='''Draw, import and save paintings. Match your drawing to the neares
 [[dependencies.canvasstudio]]
 modId="neoforge"
 type="required"
-versionRange="[26.3-alpha,26.4-alpha)"
+versionRange="[26.2.0.88]"
 ordering="NONE"
 side="BOTH"
 [[dependencies.canvasstudio]]
 modId="minecraft"
 type="required"
-versionRange="[26.3]"
+versionRange="[26.2]"
 ordering="NONE"
 side="BOTH"

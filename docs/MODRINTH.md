@@ -1,13 +1,7 @@
-# Canvas Studio+ 2.1.2 — made by SuprixZ
+# Canvas Studio+ 2.1.2 — Minecraft 26.2 / NeoForge 26.2.0.88
 
-Minecraft Java 26.3; NeoForge 26.3.x including betas; Java 25. Target: 26.3.0.51-beta. Future 26.3 API changes are not guaranteed compatible. Install one edition only, using the same release on client and server.
+**made by SuprixZ**. Java 25 required. Upload `canvas-studio-plus-26.2-2.1.2.jar` as a separate version for Minecraft **26.2** and loader **NeoForge**. Do not mark this JAR compatible with 26.3.
 
-Draw, import/export images, and save paintings with any canvas. Blank Canvas locks Get Item; Molten grants one newly created selected item/block and is consumed only on success; Infinity grants one per successful request and stays reusable. Matching and server validation are unchanged.
+All 2.1.2 features and recipes are retained: drawing, image import/export, saved map paintings, offline nearest-item matching, Blank Get Item lock, Molten single successful reward and reusable Infinity rewards. The 26.2 catalogue uses textures and registered vanilla items available in 26.2.
 
-Quill: Feather + Ink Sac. Blank Canvas: Leather + Paper + Quill. Both are shapeless.
-
-Molten Quill: centered Quill, Iron Ingots in all four corners, Gold Ingots at all four edge centers. Infinity Quill: centered Molten Quill, Echo Shards in corners, Lapis Blocks left/right, Diamond Blocks top/bottom. Both require the full 3×3 grid.
-
-Molten Canvas: Blank Canvas + Molten Quill + Compass. Infinity Canvas: Molten Canvas + Infinity Quill + Recovery Compass. Both are shapeless.
-
-Molder is renamed Molten. Existing Molder items remain valid through preserved internal IDs. Molten textures use molten gold/amber; Infinity Quill uses lapis/echo teal/diamond cyan. Infinity Canvas retains its existing cyan frame. Saving any canvas converts it to a locked map. See README and VALIDATION for details and actual test scope.
+Install one Canvas Studio JAR, with the same port on client/server. Replace the 26.3 JAR when using a 26.2 instance. Source and validation reports are attached to the separate GitHub release. No live game testing is claimed.
