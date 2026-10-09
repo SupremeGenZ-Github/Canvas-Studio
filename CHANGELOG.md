@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.1.3 — NeoForge 26.2.x compatibility
+
+- Accepts the entire NeoForge 26.2 family, including beta builds, through `[26.2-alpha,26.3-alpha)`.
+- Accepts future 26.2 builds by metadata; future API-breaking changes are not guaranteed compatible.
+- Adds published-version binary API audits, oldest/latest full build checks and Maven version-range validation.
+- Gameplay code, recipes, IDs, paintings, textures and credits are unchanged from the 26.2 port.
+
+
 ## 2.1.2 — Minecraft 26.2 port
 
 - Builds against NeoForge 26.2.0.88 / Minecraft 26.2 / FML 11 / Java 25.
@@ -57,3 +65,5 @@
 - Added server-side canvas-for-item exchange: one held canvas becomes one plain registered vanilla item. Reject missing/air/non-vanilla items, malformed palette data and blank drawings. Repeated packets cannot reuse the consumed canvas.
 - Retained Canvas Studio 1.0.3's fixed left/right mouse input, swatches, import/export, drawing tools and painting saving.
 - Retained Minecraft 26.3, exact NeoForge 26.3.0.51-beta, existing registry IDs and the “- made by SuprixZ” credit.
+
+- 2.1.3: Added the Canvas Studio+ creative inventory tab containing all six mod items.

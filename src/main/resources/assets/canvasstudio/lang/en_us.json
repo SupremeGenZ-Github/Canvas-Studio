@@ -4,5 +4,6 @@
   "item.canvasstudio.molder_canvas": "Molten Canvas",
   "item.canvasstudio.infinity_canvas": "Infinity Canvas",
   "item.canvasstudio.molder_quill": "Molten Quill",
-  "item.canvasstudio.infinity_quill": "Infinity Quill"
+  "item.canvasstudio.infinity_quill": "Infinity Quill",
+  "itemGroup.canvasstudio.studio": "Canvas Studio+"
 }

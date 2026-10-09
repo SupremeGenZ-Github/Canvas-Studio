@@ -1,4 +1,4 @@
-name: Build and publish Canvas Studio+ 2.1.2 for Minecraft 26.2
+name: Build and publish Canvas Studio+ 2.1.3 for Minecraft 26.2
 on:
   push:
     branches: [minecraft-26.2]
@@ -6,12 +6,36 @@ on:
 permissions:
   contents: write
 jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        neoforge: ['26.2.0.0-beta', '26.2.0.89']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build and check endpoint
+        run: |
+          set -euo pipefail
+          chmod +x gradlew
+          ./gradlew build --no-daemon -PneoForgeVersion=${{ matrix.neoforge }} | tee endpoint-build.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: endpoint-${{ matrix.neoforge }}
+          path: endpoint-build.log
   release:
+    needs: compatibility
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Check release version
-        run: grep -q "version = '2.1.2'" build.gradle
+        run: grep -q "version = '2.1.3'" build.gradle
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -21,27 +45,41 @@ jobs:
         run: |
           set -euo pipefail
           chmod +x gradlew
-          ./gradlew build --no-daemon | tee verification/build-2.1.2.log
-          python3 verification/ArtifactChecks.py | tee verification/artifact-2.1.2.log
+          ./gradlew build --no-daemon | tee verification/build-2.1.3.log
+          python3 verification/ArtifactChecks.py | tee verification/artifact-2.1.3.log
+      - name: Audit all published builds and dependency ranges
+        run: |
+          set -euo pipefail
+          python3 verification/audit_neoforge.py build/libs/canvas-studio-plus-26.2-2.1.3.jar | tee verification/audit-26.2.log
+          ./gradlew verifyVersionRanges --no-daemon | tee verification/ranges-26.2.log
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: endpoint-*
+          path: endpoint-logs
       - name: Package release
         run: |
           python3 - <<'PY'
-          import os, hashlib, subprocess, zipfile
+          import os, hashlib, subprocess, zipfile, json
           from pathlib import Path
           root=Path('.')
-          jar=root/'build/libs/canvas-studio-plus-26.2-2.1.2.jar'
+          jar=root/'build/libs/canvas-studio-plus-26.2-2.1.3.jar'
           digest=hashlib.sha256(jar.read_bytes()).hexdigest()
           run=f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
+          audit=json.loads((root/'verification/neoforge-26.2-audit.json').read_text())
+          versions=audit['versions']
+          assert audit['passed'] and versions
           report=root/'VALIDATION.md'
-          report.write_text(report.read_text()+f'\n## Executed release result\n\n**PASS** — clean Gradle build, all eight Java verification suites and packaged artifact checks.\n\nRun: {run}\n\nJAR SHA-256: `{digest}`\n\nInteractive in-game testing: **none**.\n')
+          report.write_text(report.read_text()+f"""\n## Executed release result\n\n**PASS** — clean Gradle build, all nine Java verification suites and packaged artifact checks.\n\nRun: {run}\n\nJAR SHA-256: `{digest}`\n\nAPI audit: **PASS** across {len(versions)} published NeoForge 26.2 builds, from {versions[0]['neoforge']} through {versions[-1]['neoforge']}.\n\nEndpoint builds: **PASS** for 26.2.0.0-beta and 26.2.0.89; normal build **PASS** for 26.2.0.88.\n\nInteractive in-game testing: **none**.\n""")
           assets=root/'assets';assets.mkdir()
           (assets/jar.name).write_bytes(jar.read_bytes())
-          for p in [report,root/'verification/build-2.1.2.log',root/'verification/artifact-2.1.2.log']:(assets/p.name).write_bytes(p.read_bytes())
+          for p in [report,root/'verification/build-2.1.3.log',root/'verification/artifact-2.1.3.log',root/'verification/neoforge-26.2-audit.json',root/'verification/neoforge-26.2-versions.txt',root/'verification/audit-26.2.log',root/'verification/ranges-26.2.log']:(assets/p.name).write_bytes(p.read_bytes())
+          for p in (root/'endpoint-logs').rglob('endpoint-build.log'):
+           (assets/(p.parent.name+'.log')).write_bytes(p.read_bytes())
           tracked=subprocess.check_output(['git','ls-files','-z']).decode().split('\0')
-          extra=['verification/build-2.1.2.log','verification/artifact-2.1.2.log']
-          with zipfile.ZipFile(assets/'Canvas-Studio-Plus-2.1.2-MC26.2-source.zip','w',zipfile.ZIP_DEFLATED) as z:
+          extra=['verification/build-2.1.3.log','verification/artifact-2.1.3.log','verification/neoforge-26.2-audit.json','verification/neoforge-26.2-versions.txt','verification/audit-26.2.log','verification/ranges-26.2.log']+[str(p) for p in (root/'endpoint-logs').rglob('endpoint-build.log')]
+          with zipfile.ZipFile(assets/'Canvas-Studio-Plus-2.1.3-MC26.2-source.zip','w',zipfile.ZIP_DEFLATED) as z:
            for name in dict.fromkeys(tracked+extra):
-            if name and not name.startswith('release-assets/') and Path(name).is_file():z.write(name,'Canvas-Studio-Plus-2.1.2-MC26.2/'+name)
+            if name and not name.startswith('release-assets/') and Path(name).is_file():z.write(name,'Canvas-Studio-Plus-2.1.3-MC26.2/'+name)
           (assets/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(assets.iterdir()) if p.is_file()))
           PY
       - name: Publish release
@@ -49,16 +87,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          if gh release view v2.1.2-mc26.2 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+          if gh release view v2.1.3-mc26.2 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo 'Release exists; leaving it unchanged.'
             exit 0
           fi
-          gh release create v2.1.2-mc26.2 assets/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title 'Canvas Studio+ 2.1.2 — Minecraft 26.2 / NeoForge 26.2.0.88' --notes-file docs/releases/v2.1.2-mc26.2.md
+          gh release create v2.1.3-mc26.2 assets/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title 'Canvas Studio+ 2.1.3 — Minecraft 26.2 / NeoForge 26.2.x' --notes-file docs/releases/v2.1.3-mc26.2.md
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: canvas-studio-2.1.2-mc26.2-validation
+          name: canvas-studio-2.1.3-mc26.2-validation
           path: |
             assets/*
-            verification/build-2.1.2.log
-            verification/artifact-2.1.2.log
+            verification/build-2.1.3.log
+            verification/artifact-2.1.3.log

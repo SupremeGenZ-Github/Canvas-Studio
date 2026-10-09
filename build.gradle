@@ -2,7 +2,7 @@ plugins {
  id 'java-library'
  id 'net.neoforged.moddev' version '2.0.147'
 }
-version = '2.1.2'
+version = '2.1.3'
 group = 'studio.canvas'
 base { archivesName = 'canvas-studio-plus-26.2' }
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
@@ -122,3 +122,12 @@ tasks.register('verifyTextures', JavaExec) {
  systemProperty 'java.awt.headless', 'true'
 }
 tasks.named('check') { dependsOn tasks.named('verifyTextures') }
+
+
+tasks.register('verifyVersionRanges', JavaExec) {
+ dependsOn tasks.named('verificationClasses')
+ classpath = sourceSets.verification.runtimeClasspath
+ mainClass = 'VersionRangeChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+}
+tasks.named('check') { dependsOn tasks.named('verifyVersionRanges') }

@@ -1,4 +1,4 @@
-"""Audit compiled mod references against every published NeoForge 26.3 artifact.
+"""Audit compiled mod references against every published NeoForge 26.2 artifact.
 Checks binary method/field signatures and class availability; not a gameplay test.
 """
 from pathlib import Path
@@ -42,8 +42,11 @@ class Class:
    if c and c[0] in (9,10,11):
     nt=self.cp[c[2]];yield(c[0],self.cls(c[1]),self.utf(nt[1]),self.utf(nt[2]))
 
-metadata=fetch(BASE+'net/neoforged/neoforge/maven-metadata.xml',CACHE/'maven-metadata.xml')
-versions=[e.text for e in ET.fromstring(metadata).findall('./versioning/versions/version') if e.text.startswith('26.3.')]
+metadata_path=CACHE/'maven-metadata.xml'
+metadata_path.unlink(missing_ok=True)
+metadata=fetch(BASE+'net/neoforged/neoforge/maven-metadata.xml',metadata_path)
+versions=[e.text for e in ET.fromstring(metadata).findall('./versioning/versions/version') if e.text.startswith('26.2.')]
+assert versions, 'No published NeoForge 26.2 versions found'
 NS={'m':'http://maven.apache.org/POM/4.0.0'}
 
 def download(v):
@@ -60,7 +63,7 @@ unique={coord for _,_,deps in downloads for name,coord in deps.items() if name i
 with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
  list(pool.map(lambda c:fetch(BASE+f'{c[0].replace(".","/")}/{c[1]}/{c[2]}/{c[1]}-{c[2]}.jar',CACHE/f'{c[1]}-{c[2]}.jar'),unique))
 
-mods={'plus':Path(sys.argv[1]) if len(sys.argv)>1 else ROOT/'build/libs/canvas-studio-plus-26.3-2.1.0.jar'}
+mods={'plus':Path(sys.argv[1]) if len(sys.argv)>1 else ROOT/'build/libs/canvas-studio-plus-26.2-2.1.3.jar'}
 refs={};used_classes={}
 for name,path in mods.items():
  refs[name]=set();used_classes[name]=set()
@@ -69,9 +72,9 @@ for name,path in mods.items():
    if n.endswith('.class'):
     c=Class(z.read(n));refs[name].update(r for r in c.refs() if r[1].startswith('net/neoforged/'))
     used_classes[name].update(c.cls(i) for i,e in enumerate(c.cp) if e and e[0]==7 and c.cls(i).startswith('net/neoforged/'))
-report={'checked_at':'2026-10-08','scope':'Binary class and method/field reference audit; not Minecraft launch/gameplay validation','versions':[]}
+report={'checked_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),'scope':'Binary class and method/field reference audit; not Minecraft launch/gameplay validation','versions':[]}
 minecraft_classes={}
-with zipfile.ZipFile(ROOT/'build/vanilla-validation/minecraft-26.3.jar') as z:
+with zipfile.ZipFile(ROOT/'build/vanilla-validation/minecraft-26.2.jar') as z:
  for n in z.namelist():
    if n.startswith('net/minecraft/') and n.endswith('.class'):
     c=Class(z.read(n));minecraft_classes[c.name]=c
@@ -100,6 +103,7 @@ for v,digest,deps in downloads:
 report['reference_counts']={e:{'members':len(refs[e]),'classes':len(used_classes[e])} for e in mods}
 report['mod_sha256']={name:hashlib.sha256(path.read_bytes()).hexdigest() for name,path in mods.items()}
 report['passed']=all(not any(row['missing_references'].values()) for row in report['versions'])
-(ROOT/'verification/neoforge-2.1-audit.json').write_text(json.dumps(report,indent=2)+'\n')
+(ROOT/'verification/neoforge-26.2-audit.json').write_text(json.dumps(report,indent=2)+'\n')
+(ROOT/'verification/neoforge-26.2-versions.txt').write_text(''.join(v+' '+deps['loader'][2]+'\n' for v,_,deps in downloads))
 print(json.dumps({'passed':report['passed'],'versions':len(versions),'reference_counts':report['reference_counts'],'neoform_versions':sorted({x['neoform'] for x in report['versions']})}),flush=True)
 if not report['passed']:raise SystemExit(1)

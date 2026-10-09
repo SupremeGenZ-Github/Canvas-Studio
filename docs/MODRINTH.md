@@ -1,7 +1,7 @@
-# Canvas Studio+ 2.1.2 — Minecraft 26.2 / NeoForge 26.2.0.88
+# Canvas Studio+ 2.1.3 — Minecraft 26.2 / NeoForge 26.2.x
 
-**made by SuprixZ**. Java 25 required. Upload `canvas-studio-plus-26.2-2.1.2.jar` as a separate version for Minecraft **26.2** and loader **NeoForge**. Do not mark this JAR compatible with 26.3.
+**made by SuprixZ**. Java 25 required. Upload `canvas-studio-plus-26.2-2.1.3.jar` as a Minecraft **26.2**, **NeoForge** release. This JAR accepts the complete 26.2 NeoForge family, including betas and future builds within `[26.2-alpha,26.3-alpha)`. Future API compatibility is not guaranteed.
 
-All 2.1.2 features and recipes are retained: drawing, image import/export, saved map paintings, offline nearest-item matching, Blank Get Item lock, Molten single successful reward and reusable Infinity rewards. The 26.2 catalogue uses textures and registered vanilla items available in 26.2.
+Retains Molten/Infinity recipes and textures, painting, PNG/JPEG import, PNG export, saved map paintings and offline nearest-item matching. Blank Get Item is locked; Molten grants one selected item and is consumed on success; Infinity can be reused, granting one selected item per successful request even if the player does not already own it.
 
-Install one Canvas Studio JAR, with the same port on client/server. Replace the 26.3 JAR when using a 26.2 instance. Source and validation reports are attached to the separate GitHub release. No live game testing is claimed.
+Install one Canvas Studio JAR. Use the same release on client/server. The 26.3 edition is a separate download. Clean builds/checks and a published-version API audit gate publication; no interactive in-game tests performed. Source ZIP, README, changelog, logs and validation/audit reports accompany the GitHub release.

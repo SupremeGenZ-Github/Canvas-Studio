@@ -1,21 +1,30 @@
-# Canvas Studio+ 2.1.2 — Minecraft 26.2 validation
+# Canvas Studio+ 2.1.3 — NeoForge 26.2.x validation
 
-Target: Minecraft 26.2, NeoForge 26.2.0.88, Java 25, FML 11. Credit: **made by SuprixZ**. Baseline: 26.3 release 2.1.2, commit `b508f28a3bd8d4bf685db92f5cad943681bc1bd7`.
+**made by SuprixZ**. Minecraft 26.2 / Java 25. Baseline: the exact-version 26.2 port, commit `9aa56ecc4b20edd3a80b4fee174dddd4b8b0ebbc`.
 
-This is a separately compiled port, with 26.2-specific build dependencies and Minecraft validation assets. Release publication is gated on a clean Gradle build and packaged artifact checks. The release copy of this report includes the actual successful run URL and JAR checksum.
+## Release gates
 
-## Automated verification
+1. Clean build and all nine Java checks against the earliest published beta, `26.2.0.0-beta`, and current latest stable, `26.2.0.89`, in separate CI jobs.
+2. Clean build and all checks against the development target `26.2.0.88`, plus packaged artifact checks.
+3. Download official Maven metadata and audit the compiled mod's referenced NeoForge/FML/bus classes and method/field signatures against every published 26.2 build.
+4. Validate Maven dependency-range semantics against synthetic boundary cases and every published NeoForge/loader pair found by the audit.
 
-Uses 26.2 Recipe.CODEC and singular `recipe` advancement conditions, checked against actual 26.2 vanilla data. Eight Java suites cover real 26.2 recipe/advancement codecs, exact quill layouts and shapeless progression, painting input including colors/drag/fill at three GUI scales, image processing, packet validation, real vanilla item texture matching, server authorization, single-use Molten/infinite Infinity rewards through test inventory adapters, and texture size/transparency. Python artifact checks inspect version, exact target metadata, recipes, credits, unchanged matcher/image-processing source and texture hashes. Historical 26.3 logs/audits do not count as port results.
+Publication is blocked by any failed gate. The published copy of this report includes the completed run URL, JAR hash and exact audited version count. Machine-readable audit, range-check output and build logs are attached and included in the source ZIP.
 
-The port removes all SDL references and uses TinyFD 3.4.1 supplied by Minecraft 26.2. Native picker cancellation and exceptions retain the canvas, while selection/decoding run off the game thread. Native picker operation is source-reviewed; an interactive dialog has not been tested here.
+## Test scope
 
-Headless crafting uses vanilla stand-in IDs for mod items. Inventory delivery uses production logic through simulated inventory/drop adapters. No actual ServerPlayer, GPU window or loaded world is tested by these suites.
+Nine Java suites cover recipe/advancement codecs and exact recipes, painting input (drawing/colors/erase/fill at three GUI scales), image decode/resize/quantization, packet codecs, real 26.2 vanilla item matching, server permissions, Molten consumption and repeated Infinity exchanges through test inventory adapters, texture dimensions/alpha/opaque paper, and version-range boundaries. Python artifact checks verify the packaged resources, metadata, credit and preserved source hashes.
+
+Binary checks establish referenced API availability, not full behavioral equivalence. The NeoForm versions used by each audited build are recorded. Builds/checks against the earliest beta, 26.2.0.88 and latest stable verify compilation and headless behavior on those endpoints; they are not live Minecraft launches. Native TinyFD picker operation remains source-reviewed only.
+
+## Compatibility boundaries
+
+NeoForge range: `[26.2-alpha,26.3-alpha)`. FML: `[11,)`. Minecraft: `[26.2]`. Current and future NeoForge 26.2 builds, including betas, are accepted by metadata. Future API-breaking changes cannot be guaranteed compatible. Other Minecraft families remain unsupported.
+
+Production gameplay code, recipe ingredients and textures are unchanged from the working 26.2 port. Existing item IDs and saved-map formats are preserved. Downgrading a 26.3 world is not tested.
 
 ## In-game tests
 
-**None performed.** A live 26.2 client/world/server, native picker, multiplayer, full-inventory drop and old-world migration must still be checked in-game.
+**None performed.** No interactive client/world/server, native picker, multiplayer or live save migration was tested. Recipe tests use vanilla stand-ins for mod items. Reward delivery tests use production logic with a simulated inventory/drop adapter.
 
-Suggested checklist: install only this port; craft all six items; select colors/draw with both hands; import/export PNG/JPEG and save maps; verify Blank lock, Molten one successful reward, Infinity repeated rewards without owning the item; check cancellation/invalid requests and inventory-full drop.
-
-No claim is made for other Minecraft/NeoForge versions. Existing IDs/map formats are preserved, but downgrading a 26.3 world to 26.2 is not validated.
+In-game checklist: craft all six items; open both hands; draw/select colors/import/export/save; verify Blank lock, one Molten reward, Infinity reuse and inventory-full drops; cancel/invalid/duplicate requests; check existing paintings in a 26.2 save and the intended modpack.

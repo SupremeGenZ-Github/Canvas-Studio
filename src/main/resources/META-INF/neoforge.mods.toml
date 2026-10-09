@@ -1,9 +1,9 @@
 modLoader="javafml"
-loaderVersion="[11,12)"
+loaderVersion="[11,)"
 license="MIT"
 [[mods]]
 modId="canvasstudio"
-version="2.1.2"
+version="2.1.3"
 displayName="Canvas Studio+"
 authors="SuprixZ"
 logoFile="canvas-studio-icon.png"
@@ -12,7 +12,7 @@ description='''Draw, import and save paintings. Match your drawing to the neares
 [[dependencies.canvasstudio]]
 modId="neoforge"
 type="required"
-versionRange="[26.2.0.88]"
+versionRange="[26.2-alpha,26.3-alpha)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.canvasstudio]]

@@ -1,7 +1,7 @@
-# Minecraft 26.2 port compatibility
+# Minecraft 26.2 / NeoForge 26.2.x compatibility
 
-Canvas Studio+ 2.1.2 — made by SuprixZ. This port builds specifically against Minecraft 26.2 / NeoForge 26.2.0.88 / Java 25, using FML 11. The metadata pins that target. The 26.3 edition remains separately available.
+Canvas Studio+ 2.1.3 — **made by SuprixZ**. Minecraft 26.2 and Java 25 required. Dependency ranges: NeoForge `[26.2-alpha,26.3-alpha)` and FML `[11,)`. All 26.2 betas/stable builds and future 26.2 builds are accepted by metadata; 26.1 and 26.3 are excluded.
 
-26.2 uses TinyFD for native image selection, its own Minecraft client validation artifact, Predicate resource selectors and the 26.2 server drop API. Advancements use the singular 26.2 `recipe` field. Recipe ingredients, textures, item IDs, map format, matching rules and server canvas permissions are retained. The actual available vanilla catalogue follows 26.2 resources. Existing 26.3 saves cannot be assumed safe to downgrade.
+Publication requires binary API checks of every published 26.2 artifact, clean build/check runs on the earliest beta and latest published stable build, and the normal full build on 26.2.0.88. See the attached machine-readable audit and validation report for exact versions and outcomes. This is not a claim that every version has been launched in-game. Future API-breaking versions cannot be guaranteed compatible.
 
-Historical 26.3 audit files are retained as history and do not validate this 26.2 port. Read VALIDATION.md and the attached build logs for the port's checks. No support for other Minecraft versions or future NeoForge versions is claimed.
+Recipes, item IDs, textures, drawing, import/export, painting saves and server exchanges retain the 26.2 port behavior. The 26.3 edition is a separate download. Install one Canvas Studio JAR and use the same release on client/server. Historical 26.3 audits do not validate this port.
