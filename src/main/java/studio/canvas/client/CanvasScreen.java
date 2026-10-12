@@ -61,7 +61,7 @@ public final class CanvasScreen extends Screen {
   button(tools,top+52,132,tool.toString().replace('_',' '),()->openPanel(0));
   button(tools,top+72,64,"Size: "+brush,()->{brush=brush==1?2:brush==2?4:brush==4?8:1;document.brush=brush;rebuild();});
   button(tools+68,top+72,64,"Options",()->openPanel(1));
-  button(tools,top+92,64,"Undo",()->{document.undo();syncPixels();});button(tools+68,top+92,64,"Redo",()->{document.redo();syncPixels();});
+  button(tools,top+92,64,"Undo",()->{finishStroke();document.undo();syncPixels();});button(tools+68,top+92,64,"Redo",()->{finishStroke();document.redo();syncPixels();});
   button(tools,top+112,132,"Projects",()->{finishStroke();syncTitle();minecraft.setScreenAndShow(new ProjectScreen(this));});
   button(tools,top+132,132,"Studio menu",()->openPanel(2));button(tools,top+152,132,"Close",this::onClose);
   button(left,top+side+27,side,editingPainting?"Save edited painting":"Save Painting",this::savePainting);
@@ -90,29 +90,29 @@ public final class CanvasScreen extends Screen {
  private int py(double y){return PixelTools.snap((int)(y-top)/(scale*zoom)+panY,document.snap);}
  private boolean inside(double x,double y){return x>=left&&x<left+side&&y>=top&&y<top+side;}
  @Override public boolean mouseClicked(MouseButtonEvent e,boolean twice){
-  if(e.button()==0&&e.x()>=tools&&e.x()<tools+128&&e.y()>=top&&e.y()<top+48){selected=swatches[(int)(e.y()-top)/12*8+(int)(e.x()-tools)/16];document.selected=selected;return true;}
-  if((e.button()==0||e.button()==1)&&inside(e.x(),e.y())&&!importing){
+  if(e.button()==InputConstants.MOUSE_BUTTON_LEFT&&e.x()>=tools&&e.x()<tools+128&&e.y()>=top&&e.y()<top+48){selected=swatches[(int)(e.y()-top)/12*8+(int)(e.x()-tools)/16];document.selected=selected;return true;}
+  if((e.button()==InputConstants.MOUSE_BUTTON_LEFT||e.button()==InputConstants.MOUSE_BUTTON_RIGHT)&&inside(e.x(),e.y())&&!importing){
    if(getFocused()!=null)setFocused(null);int x=px(e.x()),y=py(e.y());
-   if(tool==PixelTools.Tool.EYEDROPPER&&e.button()==0){selected=document.flatten()[y*128+x];document.selected=selected;return true;}
+   if(tool==PixelTools.Tool.EYEDROPPER&&e.button()==InputConstants.MOUSE_BUTTON_LEFT){selected=document.flatten()[y*128+x];document.selected=selected;return true;}
    document.begin();dragging=true;startX=lastX=x;startY=lastY=y;stroke=0;shapeDrag=tool==PixelTools.Tool.LINE||tool==PixelTools.Tool.RECTANGLE||tool==PixelTools.Tool.FILLED_RECTANGLE||tool==PixelTools.Tool.ELLIPSE||tool==PixelTools.Tool.FILLED_ELLIPSE;
-   byte color=e.button()==1||tool==PixelTools.Tool.ERASER?(document.active==0?white:0):selected;
+   byte color=e.button()==InputConstants.MOUSE_BUTTON_RIGHT||tool==PixelTools.Tool.ERASER?(document.active==0?white:0):selected;
    if(fillTool||tool==PixelTools.Tool.FILL){PixelTools.flood(document,x,y,color);finishStroke();}else if(shapeDrag)PixelTools.shape(document,tool,x,y,x,y,color);else PixelTools.line(document,x,y,x,y,color,tool,stroke);return true;
   }return super.mouseClicked(e,twice);
  }
  @Override public boolean mouseDragged(MouseButtonEvent e,double dx,double dy){
-  if(e.button()==2&&inside(e.x(),e.y())&&zoom>1){panX=Math.max(0,Math.min(128-128/zoom,panX-(int)(dx/(scale*zoom))));panY=Math.max(0,Math.min(128-128/zoom,panY-(int)(dy/(scale*zoom))));return true;}
-  if(dragging&&(e.button()==0||e.button()==1)&&!importing){int x=px(Math.max(left,Math.min(left+side-1,e.x()))),y=py(Math.max(top,Math.min(top+side-1,e.y())));byte c=e.button()==1||tool==PixelTools.Tool.ERASER?(document.active==0?white:0):selected;
-   if((e.modifiers()&1)!=0){int ax=x-startX,ay=y-startY;if(shapeDrag&&tool!=PixelTools.Tool.LINE){int n=Math.max(Math.abs(ax),Math.abs(ay));x=Math.max(0,Math.min(127,startX+(ax<0?-n:n)));y=Math.max(0,Math.min(127,startY+(ay<0?-n:n)));}else if(Math.abs(ax)>Math.abs(ay)*2)y=startY;else if(Math.abs(ay)>Math.abs(ax)*2)x=startX;else{int n=Math.max(Math.abs(ax),Math.abs(ay));x=Math.max(0,Math.min(127,startX+(ax<0?-n:n)));y=Math.max(0,Math.min(127,startY+(ay<0?-n:n)));}}
+  if(e.button()==InputConstants.MOUSE_BUTTON_MIDDLE&&inside(e.x(),e.y())&&zoom>1){panX=Math.max(0,Math.min(128-128/zoom,panX-(int)(dx/(scale*zoom))));panY=Math.max(0,Math.min(128-128/zoom,panY-(int)(dy/(scale*zoom))));return true;}
+  if(dragging&&(e.button()==InputConstants.MOUSE_BUTTON_LEFT||e.button()==InputConstants.MOUSE_BUTTON_RIGHT)&&!importing){int x=px(Math.max(left,Math.min(left+side-1,e.x()))),y=py(Math.max(top,Math.min(top+side-1,e.y())));byte c=e.button()==InputConstants.MOUSE_BUTTON_RIGHT||tool==PixelTools.Tool.ERASER?(document.active==0?white:0):selected;
+   if(e.hasShiftDown()){int ax=x-startX,ay=y-startY;if(shapeDrag&&tool!=PixelTools.Tool.LINE){int n=Math.max(Math.abs(ax),Math.abs(ay));x=Math.max(0,Math.min(127,startX+(ax<0?-n:n)));y=Math.max(0,Math.min(127,startY+(ay<0?-n:n)));}else if(Math.abs(ax)>Math.abs(ay)*2)y=startY;else if(Math.abs(ay)>Math.abs(ax)*2)x=startX;else{int n=Math.max(Math.abs(ax),Math.abs(ay));x=Math.max(0,Math.min(127,startX+(ax<0?-n:n)));y=Math.max(0,Math.min(127,startY+(ay<0?-n:n)));}}
    if(shapeDrag){document.previewReset();PixelTools.shape(document,tool,startX,startY,x,y,c);}else{PixelTools.line(document,lastX,lastY,x,y,c,tool,stroke);stroke+=Math.max(Math.abs(x-lastX),Math.abs(y-lastY));}lastX=x;lastY=y;return true;
   }return super.mouseDragged(e,dx,dy);
  }
  @Override public boolean mouseReleased(MouseButtonEvent e){boolean handled=dragging;finishStroke();return handled||super.mouseReleased(e);}
  @Override public boolean keyPressed(KeyEvent e){
   if(getFocused() instanceof EditBox)return super.keyPressed(e);
-  if(e.key()==256&&dragging){document.cancel();dragging=false;syncPixels();return true;}
-  boolean ctrl=(e.modifiers()&2)!=0;
-  if(ctrl&&e.key()==90){document.undo();syncPixels();return true;}if(ctrl&&e.key()==89){document.redo();syncPixels();return true;}
-  if(e.key()==66)selectTool(PixelTools.Tool.BRUSH);else if(e.key()==69)selectTool(PixelTools.Tool.ERASER);else if(e.key()==73)selectTool(PixelTools.Tool.EYEDROPPER);else if(e.key()==71)document.grid=!document.grid;else return super.keyPressed(e);rebuild();return true;
+  if(e.isEscape()&&dragging){document.cancel();dragging=false;syncPixels();return true;}
+  boolean ctrl=e.hasControlDown();
+  if(ctrl&&e.shortcutKey()==InputConstants.KEY_Z){finishStroke();document.undo();syncPixels();return true;}if(ctrl&&e.shortcutKey()==InputConstants.KEY_Y){finishStroke();document.redo();syncPixels();return true;}
+  if(e.shortcutKey()==InputConstants.KEY_B)selectTool(PixelTools.Tool.BRUSH);else if(e.shortcutKey()==InputConstants.KEY_E)selectTool(PixelTools.Tool.ERASER);else if(e.shortcutKey()==InputConstants.KEY_I)selectTool(PixelTools.Tool.EYEDROPPER);else if(e.shortcutKey()==InputConstants.KEY_G)document.grid=!document.grid;else return super.keyPressed(e);rebuild();return true;
  }
  void changeZoom(){zoom=zoom==1?2:zoom==2?4:1;panX=Math.min(panX,128-128/zoom);panY=Math.min(panY,128-128/zoom);}
  void cyclePalette(){preset=(preset+1)%3;refreshPalette();}

@@ -1,4 +1,5 @@
 package studio.canvas.client;
+import com.mojang.blaze3d.platform.InputConstants;
 import studio.canvas.client.art.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -18,7 +19,7 @@ public final class PaintingPreview extends Screen {
  private void button(int x,int y,int w,String label,Runnable r){addRenderableWidget(Button.builder(Component.literal(label),b->r.run()).bounds(x,y,w,20).build());}
  private void refresh(){clearWidgets();init();}
  private int cell(){return Math.max(20,Math.min((width-32)/3,(height-112)/2));}
- @Override public boolean mouseClicked(MouseButtonEvent e,boolean twice){if(wall){int cell=cell(),x0=(width-cell*3)/2,y0=38;int x=(int)e.x()-x0,y=(int)e.y()-y0;if(x>=0&&x<cell*3&&y>=0&&y<cell*2){int index=y/cell*3+x/cell;if(e.button()==1)slots[index]=null;else if(e.button()==0)slots[index]=source==0?parent.document.flatten():projects.get(Math.min(source-1,projects.size()-1)).artwork().flatten();return true;}}return super.mouseClicked(e,twice);}
+ @Override public boolean mouseClicked(MouseButtonEvent e,boolean twice){if(wall){int cell=cell(),x0=(width-cell*3)/2,y0=38;int x=(int)e.x()-x0,y=(int)e.y()-y0;if(x>=0&&x<cell*3&&y>=0&&y<cell*2){int index=y/cell*3+x/cell;if(e.button()==InputConstants.MOUSE_BUTTON_RIGHT)slots[index]=null;else if(e.button()==InputConstants.MOUSE_BUTTON_LEFT)slots[index]=source==0?parent.document.flatten():projects.get(Math.min(source-1,projects.size()-1)).artwork().flatten();return true;}}return super.mouseClicked(e,twice);}
  @Override public void onClose(){minecraft.setScreenAndShow(parent);}
  @Override public boolean isPauseScreen(){return false;}
  private void frame(GuiGraphicsExtractor g,int x,int y,int size){g.fill(x-4,y-4,x+size+4,y+size+4,glow?0xffffdd77:0xff805a34);g.fill(x-2,y-2,x+size+2,y+size+2,0xff35251d);}
