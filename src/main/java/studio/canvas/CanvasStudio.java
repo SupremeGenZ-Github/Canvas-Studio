@@ -45,7 +45,7 @@ public final class CanvasStudio {
         ITEMS.register(bus);
         COMPONENTS.register(bus);
         TABS.register(bus);
-        container.registerConfig(ModConfig.Type.SERVER,ServerRules.SPEC);
+        container.registerConfig(ModConfig.Type.SYNCED,ServerRules.SPEC);
         bus.addListener(CanvasStudio::network);
     }
     private static void network(RegisterPayloadHandlersEvent event) {

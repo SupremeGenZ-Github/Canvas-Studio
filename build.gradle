@@ -130,3 +130,12 @@ tasks.register('verifyUsage', JavaExec) {
  javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
 }
 tasks.named('check') { dependsOn tasks.named('verifyUsage') }
+
+tasks.register('verifyStudio', JavaExec) {
+ dependsOn tasks.named('verificationClasses')
+ classpath = sourceSets.verification.runtimeClasspath
+ mainClass = 'StudioChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+ systemProperty 'java.awt.headless', 'true'
+}
+tasks.named('check') { dependsOn tasks.named('verifyStudio') }
