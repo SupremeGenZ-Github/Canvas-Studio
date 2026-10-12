@@ -90,3 +90,14 @@ All registry IDs, existing recipes and item textures are retained. Legacy `molde
 - Infinity Canvas: Molten Canvas + Infinity Quill + Recovery Compass, shapeless.
 
 Build with JDK 25: `./gradlew build`. Alternate supported dependency: `./gradlew build -PneoForgeVersion=<version>`. See [validation](VALIDATION.md) for executed checks and limitations. No telemetry, cloud account or network service is required for creative tools or matching.
+
+## Downloads — 3.1.0
+
+| Minecraft | NeoForge family | JAR | Source, logs and validation |
+|---|---|---|---|
+| 26.3 | 26.3.x, including betas | [Download](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.0/canvas-studio-plus-26.3-3.1.0.jar) | [Release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.0) |
+| 26.2 | 26.2.x, including betas | [Download](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.0-mc26.2/canvas-studio-plus-26.2-3.1.0.jar) | [Release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.0-mc26.2) |
+
+All twelve Java suites passed on the selected build targets for each edition. API/range auditing passed for 75 published 26.3 builds and 91 published 26.2 builds on 12 October 2026. Future builds are accepted by metadata, with future API changes requiring verification. No interactive in-game tests were performed.
+
+Current source: `main` for 26.3 and `minecraft-26.2` for 26.2.
