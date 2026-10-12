@@ -15,6 +15,7 @@ public final class CanvasClient {
     static CanvasScreen activeCanvas;
     public CanvasClient(IEventBus bus) {
         NeoForge.EVENT_BUS.addListener(CanvasClient::rightClick);
+        bus.addListener((net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event)->event.registerEntityRenderer(CanvasStudio.WALL_PAINTING.get(),context->new net.minecraft.client.renderer.entity.ItemFrameRenderer<>(context)));
         bus.addListener((net.neoforged.neoforge.client.event.AddClientReloadListenersEvent event)->event.addListener(net.minecraft.resources.Identifier.fromNamespaceAndPath(CanvasStudio.ID,"catalogue_reload"),(net.minecraft.server.packs.resources.ResourceManagerReloadListener)resources->ItemMatchCatalog.RESOURCE_EPOCH.incrementAndGet()));
     }
     public static void reply(studio.canvas.CanvasReply reply){

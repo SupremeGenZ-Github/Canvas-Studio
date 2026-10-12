@@ -29,10 +29,13 @@ public final class CanvasStudio {
     public static final DeferredItem<Item> INFINITY_QUILL = ITEMS.registerSimpleItem("infinity_quill", p -> p.component(DataComponents.LORE, lore("Crafts a reusable Infinity Canvas")));
     public static final DeferredRegister<net.minecraft.core.component.DataComponentType<?>> COMPONENTS=DeferredRegister.create(Registries.DATA_COMPONENT_TYPE,ID);
     public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>,net.minecraft.core.component.DataComponentType<Long>> USES=COMPONENTS.register("infinity_uses",()->CanvasUsage.TYPE);
+    public static final DeferredItem<Item> KURLO_PILLOW=ITEMS.registerSimpleItem("kurlo_pillow",p->p.stacksTo(1).component(DataComponents.LORE,lore("Hold in either hand through a full night's sleep","Wake with enchanted golden apple status effects")));
+    public static final DeferredRegister<net.minecraft.world.entity.EntityType<?>> ENTITIES=DeferredRegister.create(Registries.ENTITY_TYPE,ID);
+    public static final DeferredHolder<net.minecraft.world.entity.EntityType<?>,net.minecraft.world.entity.EntityType<WallPainting>> WALL_PAINTING=ENTITIES.register("wall_painting",()->net.minecraft.world.entity.EntityType.Builder.<WallPainting>of(WallPainting::new,net.minecraft.world.entity.MobCategory.MISC).sized(0.5f,0.5f).clientTrackingRange(10).updateInterval(1).build(net.minecraft.resources.ResourceKey.create(Registries.ENTITY_TYPE,net.minecraft.resources.Identifier.fromNamespaceAndPath(ID,"wall_painting"))));
     public static final DeferredRegister<CreativeModeTab> TABS=DeferredRegister.create(Registries.CREATIVE_MODE_TAB,ID);
     public static final DeferredHolder<CreativeModeTab,CreativeModeTab> STUDIO_TAB=TABS.register("studio",()->CreativeModeTab.builder()
       .title(Component.literal("Canvas Studio+")) .icon(()->new ItemStack(INFINITY_CANVAS.get()))
-      .displayItems((parameters,output)->{output.accept(CANVAS.get());output.accept(MOLTEN_CANVAS.get());output.accept(INFINITY_CANVAS.get());output.accept(QUILL.get());output.accept(MOLTEN_QUILL.get());output.accept(INFINITY_QUILL.get());}).build());
+      .displayItems((parameters,output)->{output.accept(CANVAS.get());output.accept(MOLTEN_CANVAS.get());output.accept(INFINITY_CANVAS.get());output.accept(QUILL.get());output.accept(MOLTEN_QUILL.get());output.accept(INFINITY_QUILL.get());output.accept(KURLO_PILLOW.get());}).build());
     private static ItemLore lore(String... lines){return new ItemLore(java.util.Arrays.stream(lines).map(Component::literal).map(c -> (Component)c).toList());}
     public static CanvasTier tier(ItemStack stack){
         if(stack.is(CANVAS.get()))return CanvasTier.BLANK;
@@ -43,6 +46,11 @@ public final class CanvasStudio {
     public static boolean isCanvas(ItemStack stack){return tier(stack)!=null;}
     public CanvasStudio(IEventBus bus, ModContainer container) {
         ITEMS.register(bus);
+        ENTITIES.register(bus);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(WallPlacement::place);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(KurloPillow::tick);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(KurloPillow::wake);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(KurloPillow::logout);
         COMPONENTS.register(bus);
         TABS.register(bus);
         container.registerConfig(ServerRules.configType(),ServerRules.SPEC,"canvasstudio-server.toml");

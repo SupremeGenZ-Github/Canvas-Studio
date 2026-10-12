@@ -1,4 +1,4 @@
-# Canvas Studio+ 3.0.0
+# Canvas Studio+ 3.1.0
 
 **made by SuprixZ**
 
@@ -6,9 +6,21 @@ A local pixel-art studio and offline drawing-to-item finder for Minecraft Java *
 
 The separate Minecraft 26.2 edition uses a different JAR. Do not install a 26.3 JAR in 26.2. Metadata accepts future builds within the corresponding NeoForge family, but future API compatibility cannot be guaranteed.
 
+## Place paintings directly on walls
+
+Hold a saved locked painting map and right-click a vertical wall without sneaking. The artwork hangs directly with no item frame required or visible border. Survival placement consumes one held map; creative placement follows normal creative rules. Left-click to take the painting down and recover the same map. Right-click rotates it. If the supporting wall is removed, normal entity-drop rules apply. Placement requires build permission, a supported wall and free space.
+
+These wall paintings use the custom `canvasstudio:wall_painting` entity and persist with the world. Break and pick up one to edit it using Shift-right-click in the air, then place it again. Existing item-frame paintings also remain usable.
+
+## Kurlo Pillow
+
+Craft a Kurlo Pillow with an **Enchanted Golden Apple in the center and eight White Wool around it**. It is reusable and appears in the Canvas Studio+ creative tab.
+
+Hold it in your main hand or off hand when entering bed, keep it in that hand, and complete the night's sleep. On the normal morning wake-up, the server grants the installed game's enchanted golden apple status effects: Regeneration, Absorption, Resistance and Fire Resistance. It does not consume the pillow or restore food points. Leaving bed early, interrupted sleep, swapping away the pillow or relogging cannot grant the buffs.
+
 ## Draw and edit
 
-Right-click a canvas to open the editor. The Canvas Studio+ creative tab contains all six items. The existing 128 × 128 map palette and textures are preserved.
+Right-click a canvas to open the editor. The Canvas Studio+ creative tab contains all seven items. The existing 128 × 128 map palette and textures are preserved.
 
 - Left-drag paints; right-drag erases. On upper layers, erasing reveals lower layers.
 - Click the active-tool button to choose brush, eraser, fill, line, outlined/filled rectangle, outlined/filled ellipse, eyedropper, dotted, dashed or spray tools.

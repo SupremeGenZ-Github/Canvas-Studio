@@ -4,5 +4,7 @@
   "item.canvasstudio.molder_canvas": "Molten Canvas",
   "item.canvasstudio.infinity_canvas": "Infinity Canvas",
   "item.canvasstudio.molder_quill": "Molten Quill",
-  "item.canvasstudio.infinity_quill": "Infinity Quill"
+  "item.canvasstudio.infinity_quill": "Infinity Quill",
+  "item.canvasstudio.kurlo_pillow": "Kurlo Pillow",
+  "entity.canvasstudio.wall_painting": "Canvas Studio Painting"
 }

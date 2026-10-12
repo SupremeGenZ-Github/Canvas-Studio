@@ -1,4 +1,4 @@
-# Canvas Studio+ 3.0.0 validation — Minecraft 26.3
+# Canvas Studio+ 3.1.0 validation — Minecraft 26.3
 
 Baseline: main commit `b508f28a3bd8d4bf685db92f5cad943681bc1bd7` (2.1.2); its original build and publishing checks passed before development. Credit: **made by SuprixZ**.
 
@@ -23,3 +23,9 @@ Before relying on a production world, verify: all controls at intended GUI scale
 ## Feature boundaries
 
 Model-based matching supports simple texture references, not full GPU model capture. Previews are 2D mock-ups. Maps reopen as one flattened layer; `.csp` files preserve layers. Project gallery is capped at 200 valid entries and asset indexing at 5,000 sources. Future NeoForge 26.3 builds are accepted by metadata but cannot be guaranteed free of API-breaking changes.
+
+## Frameless paintings and Kurlo Pillow
+
+Additional automated checks cover placement eligibility, build/space/locked-map restrictions, the absence of an item-frame drop, completed versus interrupted/early sleep, and the installed game's actual enchanted golden apple status-effect catalogue. Recipe checks include all nine Pillow crafting slots. Wall entities reuse Minecraft hanging-map synchronization and serialization; native map rendering is registered for the custom type.
+
+No live placement, support-removal drop, world save/reload, sleep cycle or rendered wall entity was tested here. These remain explicit in-game checks alongside the existing manual checklist.

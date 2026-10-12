@@ -63,7 +63,7 @@ unique={coord for _,_,deps in downloads for name,coord in deps.items() if name i
 with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
  list(pool.map(lambda c:fetch(BASE+f'{c[0].replace(".","/")}/{c[1]}/{c[2]}/{c[1]}-{c[2]}.jar',CACHE/f'{c[1]}-{c[2]}.jar'),unique))
 
-mods={'plus':Path(sys.argv[1]) if len(sys.argv)>1 else ROOT/'build/libs/canvas-studio-plus-26.3-3.0.0.jar'}
+mods={'plus':Path(sys.argv[1]) if len(sys.argv)>1 else ROOT/'build/libs/canvas-studio-plus-26.3-3.1.0.jar'}
 refs={};used_classes={}
 for name,path in mods.items():
  refs[name]=set();used_classes[name]=set()

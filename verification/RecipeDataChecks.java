@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 /** Exercises the game codecs, including the old-format regression from the user's log. */
 public class RecipeDataChecks {
- static String standIns(String s){return s.replace("canvasstudio:molder_canvas","minecraft:amethyst_shard").replace("canvasstudio:infinity_canvas","minecraft:diamond").replace("canvasstudio:molder_quill","minecraft:blaze_rod").replace("canvasstudio:infinity_quill","minecraft:diamond_sword").replace("canvasstudio:canvas","minecraft:brick").replace("canvasstudio:quill","minecraft:stick");}
+ static String standIns(String s){return s.replace("canvasstudio:kurlo_pillow","minecraft:feather").replace("canvasstudio:molder_canvas","minecraft:amethyst_shard").replace("canvasstudio:infinity_canvas","minecraft:diamond").replace("canvasstudio:molder_quill","minecraft:blaze_rod").replace("canvasstudio:infinity_quill","minecraft:diamond_sword").replace("canvasstudio:canvas","minecraft:brick").replace("canvasstudio:quill","minecraft:stick");}
  static void check(boolean v,String s){if(!v)throw new AssertionError(s);}
  public static void main(String[] args) throws Exception {
   SharedConstants.tryDetectVersion(); Bootstrap.bootStrap();
@@ -27,7 +27,7 @@ public class RecipeDataChecks {
   var lookup=HolderLookup.Provider.create(Stream.concat(BuiltInRegistries.REGISTRY.stream(),Stream.of(recipes)));
   var ops=lookup.createSerializationContext(JsonOps.INSTANCE);
   Path root=Path.of(args.length==0?"src/main/resources/data/canvasstudio":args[0]);
-  for(String name:new String[]{"canvas","molder_canvas","infinity_canvas","quill","molder_quill","infinity_quill"}) {
+  for(String name:new String[]{"canvas","molder_canvas","infinity_canvas","quill","molder_quill","infinity_quill","kurlo_pillow"}) {
    // Recipes use vanilla stand-in items because standalone bootstrap freezes items.
    var json=JsonParser.parseString(standIns(Files.readString(root.resolve("recipe/"+name+".json"))));
    var recipe=Recipe.DIRECT_CODEC.parse(ops,json).getOrThrow();
@@ -65,7 +65,7 @@ public class RecipeDataChecks {
   }
   check(!Files.exists(root.resolve("recipe/canvas_with_feather.json"))&&!Files.exists(root.resolve("advancement/recipes/canvas_with_feather.json")),"Shortcut recipe and advancement removed");
   recipes.freeze();
-  for(String name:new String[]{"canvas","molder_canvas","infinity_canvas","quill","molder_quill","infinity_quill"}) {
+  for(String name:new String[]{"canvas","molder_canvas","infinity_canvas","quill","molder_quill","infinity_quill","kurlo_pillow"}) {
    var json=JsonParser.parseString(Files.readString(root.resolve("advancement/recipes/"+name+".json"))).getAsJsonObject();
    var material=json.getAsJsonObject("criteria").getAsJsonObject("has_material").getAsJsonObject("conditions").getAsJsonArray("items").get(0).getAsJsonObject();
    material.addProperty("items",standIns(material.get("items").getAsString()));

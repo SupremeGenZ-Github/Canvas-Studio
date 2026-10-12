@@ -1,4 +1,4 @@
-# Canvas Studio+ 3.0.0 — Creative Studio
+# Canvas Studio+ 3.1.0 — Creative Studio
 
 **made by SuprixZ** — Minecraft 26.3, NeoForge 26.3.x, Java 25.
 
@@ -12,4 +12,10 @@ Automated builds, regression checks and published-version API audit gate this re
 
 Remove older Canvas Studio JARs before installing. The 26.2 edition is a separate download.
 
-Upload the Minecraft 26.3 JAR with the NeoForge loader label. Do not label this artifact for Minecraft 26.2. Use README for the full description.
+Adds frameless wall paintings: right-click a vertical wall with a locked painting map, then break it to recover the painting under normal survival/entity-drop rules. Placed paintings persist as a custom hanging entity.
+
+Adds reusable Kurlo Pillow: eight White Wool surrounding one Enchanted Golden Apple. Hold it in either hand throughout a full sleep to receive the game's enchanted golden apple status effects on normal morning wake-up. Early or interrupted sleep grants nothing.
+
+Both features are server-controlled. Automated tests cover their policy and game data; live placement, save/reload and sleep were not tested interactively.
+
+Upload the Minecraft 26.3 artifact with NeoForge; the 26.2 edition is a separate artifact.
