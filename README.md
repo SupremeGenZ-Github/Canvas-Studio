@@ -2,9 +2,9 @@
 
 **made by SuprixZ**
 
-A local pixel-art studio and offline drawing-to-item finder for Minecraft Java **26.3**, **NeoForge 26.3.x** (including published prereleases), and **Java 25**. Install the same version on client and server. Replace older Canvas Studio JARs; Lite and Plus share the `canvasstudio` ID and cannot be installed together.
+A local pixel-art studio and offline drawing-to-item finder for Minecraft Java **26.2**, **NeoForge 26.2.x** (including published prereleases), and **Java 25**. Install the same version on client and server. Replace older Canvas Studio JARs; Lite and Plus share the `canvasstudio` ID and cannot be installed together.
 
-The separate Minecraft 26.2 edition uses a different JAR. Do not install a 26.3 JAR in 26.2. Metadata accepts future builds within the corresponding NeoForge family, but future API compatibility cannot be guaranteed.
+The separate Minecraft 26.3 edition uses a different JAR. Do not install a 26.2 JAR in 26.3. Metadata accepts future builds within the corresponding NeoForge family, but future API compatibility cannot be guaranteed.
 
 ## Place paintings directly on walls
 

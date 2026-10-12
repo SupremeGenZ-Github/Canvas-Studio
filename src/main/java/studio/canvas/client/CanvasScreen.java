@@ -10,10 +10,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import org.lwjgl.sdl.SDLDialog;
-import org.lwjgl.sdl.SDL_DialogFileCallback;
-import org.lwjgl.sdl.SDL_DialogFileFilter;
-import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.util.tinyfd.TinyFileDialogs;
 import studio.canvas.*;
 import studio.canvas.client.art.*;
 import java.awt.image.BufferedImage;
@@ -110,13 +108,13 @@ public final class CanvasScreen extends Screen {
  public boolean applyDrawingShortcut(KeyEvent e,boolean typing){
   if(typing)return false;
   if(e.isEscape()&&dragging){document.cancel();dragging=false;syncPixels();return true;}
-  if(e.hasControlDown()&&e.shortcutKey()==InputConstants.KEY_Z){finishStroke();document.undo();syncPixels();return true;}
-  if(e.hasControlDown()&&e.shortcutKey()==InputConstants.KEY_Y){finishStroke();document.redo();syncPixels();return true;}
+  if(e.hasControlDown()&&e.key()==InputConstants.KEY_Z){finishStroke();document.undo();syncPixels();return true;}
+  if(e.hasControlDown()&&e.key()==InputConstants.KEY_Y){finishStroke();document.redo();syncPixels();return true;}
   if(e.hasControlDown()||e.hasAltDown())return false;
-  if(e.shortcutKey()==InputConstants.KEY_B)selectTool(PixelTools.Tool.BRUSH);
-  else if(e.shortcutKey()==InputConstants.KEY_E)selectTool(PixelTools.Tool.ERASER);
-  else if(e.shortcutKey()==InputConstants.KEY_I)selectTool(PixelTools.Tool.EYEDROPPER);
-  else if(e.shortcutKey()==InputConstants.KEY_G)document.grid=!document.grid;
+  if(e.key()==InputConstants.KEY_B)selectTool(PixelTools.Tool.BRUSH);
+  else if(e.key()==InputConstants.KEY_E)selectTool(PixelTools.Tool.ERASER);
+  else if(e.key()==InputConstants.KEY_I)selectTool(PixelTools.Tool.EYEDROPPER);
+  else if(e.key()==InputConstants.KEY_G)document.grid=!document.grid;
   else return false;
   return true;
  }
@@ -132,52 +130,31 @@ public final class CanvasScreen extends Screen {
   CompletableFuture.runAsync(()->{try{new ProjectStore(root).save(id,copy);}catch(Exception e){throw new java.util.concurrent.CompletionException(e);}},ProjectStore.IO).whenComplete((v,e)->minecraft.execute(()->{if(!recovery)status=e==null?"Project saved in canvasstudio/projects.":"Project save failed: "+e.getCause().getMessage();}));
  }
  void loadProject(UUID id,Artwork d){document=d.copy();projectId=id.equals(RECOVERY)?null:id;titleBox=null;original=null;syncPixels();zoom=1;panX=panY=0;status="Project loaded; painting save is separate.";}
-    private SDL_DialogFileCallback imageDialog;
-    private SDL_DialogFileFilter.Buffer imageFilters;
-    private java.nio.ByteBuffer filterName, filterPattern;
-    private volatile boolean dialogReturned;
-    private void releaseDialog(){
-        if(imageDialog!=null){imageDialog.free();imageDialog=null;}
-        if(imageFilters!=null){imageFilters.free();imageFilters=null;}
-        if(filterName!=null){MemoryUtil.memFree(filterName);filterName=null;}
-        if(filterPattern!=null){MemoryUtil.memFree(filterPattern);filterPattern=null;}
-        dialogReturned=false;
-    }
     @Override public void tick(){
-        if(!sessionRequested && tier.canExchange()){sessionRequested=true;ClientPacketDistributor.sendToServer(new studio.canvas.OpenCanvas(hand,openRequest));}
+        if(!sessionRequested && tier.canExchange()){sessionRequested=true;ClientPacketDistributor.sendToServer(new OpenCanvas(hand,openRequest));}
         if(++ticks%600==0 && !importing){saveProject(true);}
-        // Linux portal dialogs require SDL event processing. Never block Minecraft.
-        if(imageDialog!=null){
-            org.lwjgl.sdl.SDLEvents.SDL_PumpEvents();
-            if(dialogReturned)releaseDialog();
-        }
     }
     void pickImage(){
-        if(importing||imageDialog!=null)return;
+        if(importing)return;
         importing=true;status="Choose a PNG or JPEG image...";
-        try{
-            filterName=MemoryUtil.memUTF8("PNG or JPEG");
-            filterPattern=MemoryUtil.memUTF8("png;jpg;jpeg");
-            imageFilters=SDL_DialogFileFilter.calloc(1);
-            imageFilters.get(0).name(filterName).pattern(filterPattern);
-            imageDialog=SDL_DialogFileCallback.create((userdata,files,filter)->{
-                String path=files==0?null:MemoryUtil.memUTF8Safe(MemoryUtil.memGetAddress(files));
-                String failure=files==0?org.lwjgl.sdl.SDLError.SDL_GetError():null;
-                minecraft.execute(()->{
-                    if(path==null){importing=false;status=failure==null?"Import cancelled.":"File picker failed: "+failure;return;}
-                    status="Loading image...";
-                    CompletableFuture.supplyAsync(()->{
-                        try{return ImageImport.load(Path.of(path));}catch(Exception ex){throw new java.util.concurrent.CompletionException(ex);}
-                    }).whenComplete((image,error)->minecraft.execute(()->{
-                        importing=false;
-                        if(error!=null){status="Import failed: "+error.getCause().getMessage();return;}
-                        document.begin();original=image;applyImage();document.commit();syncPixels();
-                    }));
-                });
-                dialogReturned=true;
-            });
-            SDLDialog.SDL_ShowOpenFileDialog(imageDialog,0L,0L,imageFilters,(java.nio.ByteBuffer)null,false);
-        }catch(Exception | LinkageError ex){releaseDialog();importing=false;status="Could not open file picker: "+ex.getMessage();}
+        CompletableFuture.supplyAsync(()->{
+            try(var stack=MemoryStack.stackPush()){
+                var filters=stack.mallocPointer(3);
+                filters.put(stack.UTF8("*.png")).put(stack.UTF8("*.jpg")).put(stack.UTF8("*.jpeg")).flip();
+                return TinyFileDialogs.tinyfd_openFileDialog("Import image",null,filters,"PNG / JPEG",false);
+            }
+        }).whenComplete((path,pickerError)->minecraft.execute(()->{
+            if(pickerError!=null){importing=false;status="File picker failed: "+pickerError.getMessage();return;}
+            if(path==null){importing=false;status="Import cancelled.";return;}
+            status="Loading image...";
+            CompletableFuture.supplyAsync(()->{
+                try{return ImageImport.load(Path.of(path));}catch(Exception ex){throw new java.util.concurrent.CompletionException(ex);}
+            }).whenComplete((image,error)->minecraft.execute(()->{
+                importing=false;
+                if(error!=null){status="Import failed: "+error.getCause().getMessage();return;}
+                document.begin();original=image;applyImage();document.commit();syncPixels();
+            }));
+        }));
     }
 
  private void applyImage(){BufferedImage fitted=ImageImport.resize(original,crop);byte[] converted=ImageImport.quantize(fitted,palette);System.arraycopy(converted,0,pixels,0,pixels.length);document.original=fitted.getRGB(0,0,128,128,null,0,128);status="Imported into active layer.";}

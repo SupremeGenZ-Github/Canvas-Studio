@@ -39,7 +39,7 @@ public record DrawItem(InteractionHand hand,String item,byte[] pixels,java.util.
      return CanvasExchange.deliver(tier,reward[0],new CanvasExchange.RewardTarget(){
       public void replaceHeld(ItemStack item){player.setItemInHand(p.hand,item);}
       public boolean add(ItemStack item){return player.getInventory().add(item);}
-      public boolean drop(ItemStack item){return player.drop(item,false,net.minecraft.util.Prediction.SERVER_ONLY)!=null;}
+      public boolean drop(ItemStack item){return player.drop(item,false)!=null;}
      });
     },uses->held.set(CanvasUsage.TYPE,uses));
   if(result!=CanvasExchange.Result.DELIVERED){

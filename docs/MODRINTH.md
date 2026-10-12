@@ -1,16 +1,16 @@
 # Canvas Studio+ 3.1.0 — Creative Studio
 
-**made by SuprixZ** — Minecraft 26.3, NeoForge 26.3.x, Java 25.
+**made by SuprixZ** — Minecraft 26.2, NeoForge 26.2.x, Java 25.
 
 Adds redo, shape/eyedropper/mirror/scatter tools, grid/snap/zoom, palette presets, shortcuts, 16 editable layers, local `.csp` projects and sharing, gallery/recovery, palette and wall previews, searchable offline catalogue with favorites/history and supported modded textures, per-item Infinity usage limits (unlimited by default), and editing held saved painting maps.
 
 Shift-right-click one held locked painting map in the air to edit it. Saving creates a new map in the same hand; other copies retain the original. Use projects to preserve layers.
 
-Molten remains one successful exchange per canvas and independent of Infinity limits. Existing item IDs, recipes, textures and paintings are preserved. A dedicated Canvas Studio+ creative tab contains all six items. Network protocol 4 requires matching client/server versions.
+Molten remains one successful exchange per canvas and independent of Infinity limits. Existing item IDs, recipes, textures and paintings are preserved. A dedicated Canvas Studio+ creative tab contains all seven items. Network protocol 4 requires matching client/server versions.
 
 Automated builds, regression checks and published-version API audit gate this release. No interactive Minecraft or multiplayer tests were performed. Read attached validation and README for limits, configuration and controls. Full GPU model capture and 3D room rendering are not included.
 
-Remove older Canvas Studio JARs before installing. The 26.2 edition is a separate download.
+Remove older Canvas Studio JARs before installing. The 26.3 edition is a separate download.
 
 Adds frameless wall paintings: right-click a vertical wall with a locked painting map, then break it to recover the painting under normal survival/entity-drop rules. Placed paintings persist as a custom hanging entity.
 
@@ -18,4 +18,4 @@ Adds reusable Kurlo Pillow: eight White Wool surrounding one Enchanted Golden Ap
 
 Both features are server-controlled. Automated tests cover their policy and game data; live placement, save/reload and sleep were not tested interactively.
 
-Upload the Minecraft 26.3 artifact with NeoForge; the 26.2 edition is a separate artifact.
+Upload this JAR for Minecraft 26.2 with NeoForge. The 26.3 JAR is a separate download.

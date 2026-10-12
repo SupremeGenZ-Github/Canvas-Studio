@@ -1,10 +1,10 @@
-# Canvas Studio+ 3.1.0 validation — Minecraft 26.3
+# Canvas Studio+ 3.1.0 validation — Minecraft 26.2
 
-Baseline: main commit `b508f28a3bd8d4bf685db92f5cad943681bc1bd7` (2.1.2); its original build and publishing checks passed before development. Credit: **made by SuprixZ**.
+Baseline: completed Studio 3.1.0 for Minecraft 26.3, commit `e0fefde73e0ed4e514e8889e0f338f0e04a526e2`. This separate port retains every creative feature, wall painting and Pillow, and adapts the native picker, item drop signature and recipes to Minecraft 26.2. Credit: **made by SuprixZ**.
 
 ## Release gates
 
-JDK 25 Gradle build/check on the selected development target and published compatibility endpoints; packaged artifact checks; class/member API audit of every published NeoForge 26.3 build; Maven version-range checks against every published loader pair. Publication is gated by successful checks. The release-attached copy records the final run, artifact hash and exact audited count.
+JDK 25 Gradle build/check on the selected development target and published compatibility endpoints; packaged artifact checks; class/member API audit of every published NeoForge 26.2 build; Maven version-range checks against every published loader pair. Publication is gated by successful checks. The release-attached copy records the final run, artifact hash and exact audited count.
 
 ## Automated scope
 
@@ -22,7 +22,7 @@ Before relying on a production world, verify: all controls at intended GUI scale
 
 ## Feature boundaries
 
-Model-based matching supports simple texture references, not full GPU model capture. Previews are 2D mock-ups. Maps reopen as one flattened layer; `.csp` files preserve layers. Project gallery is capped at 200 valid entries and asset indexing at 5,000 sources. Future NeoForge 26.3 builds are accepted by metadata but cannot be guaranteed free of API-breaking changes.
+Model-based matching supports simple texture references, not full GPU model capture. Previews are 2D mock-ups. Maps reopen as one flattened layer; `.csp` files preserve layers. Project gallery is capped at 200 valid entries and asset indexing at 5,000 sources. Future NeoForge 26.2 builds are accepted by metadata but cannot be guaranteed free of API-breaking changes.
 
 ## Frameless paintings and Kurlo Pillow
 
