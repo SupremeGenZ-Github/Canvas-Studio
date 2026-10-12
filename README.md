@@ -1,80 +1,80 @@
-# Canvas Studio+
-
-<p align="center"><img src="docs/canvas-studio-icon.png" alt="Canvas Studio icon" width="192"></p>
+# Canvas Studio+ 3.0.0
 
 **made by SuprixZ**
 
-Canvas Studio+ **2.1.2** lets you draw, import PNG/JPEG images, export PNG artwork, save custom paintings, and match drawings to Minecraft items and blocks offline.
+A local pixel-art studio and offline drawing-to-item finder for Minecraft Java **26.3**, **NeoForge 26.3.x** (including published prereleases), and **Java 25**. Install the same version on client and server. Replace older Canvas Studio JARs; Lite and Plus share the `canvasstudio` ID and cannot be installed together.
 
-## Download 2.1.2
+The separate Minecraft 26.2 edition uses a different JAR. Do not install a 26.3 JAR in 26.2. Metadata accepts future builds within the corresponding NeoForge family, but future API compatibility cannot be guaranteed.
 
-[Release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v2.1.2) · [JAR](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v2.1.2/canvas-studio-plus-26.3-2.1.2.jar) · [Source ZIP](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v2.1.2/Canvas-Studio-Plus-2.1.2-source.zip)
+## Draw and edit
 
-## Requirements and installation
+Right-click a canvas to open the editor. The Canvas Studio+ creative tab contains all six items. The existing 128 × 128 map palette and textures are preserved.
 
-Minecraft Java **26.3**, **Java 25**, and **NeoForge 26.3.x**, including alpha/beta builds accepted by the dependency range `[26.3-alpha,26.4-alpha)`. The development target is **26.3.0.51-beta**. Other Minecraft versions, Forge, Fabric, and NeoForge 26.4+ are unsupported. Future 26.3 builds are accepted by metadata; compatibility with future API changes is not guaranteed. See [VALIDATION.md](VALIDATION.md) for actual checks.
+- Left-drag paints; right-drag erases. On upper layers, erasing reveals lower layers.
+- Click the active-tool button to choose brush, eraser, fill, line, outlined/filled rectangle, outlined/filled ellipse, eyedropper, dotted, dashed or spray tools.
+- Hold **Shift** while drawing a line to constrain its direction; Shift with rectangles/ellipses produces squares/circles.
+- **B/E/I** select brush/eraser/eyedropper; **G** toggles grid; **Ctrl+Z/Y** undo/redo. Tool shortcuts are ignored while typing in text fields. Escape cancels an active stroke, or returns/closes the current screen.
+- Options include horizontal/vertical mirrors, grid, snapping, 1×/2×/4× zoom and Default/Grayscale/Retro 8 palettes. Middle-drag pans a zoomed canvas. The pixel grid becomes visible at sufficiently enlarged scales.
+- Undo groups a complete stroke or shape into one action. History retains up to 32 operations in memory; new edits clear redo.
+- Studio menu contains image import, fit/crop, PNG export, project saving, layers, preview, catalogue and active-layer clearing.
 
-Put the JAR in your instance's `mods` folder. Remove previous Canvas Studio JARs first. Install **one edition only**: Canvas Studio Lite, Canvas Studio, and Canvas Studio+ all use `canvasstudio`. Servers and clients require the same release; 2.1.2 uses network protocol 3 and cannot mix with 2.0.x.
+## Edit an existing saved painting
 
-Canvas Studio Lite 1.0.4 remains the painting-only edition on the `lite` branch. This update changes the full edition on `main`; older releases remain available in [GitHub Releases](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases).
+Remove the painting from its frame, hold **one locked painting map**, then **Shift + right-click in the air**. The server sends its pixels to the editor. This also supports older Canvas Studio paintings and other held locked maps.
 
-## Crafting
+Saving replaces the held map with a **new locked map** containing the edited artwork. Other copies of the original retain their artwork. Put the edited map back into its frame. Map editing has no Get Item access and grants no extra canvas or reward.
 
-| Result | Ingredients | Recipe type | Get Item |
-| --- | --- | --- | --- |
-| Quill | Feather + Ink Sac | Shapeless | — |
-| Blank Canvas | Leather + Paper + Quill | Shapeless | Locked |
-| Molten Quill | Quill in center; four Iron Ingots in corners, four Gold Ingots on edge centers | Shaped, all nine slots | — |
-| Infinity Quill | Molten Quill in center; four Echo Shards in corners, Lapis Blocks on left/right, Diamond Blocks on top/bottom | Shaped, all nine slots | — |
-| Molten Canvas | Blank Canvas + Molten Quill + Compass | Shapeless | One successful exchange |
-| Infinity Canvas | Molten Canvas + Infinity Quill + Recovery Compass | Shapeless | Unlimited successful exchanges |
+A map stores finished pixels, so it reopens as one layer. Keep a `.csp` project when you need to retain editable layers. Editing sessions expire after 20 minutes; if a session expires, save a project and reopen the held painting before saving the edited map.
 
-The former Leather + Paper + Feather shortcut has been removed, including its advancement. The normal Quill recipe remains. Molten and Infinity canvases are upgrades of the previous canvas tier. Quill layouts fill all nine slots:
+## Projects, layers and sharing
 
-| Molten Quill | | |
-| --- | --- | --- |
-| Iron Ingot | Gold Ingot | Iron Ingot |
-| Gold Ingot | Quill | Gold Ingot |
-| Iron Ingot | Gold Ingot | Iron Ingot |
+**Save editable project** stores artwork under `canvasstudio/projects`. **Save Painting** is separate: it creates a locked Minecraft map and consumes/replaces the held canvas as before, including an Infinity Canvas.
 
-| Infinity Quill | | |
-| --- | --- | --- |
-| Echo Shard | Diamond Block | Echo Shard |
-| Lapis Block | Molten Quill | Lapis Block |
-| Echo Shard | Diamond Block | Echo Shard |
+Projects retain up to 16 named layers, visibility, ordering, selected layer, map pixels, brush/tool/color/mirror/grid/snap settings and the fitted original image when available. Layers can be added, duplicated, moved, renamed, hidden, deleted and merged down. The final image composites visible layers over map-palette white.
 
-## Painting
+The Projects gallery provides thumbnails, paging, open, save current, rename, duplicate, delete and sharing. Select an entry, enter a new title in the field, then Rename. To import a shared project, paste its full `.csp` file path into the field and click Import. Export writes a shareable copy under `canvasstudio/exports`; PNG export uses the same directory. Gallery browsing displays at most 200 valid projects.
 
-Use any canvas in either hand to open the editor. Left-click/drag to draw; right-click/drag to erase. Colors, brushes, fill, undo, clear, PNG/JPEG import, fit/crop, and PNG export remain available on all three tiers. The editor shows your canvas type and Get Item availability.
+The reserved recovery project is saved every 30 seconds while the editor is active and on closing. It is separate from named projects and can be reopened from the gallery. It is one local recovery slot shared across worlds. Project history is not persisted; layer data is. See [project format](docs/PROJECT_FORMAT.md).
 
-**Save Painting** exchanges the held canvas for a named, locked Minecraft map, as in earlier releases. Place it in a normal/glowing item frame. This applies to all canvas tiers: Infinity's unlimited reuse applies to **Get Item**, not to saving maps. PNG exports appear under `canvasstudio/exports` in your game folder.
+## Finder and previews
 
-Existing paintings retain Minecraft's saved map data. Existing Blank Canvas items retain the ID `canvasstudio:canvas` and remain usable for painting; their Get Item mode is now locked. No world conversion is needed. Existing Molder Canvas/Quill items now display as **Molten Canvas/Quill**. Their internal `molder_canvas`/`molder_quill` IDs are intentionally preserved for saved-world compatibility; 2.1.2 adds new Molten textures and an Infinity Quill texture.
+Draw an item/block and choose **Draw to Get Item**. Visual matching is offline and approximate. Choose 3, 6, 12 or 24 results, search names/IDs, filter Items/Blocks/Vanilla/Modded, and mark favorites. Recent results and favorites are stored locally. Catalogue browsing works without a drawing but does not grant rewards.
 
-## Draw to item
+Supported modded PNG assets and simple model texture references can be indexed; unsupported special/composite models are skipped. Animated textures use their first square frame. Cube references approximate block appearance; exact custom model transforms and GPU-rendered models are not supported. At most 5,000 source references are indexed. Resource reloads trigger rebuilding of an open catalogue. Servers must explicitly enable modded rewards.
 
-With a Molten or Infinity Canvas, select **Mode: Get Item**, draw an item/block, then select **Find Item / Block**. Compare up to three suggestions and choose a result. The reward is **one newly created plain item/block**, even if you do not own it. Enchantments/custom data are not copied.
+Preview compares the stored fitted source image with final map colors. If no original source exists, both panels show the map artwork. The 2D wall planner has six slots: select the current drawing or a saved project, left-click to place and right-click to clear. Frame style and display size can be changed. This is a mock-up; it does not place frames or simulate actual world lighting.
 
-A successful Molten exchange replaces the held canvas with the reward. Infinity keeps the canvas and inserts the reward into your inventory; if full, the reward drops beside you. Each confirmed Infinity request grants one item, and you may choose again or return to drawing.
+## Canvas rewards and administration
 
-Returning to drawing, cancelling, failed matching, or rejected requests do not consume a canvas. Blank Canvas shows Get Item as locked and explains that Molten or Infinity is required. Exchange buttons wait for server confirmation. Each server-issued token works once and is bound to the held stack, hand and tier; it expires after 6,000 game ticks. Reopen the canvas to renew an expired session.
+| Canvas | Painting | Get Item |
+|---|---|---|
+| Blank | Yes | Locked |
+| Molten | Yes | One successful reward replaces the canvas |
+| Infinity | Yes | Reusable; unlimited by default |
 
-The existing finder catalogue and visual rules are unchanged: supported vanilla inventory textures, shape/outline, color and orientation. Matching is approximate, local, and requires no cloud service/API key. Scores describe visual similarity, not certainty. Modded items and unsupported special models are outside the catalogue. As in 2.0.1, server ID validation accepts registered non-air vanilla items; the server does not recompute client texture rankings.
+Rewards are newly created plain items, one per successful exchange, regardless of inventory ownership. Infinity inserts the reward into inventory or drops it when full. Failed delivery, cancellation, invalid requests and duplicate packets do not consume uses. Molten does not use Infinity quotas.
 
-## Build and verify
+Server configuration: `config/canvasstudio-synced.toml` (a world's `syncedconfig` file of the same name can override it). NeoForge loads and synchronizes this configuration at server startup. Restart the world/server after editing configuration files.
 
-Use JDK 25:
-
-```sh
-./gradlew build
-# Optional alternate development dependency:
-./gradlew build -PneoForgeVersion=26.3.0.57-beta
+```toml
+maxInfinityCanvasUses = 0
+allowModdedRewards = false
+blockedRewardItems = []
 ```
 
-JARs appear in `build/libs`. `check` runs image, palette, packet, editor-input, recipe/advancement codec, matching, and server authorization checks. See [VALIDATION.md](VALIDATION.md) for scope and in-game checks still needed, and [CHANGELOG.md](CHANGELOG.md) for changes.
+`0` means unlimited. A positive maximum limits successful rewards per individual Infinity Canvas. Counts remain on the item through transfers and saves, and accumulate even while unlimited. Older canvases begin at zero. Lowering a limit below an existing count blocks further rewards; returning to zero restores unlimited eligibility. Normal painting, projects and crafting are unaffected. Administrative/creative duplication and external item-data editing are outside normal-play quota guarantees.
 
-## Help and license
+Blocked IDs reject individual rewards, including Molten requests for those IDs. There is no global Molten disable switch, Infinity cooldown applied to Molten, or player-wide quota. Configure item restrictions sensibly if Molten rewards must remain available. Protocol **4** requires matching client/server releases. Clients never supply trusted usage counts, item components or project paths to the server.
 
-[Issue tracker](https://github.com/SupremeGenZ-Github/Canvas-Studio/issues): include release, Minecraft/NeoForge versions, reproduction steps, and `logs/latest.log` with private information removed.
+## Recipes and compatibility
 
-[MIT license](LICENSE).
+All registry IDs, existing recipes and item textures are retained. Legacy `molder_canvas` / `molder_quill` IDs still display as Molten.
+
+- Quill: Feather + Ink Sac, shapeless.
+- Blank Canvas: Leather + Paper + Quill, shapeless.
+- Molten Quill: Quill center, Iron Ingots in four corners, Gold Ingots on four edges.
+- Molten Canvas: Blank Canvas + Molten Quill + Compass, shapeless.
+- Infinity Quill: Molten Quill center; Echo Shards in corners, Lapis Blocks left/right, Diamond Blocks top/bottom.
+- Infinity Canvas: Molten Canvas + Infinity Quill + Recovery Compass, shapeless.
+
+Build with JDK 25: `./gradlew build`. Alternate supported dependency: `./gradlew build -PneoForgeVersion=<version>`. See [validation](VALIDATION.md) for executed checks and limitations. No telemetry, cloud account or network service is required for creative tools or matching.

@@ -139,3 +139,11 @@ tasks.register('verifyStudio', JavaExec) {
  systemProperty 'java.awt.headless', 'true'
 }
 tasks.named('check') { dependsOn tasks.named('verifyStudio') }
+
+tasks.register('verifyVersionRanges', JavaExec) {
+ dependsOn tasks.named('verificationClasses')
+ classpath = sourceSets.verification.runtimeClasspath
+ mainClass = 'VersionRangeChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+}
+tasks.named('check') { dependsOn tasks.named('verifyVersionRanges') }

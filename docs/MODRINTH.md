@@ -1,13 +1,15 @@
-# Canvas Studio+ 2.1.2 — made by SuprixZ
+# Canvas Studio+ 3.0.0 — Creative Studio
 
-Minecraft Java 26.3; NeoForge 26.3.x including betas; Java 25. Target: 26.3.0.51-beta. Future 26.3 API changes are not guaranteed compatible. Install one edition only, using the same release on client and server.
+**made by SuprixZ** — Minecraft 26.3, NeoForge 26.3.x, Java 25.
 
-Draw, import/export images, and save paintings with any canvas. Blank Canvas locks Get Item; Molten grants one newly created selected item/block and is consumed only on success; Infinity grants one per successful request and stays reusable. Matching and server validation are unchanged.
+Adds redo, shape/eyedropper/mirror/scatter tools, grid/snap/zoom, palette presets, shortcuts, 16 editable layers, local `.csp` projects and sharing, gallery/recovery, palette and wall previews, searchable offline catalogue with favorites/history and supported modded textures, per-item Infinity usage limits (unlimited by default), and editing held saved painting maps.
 
-Quill: Feather + Ink Sac. Blank Canvas: Leather + Paper + Quill. Both are shapeless.
+Shift-right-click one held locked painting map in the air to edit it. Saving creates a new map in the same hand; other copies retain the original. Use projects to preserve layers.
 
-Molten Quill: centered Quill, Iron Ingots in all four corners, Gold Ingots at all four edge centers. Infinity Quill: centered Molten Quill, Echo Shards in corners, Lapis Blocks left/right, Diamond Blocks top/bottom. Both require the full 3×3 grid.
+Molten remains one successful exchange per canvas and independent of Infinity limits. Existing item IDs, recipes, textures and paintings are preserved. A dedicated Canvas Studio+ creative tab contains all six items. Network protocol 4 requires matching client/server versions.
 
-Molten Canvas: Blank Canvas + Molten Quill + Compass. Infinity Canvas: Molten Canvas + Infinity Quill + Recovery Compass. Both are shapeless.
+Automated builds, regression checks and published-version API audit gate this release. No interactive Minecraft or multiplayer tests were performed. Read attached validation and README for limits, configuration and controls. Full GPU model capture and 3D room rendering are not included.
 
-Molder is renamed Molten. Existing Molder items remain valid through preserved internal IDs. Molten textures use molten gold/amber; Infinity Quill uses lapis/echo teal/diamond cyan. Infinity Canvas retains its existing cyan frame. Saving any canvas converts it to a locked map. See README and VALIDATION for details and actual test scope.
+Remove older Canvas Studio JARs before installing. The 26.2 edition is a separate download.
+
+Upload the Minecraft 26.3 JAR with the NeoForge loader label. Do not label this artifact for Minecraft 26.2. Use README for the full description.

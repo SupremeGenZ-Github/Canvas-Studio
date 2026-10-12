@@ -1,3 +1,7 @@
+# 3.0.0 — Creative Studio
+
+See [release notes](docs/releases/v3.0.0.md) and [README](README.md) for the editor, library, finder, server limits and saved-painting editing upgrade.
+
 # Changelog
 
 ## Canvas Studio+ 2.1.2

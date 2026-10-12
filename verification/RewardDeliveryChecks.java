@@ -35,6 +35,7 @@ public class RewardDeliveryChecks {
    inventory.rejectDrop=true;
    check(!CanvasExchange.deliver(CanvasTier.INFINITY,CanvasExchange.createReward("minecraft:diamond"),inventory)&&inventory.hands[hand]==canvas&&inventory.drops.size()==1,"Rejected drop retains canvas and reports failure");
   }
+  var tracked=new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.PAPER);check(studio.canvas.CanvasUsage.count(tracked)==0,"Legacy stack starts at zero");tracked.set(studio.canvas.CanvasUsage.TYPE,7L);var moved=tracked.copy();check(studio.canvas.CanvasUsage.count(moved)==7,"Usage survives ItemStack copy/transfer");studio.canvas.CanvasUsage.delivered(moved);check(studio.canvas.CanvasUsage.count(moved)==8&&studio.canvas.CanvasUsage.count(tracked)==7,"Counters are per stack");
   System.out.println("PASS production reward delivery with headless inventory: both hands, fresh plain items without ownership, Molten replacement, Infinity reuse, full inventory drop, rejected drop retains canvas.");
  }
 }

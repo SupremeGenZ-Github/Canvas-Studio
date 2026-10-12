@@ -107,13 +107,20 @@ public final class CanvasScreen extends Screen {
   }return super.mouseDragged(e,dx,dy);
  }
  @Override public boolean mouseReleased(MouseButtonEvent e){boolean handled=dragging;finishStroke();return handled||super.mouseReleased(e);}
- @Override public boolean keyPressed(KeyEvent e){
-  if(getFocused() instanceof EditBox)return super.keyPressed(e);
+ public boolean applyDrawingShortcut(KeyEvent e,boolean typing){
+  if(typing)return false;
   if(e.isEscape()&&dragging){document.cancel();dragging=false;syncPixels();return true;}
-  boolean ctrl=e.hasControlDown();
-  if(ctrl&&e.shortcutKey()==InputConstants.KEY_Z){finishStroke();document.undo();syncPixels();return true;}if(ctrl&&e.shortcutKey()==InputConstants.KEY_Y){finishStroke();document.redo();syncPixels();return true;}
-  if(e.shortcutKey()==InputConstants.KEY_B)selectTool(PixelTools.Tool.BRUSH);else if(e.shortcutKey()==InputConstants.KEY_E)selectTool(PixelTools.Tool.ERASER);else if(e.shortcutKey()==InputConstants.KEY_I)selectTool(PixelTools.Tool.EYEDROPPER);else if(e.shortcutKey()==InputConstants.KEY_G)document.grid=!document.grid;else return super.keyPressed(e);rebuild();return true;
+  if(e.hasControlDown()&&e.shortcutKey()==InputConstants.KEY_Z){finishStroke();document.undo();syncPixels();return true;}
+  if(e.hasControlDown()&&e.shortcutKey()==InputConstants.KEY_Y){finishStroke();document.redo();syncPixels();return true;}
+  if(e.hasControlDown()||e.hasAltDown())return false;
+  if(e.shortcutKey()==InputConstants.KEY_B)selectTool(PixelTools.Tool.BRUSH);
+  else if(e.shortcutKey()==InputConstants.KEY_E)selectTool(PixelTools.Tool.ERASER);
+  else if(e.shortcutKey()==InputConstants.KEY_I)selectTool(PixelTools.Tool.EYEDROPPER);
+  else if(e.shortcutKey()==InputConstants.KEY_G)document.grid=!document.grid;
+  else return false;
+  return true;
  }
+ @Override public boolean keyPressed(KeyEvent e){if(applyDrawingShortcut(e,getFocused() instanceof EditBox)){rebuild();return true;}return super.keyPressed(e);}
  void changeZoom(){zoom=zoom==1?2:zoom==2?4:1;panX=Math.min(panX,128-128/zoom);panY=Math.min(panY,128-128/zoom);}
  void cyclePalette(){preset=(preset+1)%3;refreshPalette();}
  void clearLayer(){document.begin();Arrays.fill(pixels,document.active==0?white:(byte)0);document.commit();status="Layer cleared; Undo restores it.";}
