@@ -16,5 +16,9 @@ public final class ServerRules {
   SPEC=b.build();
  }
  public static boolean permits(String id){return !BLOCKED.get().contains(id)&&(MODDED.get()||id.startsWith("minecraft:"));}
+ public static net.neoforged.fml.config.ModConfig.Type configType(){
+  try{return net.neoforged.fml.config.ModConfig.Type.valueOf("SYNCED");}
+  catch(IllegalArgumentException legacy){return net.neoforged.fml.config.ModConfig.Type.valueOf("SERVER");}
+ }
  private ServerRules(){}
 }
