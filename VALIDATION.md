@@ -1,30 +1,31 @@
-# Canvas Studio+ 2.1.3 — NeoForge 26.2.x validation
+# Canvas Studio+ 3.1.0 validation — Minecraft 26.2
 
-**made by SuprixZ**. Minecraft 26.2 / Java 25. Baseline: the exact-version 26.2 port, commit `9aa56ecc4b20edd3a80b4fee174dddd4b8b0ebbc`.
+Baseline: completed Studio 3.1.0 for Minecraft 26.3, commit `e0fefde73e0ed4e514e8889e0f338f0e04a526e2`. This separate port retains every creative feature, wall painting and Pillow, and adapts the native picker, item drop signature and recipes to Minecraft 26.2. Credit: **made by SuprixZ**.
 
 ## Release gates
 
-1. Clean build and all nine Java checks against the earliest published beta, `26.2.0.0-beta`, and current latest stable, `26.2.0.89`, in separate CI jobs.
-2. Clean build and all checks against the development target `26.2.0.88`, plus packaged artifact checks.
-3. Download official Maven metadata and audit the compiled mod's referenced NeoForge/FML/bus classes and method/field signatures against every published 26.2 build.
-4. Validate Maven dependency-range semantics against synthetic boundary cases and every published NeoForge/loader pair found by the audit.
+JDK 25 Gradle build/check on the selected development target and published compatibility endpoints; packaged artifact checks; class/member API audit of every published NeoForge 26.2 build; Maven version-range checks against every published loader pair. Publication is gated by successful checks. The release-attached copy records the final run, artifact hash and exact audited count.
 
-Publication is blocked by any failed gate. The published copy of this report includes the completed run URL, JAR hash and exact audited version count. Machine-readable audit, range-check output and build logs are attached and included in the source ZIP.
+## Automated scope
 
-## Test scope
+Existing checks cover real Minecraft recipe/advancement codecs, palette conversion and image rejection, packet roundtrips, vanilla asset matching, server sessions and replay rejection, inventory/drop reward delivery adapters and texture integrity.
 
-Nine Java suites cover recipe/advancement codecs and exact recipes, painting input (drawing/colors/erase/fill at three GUI scales), image decode/resize/quantization, packet codecs, real 26.2 vanilla item matching, server permissions, Molten consumption and repeated Infinity exchanges through test inventory adapters, texture dimensions/alpha/opaque paper, and version-range boundaries. Python artifact checks verify the packaged resources, metadata, credit and preserved source hashes.
+Added checks cover persistent counter codec and boundaries, finite/unlimited policy, independent counters, failed delivery, Molten independence and the production exchange transaction with replayed packets. Artwork tests cover stroke undo/redo, rectangles/ellipses, mirroring, layer visibility/duplication/order/merge, project source-image/layer/settings roundtrips, version-1 migration, invalid versions/truncation/size rejection, gallery save/load/rename/duplicate/delete, sharing and symlink-target preservation. Headless editor tests cover actual mouse constants at three GUI scales, shortcut focus guards, undo/redo shortcuts and zoom/pan pointer mapping. Catalogue tests resolve a synthetic modded model parent and texture alias and skip an unsupported special model. Painting-transfer packets are roundtrip-tested.
 
-Binary checks establish referenced API availability, not full behavioral equivalence. The NeoForm versions used by each audited build are recorded. Builds/checks against the earliest beta, 26.2.0.88 and latest stable verify compilation and headless behavior on those endpoints; they are not live Minecraft launches. Native TinyFD picker operation remains source-reviewed only.
+The API audit checks referenced NeoForge/FML/bus classes and binary members. It does not prove complete behavioral compatibility. Reference availability and headless checks are distinct from launching every loader version.
 
-## Compatibility boundaries
+## Not performed
 
-NeoForge range: `[26.2-alpha,26.3-alpha)`. FML: `[11,)`. Minecraft: `[26.2]`. Current and future NeoForge 26.2 builds, including betas, are accepted by metadata. Future API-breaking changes cannot be guaranteed compatible. Other Minecraft families remain unsupported.
+No interactive Minecraft client, multiplayer session, live world-save migration, native image-picker operation, rendered UI inspection or actual server restart was tested in this environment. Persistent usage uses Minecraft's registered saved and network-synchronized data component; its codec and item operations are tested, while actual world save/reload remains a manual check. Saved-map editing packet transfer is tested; the live hold/map/session workflow still requires in-game verification.
 
-Production gameplay code, recipe ingredients and textures are unchanged from the working 26.2 port. Existing item IDs and saved-map formats are preserved. Downgrading a 26.3 world is not tested.
+Before relying on a production world, verify: all controls at intended GUI scales; drawing and typing; library/recovery and sharing; resource-pack reload while matching; modded rewards with server configuration; both hands; inventory-full drops; limits across item transfer/relog/world restart; editing an older held locked painting and confirming other map copies remain unchanged; normal/glowing frame and wall previews. Back up worlds before upgrading Minecraft itself.
 
-## In-game tests
+## Feature boundaries
 
-**None performed.** No interactive client/world/server, native picker, multiplayer or live save migration was tested. Recipe tests use vanilla stand-ins for mod items. Reward delivery tests use production logic with a simulated inventory/drop adapter.
+Model-based matching supports simple texture references, not full GPU model capture. Previews are 2D mock-ups. Maps reopen as one flattened layer; `.csp` files preserve layers. Project gallery is capped at 200 valid entries and asset indexing at 5,000 sources. Future NeoForge 26.2 builds are accepted by metadata but cannot be guaranteed free of API-breaking changes.
 
-In-game checklist: craft all six items; open both hands; draw/select colors/import/export/save; verify Blank lock, one Molten reward, Infinity reuse and inventory-full drops; cancel/invalid/duplicate requests; check existing paintings in a 26.2 save and the intended modpack.
+## Frameless paintings and Kurlo Pillow
+
+Additional automated checks cover placement eligibility, build/space/locked-map restrictions, the absence of an item-frame drop, completed versus interrupted/early sleep, and the installed game's actual enchanted golden apple status-effect catalogue. Recipe checks include all nine Pillow crafting slots. Wall entities reuse Minecraft hanging-map synchronization and serialization; native map rendering is registered for the custom type.
+
+No live placement, support-removal drop, world save/reload, sleep cycle or rendered wall entity was tested here. These remain explicit in-game checks alongside the existing manual checklist.

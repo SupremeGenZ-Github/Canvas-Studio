@@ -40,6 +40,16 @@ public class VanillaItemMatchChecks {
     public Map<Identifier,List<Resource>> listResourceStacks(String path,java.util.function.Predicate<Identifier> selector){return Map.of();}
     public Stream<PackResources> listPacks(){return Stream.empty();}
    };
+   var modelResolver=ItemMatchCatalog.class.getDeclaredMethod("modelTexture",ResourceManager.class,Identifier.class);modelResolver.setAccessible(true);
+   var diamond=assets.get(Identifier.parse("minecraft:textures/item/diamond.png"));
+   assets.put(Identifier.parse("fixture:textures/item/actual.png"),diamond);
+   java.util.function.BiConsumer<String,String> putJson=(id,json)->assets.put(Identifier.parse(id),new Resource(null,()->new java.io.ByteArrayInputStream(json.getBytes(java.nio.charset.StandardCharsets.UTF_8))));
+   putJson.accept("fixture:items/custom.json","{\"model\":{\"type\":\"minecraft:model\",\"model\":\"fixture:item/custom\"}}");
+   putJson.accept("fixture:models/item/custom.json","{\"parent\":\"fixture:item/parent\",\"textures\":{\"base\":\"fixture:item/actual\"}}");
+   putJson.accept("fixture:models/item/parent.json","{\"textures\":{\"layer0\":\"#base\"}}");
+   check(modelResolver.invoke(null,resources,Identifier.parse("fixture:custom"))==diamond,"Modded model parent and texture alias resolved");
+   putJson.accept("fixture:items/special.json","{\"model\":{\"type\":\"minecraft:special\"}}");
+   check(modelResolver.invoke(null,resources,Identifier.parse("fixture:special"))==null,"Unsupported special model skipped");
    var refs=ItemMatchCatalog.load(resources).get(90,TimeUnit.SECONDS);
    long itemCount=refs.stream().map(ItemMatcher.Reference::id).distinct().count();check(itemCount>300,"Substantial actual vanilla catalogue: "+itemCount);
    System.out.println("Vanilla texture catalogue: "+itemCount+" distinct inventory items, "+refs.size()+" references");

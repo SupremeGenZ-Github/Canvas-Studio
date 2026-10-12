@@ -15,7 +15,8 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /** One fixed-size map image, no paths or original file data leave the client. */
-public record SavePainting(InteractionHand hand, String title, byte[] pixels) implements CustomPacketPayload {
+public record SavePainting(InteractionHand hand, String title, byte[] pixels, java.util.UUID editToken) implements CustomPacketPayload {
+    public SavePainting(InteractionHand hand,String title,byte[] pixels){this(hand,title,pixels,CanvasReply.NONE);}
     public static final int SIZE = 128;
     public static final int PIXELS = SIZE * SIZE;
     public static final Type<SavePainting> TYPE = new Type<>(Identifier.fromNamespaceAndPath(CanvasStudio.ID, "save"));
@@ -25,24 +26,25 @@ public record SavePainting(InteractionHand hand, String title, byte[] pixels) im
             String title = b.readUtf(64);
             byte[] pixels = new byte[PIXELS];
             b.readBytes(pixels);
-            return new SavePainting(hand, title, pixels);
+            return new SavePainting(hand, title, pixels,b.readUUID());
         }
         public void encode(RegistryFriendlyByteBuf b, SavePainting p) {
             if (p.pixels == null || p.pixels.length != PIXELS) throw new IllegalArgumentException("Invalid canvas size");
             b.writeBoolean(p.hand == InteractionHand.OFF_HAND);
-            b.writeUtf(p.title, 64); b.writeBytes(p.pixels);
+            b.writeUtf(p.title, 64); b.writeBytes(p.pixels);b.writeUUID(p.editToken);
         }
     };
     @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     public static void handle(SavePainting p, IPayloadContext context) {
         if (!(context.player() instanceof ServerPlayer player)) return;
         ItemStack held = player.getItemInHand(p.hand);
-        if (!CanvasStudio.isCanvas(held) || held.getCount() != 1 || p.pixels == null || p.pixels.length != PIXELS) return;
+        if (held.getCount() != 1 || p.pixels == null || p.pixels.length != PIXELS){context.reply(new CanvasReply(p.editToken,CanvasReply.NONE,3,"Hold one canvas or saved painting."));return;}
         // Color ids 0..3 are transparent; reject invalid palette entries before allocating map data.
         for (byte color : p.pixels) if (Byte.toUnsignedInt(color) > 247) return;
+        if(!CanvasStudio.isCanvas(held)&&!OpenPainting.claim(player,p.hand,held,p.editToken)){context.reply(new CanvasReply(p.editToken,CanvasReply.NONE,3,"Painting session expired or held item changed. Reopen the painting; your project is in recovery."));return;}
         ItemStack painting = MapItem.create(player.level(), 0, 0, (byte)0, false, false);
         MapItemSavedData data = MapItem.getSavedData(painting, player.level());
-        if (data == null) return;
+        if (data == null){context.reply(new CanvasReply(p.editToken,CanvasReply.NONE,3,"Could not create painting. Artwork retained."));return;}
         System.arraycopy(p.pixels, 0, data.colors, 0, PIXELS);
         data = data.locked();
         player.level().setMapData(painting.get(DataComponents.MAP_ID), data);
@@ -53,6 +55,7 @@ public record SavePainting(InteractionHand hand, String title, byte[] pixels) im
         player.setItemInHand(p.hand, painting);
         OpenCanvas.SESSIONS.remove(player);
         player.inventoryMenu.broadcastChanges();
+        context.reply(new CanvasReply(p.editToken,CanvasReply.NONE,4,"Painting saved."));
         player.sendSystemMessage(Component.literal("Painting saved! Place it in an item frame."), false);
     }
 }

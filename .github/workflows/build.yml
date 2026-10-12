@@ -1,7 +1,7 @@
 name: Build
 on:
   push:
-    branches: [main, lite, minecraft-26.2]
+    branches: [main, lite, minecraft-26.2, studio-3.0, studio-3.1, studio-3.1-mc26.2]
   pull_request:
   workflow_dispatch:
 permissions:

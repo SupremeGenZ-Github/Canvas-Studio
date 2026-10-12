@@ -23,9 +23,10 @@ public class CanvasChecks {
     check(open.hand()==hand&&open.request().equals(request)&&b.readableBytes()==0,"Session request roundtrip");
    }
    for(int code=0;code<4;code++){
-    var reply=new CanvasReply(request,token,code,"Server response");CanvasReply.CODEC.encode(b,reply);
+    var reply=new CanvasReply(request,token,code,"Server response",17,20,true);CanvasReply.CODEC.encode(b,reply);
     check(reply.equals(CanvasReply.CODEC.decode(b))&&b.readableBytes()==0,"Session reply roundtrip");
    }
+   var painting=new studio.canvas.PaintingData(InteractionHand.MAIN_HAND,request,token,"Editable",pixels);studio.canvas.PaintingData.CODEC.encode(b,painting);var paintingCopy=studio.canvas.PaintingData.CODEC.decode(b);check(paintingCopy.token().equals(token)&&Arrays.equals(paintingCopy.pixels(),pixels)&&b.readableBytes()==0,"Saved painting transfer roundtrip");
    var p=new SavePainting(InteractionHand.OFF_HAND,"My Painting",pixels);
    SavePainting.CODEC.encode(b,p);var decoded=SavePainting.CODEC.decode(b);
    check(decoded.hand()==p.hand()&&decoded.title().equals(p.title())&&Arrays.equals(decoded.pixels(),pixels),"Packet roundtrip");

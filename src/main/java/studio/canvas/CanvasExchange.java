@@ -4,6 +4,18 @@ import java.util.UUID;
 /** Actual authorization boundary used by the server handler and headless regression tests. */
 public final class CanvasExchange {
  private CanvasExchange(){}
+ public enum Result { DELIVERED, REJECTED, LIMIT_REACHED, DELIVERY_FAILED }
+ /** Called on the server thread: claim, deliver and record the successful use in one handler turn. */
+ public static <T> Result exchange(ExchangeSession<T> session,T held,boolean off,CanvasTier tier,int count,
+   UUID token,byte[] pixels,boolean validItem,long now,long uses,int maximum,java.util.function.BooleanSupplier delivery,java.util.function.LongConsumer persist){
+  if(tier==null||!tier.canExchange())return Result.REJECTED;
+  if(!CanvasUsage.allowed(tier,uses,maximum))return Result.LIMIT_REACHED;
+  if(!authorize(session,held,off,tier,count,token,pixels,validItem,now))return Result.REJECTED;
+  if(!delivery.getAsBoolean())return Result.DELIVERY_FAILED;
+  if(tier==CanvasTier.INFINITY)persist.accept(CanvasUsage.afterDelivery(uses,true));
+  return Result.DELIVERED;
+ }
+
  public interface RewardTarget {
   void replaceHeld(net.minecraft.world.item.ItemStack reward);
   boolean add(net.minecraft.world.item.ItemStack reward);

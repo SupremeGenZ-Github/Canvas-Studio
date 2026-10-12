@@ -46,6 +46,20 @@ public class CanvasInputChecks {
     for(byte color:pixels)check(color==chosen,"Fill paints the connected blank canvas");
     screen.mouseClicked(event(left+10*scale,top+10*scale,InputConstants.MOUSE_BUTTON_RIGHT),false);
     for(byte color:pixels)check(color==white,"Right-click fill erases");
+    field("fillTool").setBoolean(screen,false);
+    var doc=(studio.canvas.client.art.Artwork)field("document").get(screen);
+    var eraser=new net.minecraft.client.input.KeyEvent(InputConstants.KEY_E,InputConstants.KEY_E,0);
+    check(!screen.applyDrawingShortcut(eraser,true),"Typing blocks tool shortcuts");check(doc.tool.equals("BRUSH"),"Typing retains current tool");
+    check(screen.applyDrawingShortcut(eraser,false)&&doc.tool.equals("ERASER"),"E selects eraser");
+    screen.applyDrawingShortcut(new net.minecraft.client.input.KeyEvent(InputConstants.KEY_B,InputConstants.KEY_B,0),false);
+    screen.applyDrawingShortcut(new net.minecraft.client.input.KeyEvent(InputConstants.KEY_G,InputConstants.KEY_G,0),false);check(doc.grid,"Grid shortcut");
+    screen.mouseClicked(event(left+32*scale+.5,top+32*scale+.5,InputConstants.MOUSE_BUTTON_LEFT),false);screen.mouseReleased(event(left+32*scale,top+32*scale,InputConstants.MOUSE_BUTTON_LEFT));
+    screen.applyDrawingShortcut(new net.minecraft.client.input.KeyEvent(InputConstants.KEY_Z,InputConstants.KEY_Z,InputConstants.MOD_CONTROL),false);check(doc.flatten()[32*128+32]==white,"Ctrl+Z undoes stroke");
+    screen.applyDrawingShortcut(new net.minecraft.client.input.KeyEvent(InputConstants.KEY_Y,InputConstants.KEY_Y,InputConstants.MOD_CONTROL),false);check(doc.flatten()[32*128+32]==chosen,"Ctrl+Y restores stroke");
+    field("zoom").setInt(screen,2);field("panX").setInt(screen,16);field("panY").setInt(screen,16);
+    screen.mouseClicked(event(left+64*scale+.5,top+64*scale+.5,InputConstants.MOUSE_BUTTON_LEFT),false);screen.mouseReleased(event(left+64*scale,top+64*scale,InputConstants.MOUSE_BUTTON_LEFT));check(doc.flatten()[48*128+48]==chosen,"Zoom and pan pointer mapping");
+    doc.addLayer();var sync=CanvasScreen.class.getDeclaredMethod("syncPixels");sync.setAccessible(true);sync.invoke(screen);
+    screen.mouseClicked(event(left+64*scale+.5,top+64*scale+.5,InputConstants.MOUSE_BUTTON_RIGHT),false);screen.mouseReleased(event(left+64*scale,top+64*scale,InputConstants.MOUSE_BUTTON_RIGHT));check(doc.pixels()[48*128+48]==0&&doc.flatten()[48*128+48]==chosen,"Layer erase retains lower art");
     System.out.println("PASS editor input at scale "+scale+": left draw/drag, right erase/drag, palette, middle-click rejection, fill");
    }
   }finally{instance.set(null,previous);}

@@ -1,7 +1,21 @@
-# Canvas Studio+ 2.1.3 — Minecraft 26.2 / NeoForge 26.2.x
+# Canvas Studio+ 3.1.0 — Creative Studio
 
-**made by SuprixZ**. Java 25 required. Upload `canvas-studio-plus-26.2-2.1.3.jar` as a Minecraft **26.2**, **NeoForge** release. This JAR accepts the complete 26.2 NeoForge family, including betas and future builds within `[26.2-alpha,26.3-alpha)`. Future API compatibility is not guaranteed.
+**made by SuprixZ** — Minecraft 26.2, NeoForge 26.2.x, Java 25.
 
-Retains Molten/Infinity recipes and textures, painting, PNG/JPEG import, PNG export, saved map paintings and offline nearest-item matching. Blank Get Item is locked; Molten grants one selected item and is consumed on success; Infinity can be reused, granting one selected item per successful request even if the player does not already own it.
+Adds redo, shape/eyedropper/mirror/scatter tools, grid/snap/zoom, palette presets, shortcuts, 16 editable layers, local `.csp` projects and sharing, gallery/recovery, palette and wall previews, searchable offline catalogue with favorites/history and supported modded textures, per-item Infinity usage limits (unlimited by default), and editing held saved painting maps.
 
-Install one Canvas Studio JAR. Use the same release on client/server. The 26.3 edition is a separate download. Clean builds/checks and a published-version API audit gate publication; no interactive in-game tests performed. Source ZIP, README, changelog, logs and validation/audit reports accompany the GitHub release.
+Shift-right-click one held locked painting map in the air to edit it. Saving creates a new map in the same hand; other copies retain the original. Use projects to preserve layers.
+
+Molten remains one successful exchange per canvas and independent of Infinity limits. Existing item IDs, recipes, textures and paintings are preserved. A dedicated Canvas Studio+ creative tab contains all seven items. Network protocol 4 requires matching client/server versions.
+
+Automated builds, regression checks and published-version API audit gate this release. No interactive Minecraft or multiplayer tests were performed. Read attached validation and README for limits, configuration and controls. Full GPU model capture and 3D room rendering are not included.
+
+Remove older Canvas Studio JARs before installing. The 26.3 edition is a separate download.
+
+Adds frameless wall paintings: right-click a vertical wall with a locked painting map, then break it to recover the painting under normal survival/entity-drop rules. Placed paintings persist as a custom hanging entity.
+
+Adds reusable Kurlo Pillow: eight White Wool surrounding one Enchanted Golden Apple. Hold it in either hand throughout a full sleep to receive the game's enchanted golden apple status effects on normal morning wake-up. Early or interrupted sleep grants nothing.
+
+Both features are server-controlled. Automated tests cover their policy and game data; live placement, save/reload and sleep were not tested interactively.
+
+Upload this JAR for Minecraft 26.2 with NeoForge. The 26.3 JAR is a separate download.

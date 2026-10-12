@@ -26,26 +26,30 @@ public record DrawItem(InteractionHand hand,String item,byte[] pixels,java.util.
   return ink>=8;
  }
  public static boolean validItem(String item){if(item==null)return false;Identifier id=Identifier.tryParse(item);return id!=null && id.getNamespace().equals("minecraft") && BuiltInRegistries.ITEM.containsKey(id) && BuiltInRegistries.ITEM.getValue(id)!=Items.AIR;}
+ public static boolean registeredItem(String item){if(item==null)return false;Identifier id=Identifier.tryParse(item);return id!=null&&BuiltInRegistries.ITEM.containsKey(id)&&BuiltInRegistries.ITEM.getValue(id)!=Items.AIR;}
  public static void handle(DrawItem p,IPayloadContext context){
   if(!(context.player() instanceof ServerPlayer player))return;
   ItemStack held=player.getItemInHand(p.hand);
   CanvasTier tier=CanvasStudio.tier(held);
   var session=OpenCanvas.SESSIONS.get(player);
-  if(!CanvasExchange.authorize(session,held,p.hand==InteractionHand.OFF_HAND,tier,held.getCount(),p.token,p.pixels,validItem(p.item),player.level().getGameTime())){
-   context.reply(new CanvasReply(p.token,CanvasReply.NONE,3,"Request rejected. Reopen the held Molten or Infinity Canvas."));return;
+  ItemStack[] reward=new ItemStack[1];
+  var result=CanvasExchange.exchange(session,held,p.hand==InteractionHand.OFF_HAND,tier,held.getCount(),p.token,p.pixels,
+    registeredItem(p.item)&&ServerRules.permits(p.item),player.level().getGameTime(),CanvasUsage.count(held),ServerRules.MAX_INFINITY.get(),()->{
+     reward[0]=CanvasExchange.createReward(p.item);
+     return CanvasExchange.deliver(tier,reward[0],new CanvasExchange.RewardTarget(){
+      public void replaceHeld(ItemStack item){player.setItemInHand(p.hand,item);}
+      public boolean add(ItemStack item){return player.getInventory().add(item);}
+      public boolean drop(ItemStack item){return player.drop(item,false)!=null;}
+     });
+    },uses->held.set(CanvasUsage.TYPE,uses));
+  if(result!=CanvasExchange.Result.DELIVERED){
+   String reason=switch(result){case LIMIT_REACHED->"Infinity Canvas usage limit reached.";case DELIVERY_FAILED->"Reward delivery failed. Canvas and uses retained; reopen to retry.";default->"Request rejected: held canvas, drawing, token or reward is not allowed.";};
+   context.reply(CanvasReply.server(p.token,CanvasReply.NONE,3,reason,held));return;
   }
-  // Preserve the existing vanilla-ID rules and local texture-based matching catalogue.
-  ItemStack reward=CanvasExchange.createReward(p.item);
-  Component rewardName=reward.getHoverName();
-  boolean delivered=CanvasExchange.deliver(tier,reward,new CanvasExchange.RewardTarget(){
-   public void replaceHeld(ItemStack item){player.setItemInHand(p.hand,item);}
-   public boolean add(ItemStack item){return player.getInventory().add(item);}
-   public boolean drop(ItemStack item){return player.drop(item,false)!=null;}
-  });
-  if(!delivered){context.reply(new CanvasReply(p.token,CanvasReply.NONE,3,"Reward could not be dropped. Canvas retained; reopen to retry."));return;}
+  Component rewardName=reward[0].getHoverName();
   if(tier==CanvasTier.MOLTEN)OpenCanvas.SESSIONS.remove(player);
   player.inventoryMenu.broadcastChanges();
-  context.reply(new CanvasReply(p.token,session.token()==null?CanvasReply.NONE:session.token(),tier==CanvasTier.MOLTEN?1:2,"Received 1 "+rewardName.getString()));
+  context.reply(CanvasReply.server(p.token,session.token()==null?CanvasReply.NONE:session.token(),tier==CanvasTier.MOLTEN?1:2,"Received 1 "+rewardName.getString(),held));
   player.sendSystemMessage(Component.literal("Canvas Studio: received ").append(rewardName),false);
  }
 }

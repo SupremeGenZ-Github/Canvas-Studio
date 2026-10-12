@@ -2,7 +2,7 @@ plugins {
  id 'java-library'
  id 'net.neoforged.moddev' version '2.0.147'
 }
-version = '2.1.3'
+version = '3.1.0'
 group = 'studio.canvas'
 base { archivesName = 'canvas-studio-plus-26.2' }
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
@@ -123,6 +123,22 @@ tasks.register('verifyTextures', JavaExec) {
 }
 tasks.named('check') { dependsOn tasks.named('verifyTextures') }
 
+tasks.register('verifyUsage', JavaExec) {
+ dependsOn tasks.named('verificationClasses')
+ classpath = sourceSets.verification.runtimeClasspath
+ mainClass = 'UsageChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+}
+tasks.named('check') { dependsOn tasks.named('verifyUsage') }
+
+tasks.register('verifyStudio', JavaExec) {
+ dependsOn tasks.named('verificationClasses')
+ classpath = sourceSets.verification.runtimeClasspath
+ mainClass = 'StudioChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+ systemProperty 'java.awt.headless', 'true'
+}
+tasks.named('check') { dependsOn tasks.named('verifyStudio') }
 
 tasks.register('verifyVersionRanges', JavaExec) {
  dependsOn tasks.named('verificationClasses')
@@ -131,3 +147,12 @@ tasks.register('verifyVersionRanges', JavaExec) {
  javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
 }
 tasks.named('check') { dependsOn tasks.named('verifyVersionRanges') }
+
+tasks.register('verifyWallPillow', JavaExec) {
+ dependsOn tasks.named('verificationClasses'), tasks.named('prepareVanillaValidation')
+ classpath = files(vanillaValidationJar) + sourceSets.verification.runtimeClasspath
+ mainClass = 'WallPillowChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+ systemProperty 'java.awt.headless', 'true'
+}
+tasks.named('check') { dependsOn tasks.named('verifyWallPillow') }
