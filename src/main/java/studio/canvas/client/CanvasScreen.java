@@ -31,19 +31,22 @@ public final class CanvasScreen extends Screen {
  private final byte[] swatches=new byte[32];
  private EditBox titleBox,hexBox;
  private int left,top,scale,side,tools,brush=2,lastX=-1,lastY=-1,startX,startY,stroke,ticks;
- private byte selected,white; private boolean fillTool,crop,importing,dragging,shapeDrag;
+ private byte selected,white; private boolean fillTool,crop,importing,dragging,shapeDrag,saving;
  int zoom=1,panX,panY,preset; String status="Left: draw | Right: erase | Shift: constrain | Middle: pan";
  private BufferedImage original; private UUID projectId; boolean editingPainting; UUID paintingToken=CanvasReply.NONE;
  PixelTools.Tool tool=PixelTools.Tool.BRUSH;
  public CanvasScreen(InteractionHand hand){this(hand,CanvasTier.BLANK);}
  public CanvasScreen(InteractionHand hand,CanvasTier tier){
-  super(Component.literal("Canvas Studio+ - made by SuprixZ"));this.hand=hand;this.tier=tier;
+  super(Component.literal("Canvas Studio+ - made by SuprixZ"));this.hand=hand;this.tier=tier;CanvasClient.activeCanvas=this;
   for(int i=4;i<248;i++)palette[i]=MapColor.getColorFromPackedId(i);
   white=ImageImport.nearest(0xffffff,palette);selected=ImageImport.nearest(0x202020,palette);
   document=draft==null?new Artwork():draft.copy();syncPixels();refreshPalette();
  }
  String usageLabel(){return tier==CanvasTier.INFINITY?"Uses: "+uses+" / "+(maximum==0?"unlimited":maximum):tier.availability;}
  void reply(CanvasReply reply){
+  if(saving&&reply.request().equals(paintingToken)){
+   saving=false;status=reply.message();if(reply.code()==4){draft=null;minecraft.setScreenAndShow(null);}return;
+  }
   if(!reply.request().equals(openRequest)&&!reply.request().equals(exchangeToken))return;
   uses=reply.uses();maximum=reply.maximum();moddedRewards=reply.modded();
   if(reply.code()==0||reply.code()==2)exchangeToken=reply.token();status=reply.message();
@@ -72,7 +75,7 @@ public final class CanvasScreen extends Screen {
  void clearDraftAfterExchange(){draft=null;}
  @Override public boolean isPauseScreen(){return false;}
  private void finishStroke(){if(dragging){document.commit();dragging=false;}lastX=lastY=-1;}
- @Override public void onClose(){if(importing){status="Wait for image import.";return;}finishStroke();syncTitle();draft=document.copy();saveProject(true);super.onClose();}
+ @Override public void onClose(){if(saving){status="Waiting for server save confirmation...";return;}if(importing){status="Wait for image import.";return;}finishStroke();syncTitle();draft=document.copy();saveProject(true);super.onClose();}
  @Override public void removed(){finishStroke();}
  @Override public void extractRenderState(GuiGraphicsExtractor g,int mx,int my,float tick){
   g.fill(0,0,width,height,0xf0181c26);g.centeredText(font,"CANVAS STUDIO+ - made by SuprixZ",width/2,7,0xfff5ddaa);
@@ -115,7 +118,7 @@ public final class CanvasScreen extends Screen {
  void cyclePalette(){preset=(preset+1)%3;refreshPalette();}
  void clearLayer(){document.begin();Arrays.fill(pixels,document.active==0?white:(byte)0);document.commit();status="Layer cleared; Undo restores it.";}
  void toggleCrop(){crop=!crop;if(original!=null){document.begin();applyImage();document.commit();}status=crop?"Centre crop":"Whole image fit";}
- private void savePainting(){if(importing)return;finishStroke();syncTitle();if(minecraft.player==null)return;ClientPacketDistributor.sendToServer(new SavePainting(hand,document.title,document.flatten(),paintingToken));draft=null;minecraft.setScreenAndShow(null);}
+ private void savePainting(){if(importing||saving)return;finishStroke();syncTitle();if(minecraft.player==null)return;saveProject(true);saving=true;status="Saving painting on server...";ClientPacketDistributor.sendToServer(new SavePainting(hand,document.title,document.flatten(),paintingToken));}
  void finder(boolean browse){finishStroke();syncTitle();if(!browse&&!tier.canExchange()){status="Get Item requires a Molten or Infinity Canvas.";return;}minecraft.setScreenAndShow(new ItemMatchScreen(this,hand,document.flatten(),palette,browse));}
  void saveProject(boolean recovery){
   syncTitle();Artwork copy=document.copy();UUID id=recovery?RECOVERY:projectId==null?(projectId=UUID.randomUUID()):projectId;Path root=minecraft.gameDirectory.toPath();

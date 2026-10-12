@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 
 /** Indexes item sprites and block textures from the currently loaded resource packs. */
 public final class ItemMatchCatalog {
+ public static final java.util.concurrent.atomic.AtomicInteger RESOURCE_EPOCH=new java.util.concurrent.atomic.AtomicInteger();
  public record Source(String id, Resource texture, boolean block) {}
  private ItemMatchCatalog() {}
  public static CompletableFuture<List<ItemMatcher.Reference>> load(ResourceManager resources) {return load(resources,false);}
@@ -30,7 +31,6 @@ public final class ItemMatchCatalog {
    if(!modded&&!id.getNamespace().equals("minecraft"))continue;
    if(sources.size()>=5000)break;
    Resource sprite=sprites.get(Identifier.fromNamespaceAndPath(id.getNamespace(),"textures/item/"+id.getPath()+".png"));
-   if(sprite==null&&modded&&!id.getNamespace().equals("minecraft"))sprite=modelTexture(resources,id);
    if(sprite!=null){sources.add(new Source(id.toString(),sprite,false));continue;}
    if(item instanceof BlockItem block){
     Identifier bid=BuiltInRegistries.BLOCK.getKey(block.getBlock());
@@ -40,9 +40,10 @@ public final class ItemMatchCatalog {
     }
    }
   }
+  if(modded){java.util.Set<String> added=new java.util.HashSet<>();for(var source:sources)added.add(source.id());for(Item item:BuiltInRegistries.ITEM){Identifier id=BuiltInRegistries.ITEM.getKey(item);if(sources.size()>=5000)break;if(!id.getNamespace().equals("minecraft")&&!added.contains(id.toString())&&item!=Items.AIR)sources.add(new Source(id.toString(),null,item instanceof BlockItem));}}
   return CompletableFuture.supplyAsync(()->{
    List<ItemMatcher.Reference> refs=new ArrayList<>();
-   for(Source source:sources)try(var input=source.texture.open()){
+   for(Source source:sources)try{Resource texture=source.texture==null?modelTexture(resources,Identifier.parse(source.id)):source.texture;if(texture==null)continue;try(var input=texture.open()){
     BufferedImage image=readTexture(input);if(image==null||image.getWidth()>1024||image.getHeight()>8192)continue;
     // Animated texture sheets: use the first square frame.
     if(image.getHeight()>image.getWidth())image=image.getSubimage(0,0,image.getWidth(),image.getWidth());
@@ -57,7 +58,7 @@ public final class ItemMatchCatalog {
      var descriptor=ItemMatcher.describe(canvas,true);
      if(descriptor!=null)refs.add(new ItemMatcher.Reference(source.id,descriptor));
     }
-   }catch(java.io.IOException|RuntimeException ignored){ /* Skip unsupported pack assets. */ }
+   }}catch(java.io.IOException|RuntimeException ignored){ /* Skip unsupported pack assets. */ }
    return List.copyOf(refs);
   });
  }

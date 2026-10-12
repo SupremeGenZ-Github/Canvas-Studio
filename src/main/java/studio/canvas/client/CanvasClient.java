@@ -12,13 +12,15 @@ import studio.canvas.CanvasStudio;
 /** Loaded only on the physical client; server code never resolves GUI/AWT classes. */
 @Mod(value=CanvasStudio.ID, dist=Dist.CLIENT)
 public final class CanvasClient {
+    static CanvasScreen activeCanvas;
     public CanvasClient(IEventBus bus) {
         NeoForge.EVENT_BUS.addListener(CanvasClient::rightClick);
+        bus.addListener((net.neoforged.neoforge.client.event.AddClientReloadListenersEvent event)->event.addListener(net.minecraft.resources.Identifier.fromNamespaceAndPath(CanvasStudio.ID,"catalogue_reload"),(net.minecraft.server.packs.resources.ResourceManagerReloadListener)resources->ItemMatchCatalog.RESOURCE_EPOCH.incrementAndGet()));
     }
     public static void reply(studio.canvas.CanvasReply reply){
         var screen=Minecraft.getInstance().gui.screen();
-        if(screen instanceof CanvasScreen canvas)canvas.reply(reply);
-        else if(screen instanceof ItemMatchScreen matches)matches.reply(reply);
+        if(screen instanceof ItemMatchScreen matches)matches.reply(reply);
+        else if(activeCanvas!=null)activeCanvas.reply(reply);
     }
     private static java.util.UUID paintingRequest;
     public static void painting(studio.canvas.PaintingData data){
