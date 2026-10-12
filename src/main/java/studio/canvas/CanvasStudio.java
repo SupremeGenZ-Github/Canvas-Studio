@@ -52,6 +52,8 @@ public final class CanvasStudio {
         var registrar = event.registrar("4").executesOn(net.neoforged.neoforge.network.registration.HandlerThread.MAIN);
         registrar.playToServer(SavePainting.TYPE, SavePainting.CODEC, SavePainting::handle);
         registrar.playToServer(DrawItem.TYPE, DrawItem.CODEC, DrawItem::handle);
+        registrar.playToServer(OpenPainting.TYPE,OpenPainting.CODEC,OpenPainting::handle);
+        registrar.playToClient(PaintingData.TYPE,PaintingData.CODEC,PaintingData::handle);
         registrar.playToServer(OpenCanvas.TYPE, OpenCanvas.CODEC, OpenCanvas::handle);
         registrar.playToClient(CanvasReply.TYPE, CanvasReply.CODEC, CanvasReply::handle);
     }

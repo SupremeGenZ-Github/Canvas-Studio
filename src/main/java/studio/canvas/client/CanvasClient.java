@@ -20,8 +20,21 @@ public final class CanvasClient {
         if(screen instanceof CanvasScreen canvas)canvas.reply(reply);
         else if(screen instanceof ItemMatchScreen matches)matches.reply(reply);
     }
+    private static java.util.UUID paintingRequest;
+    public static void painting(studio.canvas.PaintingData data){
+        Minecraft mc=Minecraft.getInstance();
+        if(!data.request().equals(paintingRequest)||mc.player==null||!mc.player.getItemInHand(data.hand()).is(net.minecraft.world.item.Items.FILLED_MAP))return;
+        paintingRequest=null;var screen=new CanvasScreen(data.hand());
+        var document=new studio.canvas.client.art.Artwork(data.pixels());document.title=data.title();
+        screen.loadProject(java.util.UUID.randomUUID(),document);screen.editingPainting=true;screen.paintingToken=data.token();
+        mc.setScreenAndShow(screen);
+    }
     private static void rightClick(PlayerInteractEvent.RightClickItem event) {
         Minecraft mc = Minecraft.getInstance();
+        if(event.getEntity()==mc.player&&mc.player.isShiftKeyDown()&&event.getItemStack().is(net.minecraft.world.item.Items.FILLED_MAP)){
+            event.setCanceled(true);event.setCancellationResult(InteractionResult.SUCCESS);paintingRequest=java.util.UUID.randomUUID();
+            net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(new studio.canvas.OpenPainting(event.getHand(),paintingRequest));return;
+        }
         if (event.getEntity() == mc.player && CanvasStudio.isCanvas(event.getItemStack())) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);

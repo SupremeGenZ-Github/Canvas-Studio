@@ -1,11 +1,11 @@
 package studio.canvas.client;
-
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.material.MapColor;
@@ -14,160 +14,114 @@ import org.lwjgl.sdl.SDLDialog;
 import org.lwjgl.sdl.SDL_DialogFileCallback;
 import org.lwjgl.sdl.SDL_DialogFileFilter;
 import org.lwjgl.system.MemoryUtil;
-import studio.canvas.SavePainting;
+import studio.canvas.*;
+import studio.canvas.client.art.*;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
-import java.util.ArrayDeque;
-import java.util.Arrays;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public final class CanvasScreen extends Screen {
-    private static byte[] draft;
-    private static String draftTitle = "Custom Painting";
-    private final InteractionHand hand;
-    final studio.canvas.CanvasTier tier;
-    private final java.util.UUID openRequest=java.util.UUID.randomUUID();
-    java.util.UUID exchangeToken;
-    private boolean sessionRequested;
-    long uses; int maximum; boolean moddedRewards;
-    String usageLabel(){return tier==studio.canvas.CanvasTier.INFINITY?"Uses: "+uses+" / "+(maximum==0?"unlimited":maximum):tier.availability;}
-    void reply(studio.canvas.CanvasReply reply){
-        uses=reply.uses();maximum=reply.maximum();moddedRewards=reply.modded();
-        if(!reply.request().equals(openRequest))return;
-        if(reply.code()==0)exchangeToken=reply.token();
-        status=reply.message();
-    }
-    private final int[] palette = new int[248];
-    private final byte[] pixels;
-    private final ArrayDeque<byte[]> undo = new ArrayDeque<>();
-    private final byte[] swatches = new byte[32];
-    private EditBox titleBox, hexBox;
-    private int left, top, scale, side, tools, brush=2, lastX=-1, lastY=-1;
-    private byte selected, white;
-    private boolean fillTool, crop, importing, receiveMode;
-    private String status = "Left: draw | Right: erase";
-    private BufferedImage original;
-    private CompletableFuture<java.util.List<ItemMatcher.Reference>> itemReferences;
-    CompletableFuture<java.util.List<ItemMatcher.Reference>> matchReferences(){
-        if(itemReferences==null)itemReferences=ItemMatchCatalog.load(minecraft.getResourceManager());
-        return itemReferences;
-    }
-
-    public CanvasScreen(InteractionHand hand) {this(hand,studio.canvas.CanvasTier.BLANK);}
-    public CanvasScreen(InteractionHand hand,studio.canvas.CanvasTier tier) {
-        super(Component.literal("Canvas Studio+ - made by SuprixZ")); this.hand = hand; this.tier=tier;
-        for (int i=4;i<palette.length;i++) {
-            // Minecraft 26.3 exposes packed map colors as ARGB, matching the GUI.
-            int c = MapColor.getColorFromPackedId(i);
-            palette[i] = c;
-        }
-        white = ImageImport.nearest(0xffffff, palette); selected = ImageImport.nearest(0x202020,palette);
-        pixels = draft == null ? new byte[SavePainting.PIXELS] : draft.clone();
-        if (draft == null) Arrays.fill(pixels, white);
-        int[] colors={0x202020,0x555555,0x999999,0xffffff,0x6c3020,0xb87438,0xdfad6b,0xffdd44,
-            0xa31616,0xff3333,0xff7733,0xffbb33,0x1e692c,0x45a63a,0x99ce51,0xcde8a0,
-            0x143567,0x315dc2,0x3d98c9,0x91d9e5,0x591d8d,0x964bd0,0xd844ab,0xffa3c5,
-            0x452d22,0x815e43,0xd5c7a0,0xede5cd,0x087e80,0x47bba7,0xababdf,0xeecccc};
-        for(int i=0;i<colors.length;i++)swatches[i]=ImageImport.nearest(colors[i],palette);
-    }
-    @Override protected void init() {
-        if (titleBox != null) draftTitle = titleBox.getValue();
-        scale = Math.max(1, Math.min(3, Math.min((width-170)/128, (height-122)/128)));
-        side = 128*scale; left = Math.max(8,(width-side-152)/2); top=46; tools=left+side+12;
-        titleBox = new EditBox(font,left,22,side+140,20,Component.literal("Painting title"));
-        titleBox.setMaxLength(64); titleBox.setValue(draftTitle); addRenderableWidget(titleBox);
-        hexBox = new EditBox(font,left,top+side+6,Math.max(55,side-52),20,Component.literal("Hex color"));
-        hexBox.setMaxLength(7); hexBox.setValue("#202020"); addRenderableWidget(hexBox);
-        button(left+side-48,top+side+6,48,"Color",()->{
-            try { selected=ImageImport.nearest(Integer.parseInt(hexBox.getValue().replace("#",""),16),palette);status="Color selected (map palette)."; }
-            catch(NumberFormatException ex){status="Use a color like #FF8800.";}
-        });
-        button(tools,top+54,64,"Brush: "+brush,()->{brush=brush==1?2:brush==2?4:brush==4?8:1;rebuild();});
-        button(tools+68,top+54,64,fillTool?"Fill":"Draw",()->{fillTool=!fillTool;rebuild();});
-        button(tools,top+78,132,"Import PNG / JPEG",this::pickImage);
-        button(tools,top+102,132,crop?"Fit: centre crop":"Fit: whole image",()->{
-            crop=!crop;if(original!=null){snapshot();applyImage();}rebuild();
-        });
-        button(tools,top+126,64,"Undo",()->{if(!undo.isEmpty())System.arraycopy(undo.removeLast(),0,pixels,0,pixels.length);});
-        button(tools+68,top+126,64,"Clear",()->{snapshot();Arrays.fill(pixels,white);status="Cleared; Undo restores it.";});
-        Button modeButton=button(tools,top+174,132,tier.canExchange()?(receiveMode?"Mode: Get Item":"Mode: Painting"):"Get Item: locked",()->{receiveMode=!receiveMode;rebuild();});
-        modeButton.active=tier.canExchange();
-        modeButton.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(tier.availability)));
-        button(tools,top+150,132,receiveMode?"Find Item / Block":"Save Painting",()->{
-            if(importing){status="Wait for image import.";return;}
-            if(receiveMode && tier.canExchange()){minecraft.setScreenAndShow(new ItemMatchScreen(this,hand,pixels,palette));return;}
-            if(minecraft.player==null || !studio.canvas.CanvasStudio.isCanvas(minecraft.player.getItemInHand(hand))){status="Hold your canvas to save.";return;}
-            ClientPacketDistributor.sendToServer(new SavePainting(hand,titleBox.getValue(),pixels.clone()));
-            draft=null;draftTitle="Custom Painting";minecraft.setScreenAndShow(null);
-        });
-        button(left,top+side+30,64,"Export",this::exportImage);
-        button(left+side-64,top+side+30,64,"Close",this::onClose);
-    }
-    void clearDraftAfterExchange(){draft=null;draftTitle="Custom Painting";}
-    private void rebuild() {draftTitle=titleBox.getValue();String color=hexBox.getValue();clearWidgets();init();hexBox.setValue(color);}
-    private Button button(int x,int y,int w,String label,Runnable action) {
-        return addRenderableWidget(Button.builder(Component.literal(label),b->action.run()).bounds(x,y,w,20).build());
-    }
-    private void snapshot(){if(undo.size()==10)undo.removeFirst();undo.addLast(pixels.clone());}
-    @Override public boolean isPauseScreen(){return false;}
-    @Override public void onClose(){if(importing){status="Wait for the image to finish loading.";return;}draft=pixels.clone();draftTitle=titleBox.getValue();super.onClose();}
-    @Override public void extractRenderState(GuiGraphicsExtractor g,int mouseX,int mouseY,float partialTick){
-        g.fill(0,0,width,height,0xf0181c26);
-        g.centeredText(font,Component.literal("CANVAS STUDIO+ - made by SuprixZ"),width/2,10,0xfff5ddaa);
-        g.fill(left-2,top-2,left+side+2,top+side+2,0xffaa8050);
-        // Coalesce horizontal runs, avoiding a separate draw call for every pixel in flat areas.
-        for(int y=0;y<128;y++)for(int x=0;x<128;){
-            int start=x, color=Byte.toUnsignedInt(pixels[y*128+x]);
-            while(x<128 && Byte.toUnsignedInt(pixels[y*128+x])==color)x++;
-            g.fill(left+start*scale,top+y*scale,left+x*scale,top+(y+1)*scale,palette[color]);
-        }
-        for(int i=0;i<swatches.length;i++){
-            int x=tools+(i%8)*16,y=top+(i/8)*12;
-            g.fill(x,y,x+15,y+11,swatches[i]==selected?0xffffffff:0xff363b48);
-            g.fill(x+1,y+1,x+14,y+10,palette[Byte.toUnsignedInt(swatches[i])]);
-        }
-        g.text(font,font.plainSubstrByWidth(tier.label+" | "+usageLabel(),width-16),8,height-26,0xffbec8d8,false);
-        g.text(font,font.plainSubstrByWidth(status,width-16),8,height-13,0xffdddddd,false);
-        super.extractRenderState(g,mouseX,mouseY,partialTick);
-    }
-    @Override public boolean mouseClicked(MouseButtonEvent event,boolean doubleClick){
-        double mx=event.x(),my=event.y();
-        if(event.button()==InputConstants.MOUSE_BUTTON_LEFT && mx>=tools && mx<tools+128 && my>=top && my<top+48){
-            selected=swatches[(int)(my-top)/12*8+(int)(mx-tools)/16];return true;
-        }
-        if((event.button()==InputConstants.MOUSE_BUTTON_LEFT||event.button()==InputConstants.MOUSE_BUTTON_RIGHT)&&inside(mx,my)&&!importing){
-            snapshot();lastX=(int)(mx-left)/scale;lastY=(int)(my-top)/scale;
-            byte color=event.button()==InputConstants.MOUSE_BUTTON_RIGHT?white:selected;
-            if(fillTool)flood(lastX,lastY,color);else stamp(lastX,lastY,color);return true;
-        }
-        return super.mouseClicked(event,doubleClick);
-    }
-    @Override public boolean mouseDragged(MouseButtonEvent event,double dx,double dy){
-        if((event.button()==InputConstants.MOUSE_BUTTON_LEFT||event.button()==InputConstants.MOUSE_BUTTON_RIGHT)&&inside(event.x(),event.y())&&!importing&&!fillTool&&lastX>=0){
-            int x=(int)(event.x()-left)/scale,y=(int)(event.y()-top)/scale;
-            int steps=Math.max(Math.abs(x-lastX),Math.abs(y-lastY));
-            for(int i=0;i<=steps;i++)stamp(steps==0?x:lastX+(x-lastX)*i/steps,steps==0?y:lastY+(y-lastY)*i/steps,event.button()==InputConstants.MOUSE_BUTTON_RIGHT?white:selected);
-            lastX=x;lastY=y;return true;
-        }
-        if(!inside(event.x(),event.y())){lastX=-1;lastY=-1;}
-        return super.mouseDragged(event,dx,dy);
-    }
-    @Override public boolean mouseReleased(MouseButtonEvent event){lastX=-1;lastY=-1;return super.mouseReleased(event);}
-    private boolean inside(double x,double y){return x>=left&&x<left+side&&y>=top&&y<top+side;}
-    private void stamp(int x,int y,byte color){
-        for(int yy=y-brush/2;yy<y-brush/2+brush;yy++)for(int xx=x-brush/2;xx<x-brush/2+brush;xx++)
-            if(xx>=0&&xx<128&&yy>=0&&yy<128)pixels[yy*128+xx]=color;
-    }
-    private void flood(int x,int y,byte color){
-        byte old=pixels[y*128+x];if(old==color)return;
-        ArrayDeque<Integer> queue=new ArrayDeque<>();queue.add(y*128+x);pixels[y*128+x]=color;
-        while(!queue.isEmpty()){
-            int p=queue.removeFirst(),px=p%128,py=p/128;
-            if(px>0)offer(queue,p-1,old,color);if(px<127)offer(queue,p+1,old,color);
-            if(py>0)offer(queue,p-128,old,color);if(py<127)offer(queue,p+128,old,color);
-        }
-    }
-    private void offer(ArrayDeque<Integer> q,int p,byte old,byte color){if(pixels[p]==old){pixels[p]=color;q.add(p);}}
+ private static Artwork draft;
+ private static final UUID RECOVERY=UUID.fromString("00000000-0000-0000-0000-000000000001");
+ final InteractionHand hand; final CanvasTier tier;
+ private final UUID openRequest=UUID.randomUUID(); UUID exchangeToken;
+ private boolean sessionRequested; long uses;int maximum;boolean moddedRewards;
+ Artwork document; private byte[] pixels; final int[] palette=new int[248];
+ private final byte[] swatches=new byte[32];
+ private EditBox titleBox,hexBox;
+ private int left,top,scale,side,tools,brush=2,lastX=-1,lastY=-1,startX,startY,stroke,ticks;
+ private byte selected,white; private boolean fillTool,crop,importing,dragging,shapeDrag;
+ int zoom=1,panX,panY,preset; String status="Left: draw | Right: erase | Shift: constrain | Middle: pan";
+ private BufferedImage original; private UUID projectId; boolean editingPainting; UUID paintingToken=CanvasReply.NONE;
+ PixelTools.Tool tool=PixelTools.Tool.BRUSH;
+ public CanvasScreen(InteractionHand hand){this(hand,CanvasTier.BLANK);}
+ public CanvasScreen(InteractionHand hand,CanvasTier tier){
+  super(Component.literal("Canvas Studio+ - made by SuprixZ"));this.hand=hand;this.tier=tier;
+  for(int i=4;i<248;i++)palette[i]=MapColor.getColorFromPackedId(i);
+  white=ImageImport.nearest(0xffffff,palette);selected=ImageImport.nearest(0x202020,palette);
+  document=draft==null?new Artwork():draft.copy();syncPixels();refreshPalette();
+ }
+ String usageLabel(){return tier==CanvasTier.INFINITY?"Uses: "+uses+" / "+(maximum==0?"unlimited":maximum):tier.availability;}
+ void reply(CanvasReply reply){
+  if(!reply.request().equals(openRequest)&&!reply.request().equals(exchangeToken))return;
+  uses=reply.uses();maximum=reply.maximum();moddedRewards=reply.modded();
+  if(reply.code()==0||reply.code()==2)exchangeToken=reply.token();status=reply.message();
+ }
+ CompletableFuture<java.util.List<ItemMatcher.Reference>> matchReferences(){return ItemMatchCatalog.load(minecraft.getResourceManager());}
+ private void refreshPalette(){int[] colors={0x202020,0x555555,0x999999,0xffffff,0x6c3020,0xb87438,0xdfad6b,0xffdd44,0xa31616,0xff3333,0xff7733,0xffbb33,0x1e692c,0x45a63a,0x99ce51,0xcde8a0,0x143567,0x315dc2,0x3d98c9,0x91d9e5,0x591d8d,0x964bd0,0xd844ab,0xffa3c5,0x452d22,0x815e43,0xd5c7a0,0xede5cd,0x087e80,0x47bba7,0xababdf,0xeecccc};for(int i=0;i<32;i++){int c=preset==1?(i*255/31)*0x010101:preset==2?colors[(i/4)*4]:colors[i];swatches[i]=ImageImport.nearest(c,palette);}}
+ @Override protected void init(){
+  syncTitle();scale=Math.max(1,Math.min(3,Math.min((width-160)/128,(height-112)/128)));side=128*scale;left=Math.max(6,(width-side-146)/2);top=42;tools=left+side+10;
+  titleBox=new EditBox(font,left,21,Math.min(width-left-6,side+138),17,Component.literal("Painting title"));titleBox.setMaxLength(64);titleBox.setValue(document.title);addRenderableWidget(titleBox);
+  hexBox=new EditBox(font,left,top+side+5,Math.max(60,side-50),18,Component.literal("Hex color"));hexBox.setMaxLength(7);hexBox.setValue(String.format("#%06X",palette[Byte.toUnsignedInt(selected)]&0xffffff));addRenderableWidget(hexBox);
+  button(left+side-46,top+side+5,46,"Color",()->{try{selected=ImageImport.nearest(Integer.parseInt(hexBox.getValue().replace("#",""),16),palette);document.selected=selected;status="Selected nearest Minecraft map color.";}catch(NumberFormatException e){status="Use a color like #FF8800.";}});
+  button(tools,top+52,132,tool.toString().replace('_',' '),()->openPanel(0));
+  button(tools,top+72,64,"Size: "+brush,()->{brush=brush==1?2:brush==2?4:brush==4?8:1;document.brush=brush;rebuild();});
+  button(tools+68,top+72,64,"Options",()->openPanel(1));
+  button(tools,top+92,64,"Undo",()->{document.undo();syncPixels();});button(tools+68,top+92,64,"Redo",()->{document.redo();syncPixels();});
+  button(tools,top+112,132,"Projects",()->{finishStroke();syncTitle();minecraft.setScreenAndShow(new ProjectScreen(this));});
+  button(tools,top+132,132,"Studio menu",()->openPanel(2));button(tools,top+152,132,"Close",this::onClose);
+  button(left,top+side+27,side,editingPainting?"Save edited painting":"Save Painting",this::savePainting);
+ }
+ private void openPanel(int page){finishStroke();syncTitle();minecraft.setScreenAndShow(new StudioPanel(this,page));}
+ void syncTitle(){if(titleBox!=null)document.title=titleBox.getValue();}
+ void syncPixels(){pixels=document.pixels();brush=document.brush;selected=document.selected;try{tool=PixelTools.Tool.valueOf(document.tool);}catch(Exception e){tool=PixelTools.Tool.BRUSH;}fillTool=tool==PixelTools.Tool.FILL;}
+ void rebuild(){syncTitle();clearWidgets();init();}
+ private Button button(int x,int y,int w,String label,Runnable action){return addRenderableWidget(Button.builder(Component.literal(label),b->action.run()).bounds(x,y,w,18).build());}
+ void selectTool(PixelTools.Tool t){tool=t;document.tool=t.name();fillTool=t==PixelTools.Tool.FILL;}
+ void clearDraftAfterExchange(){draft=null;}
+ @Override public boolean isPauseScreen(){return false;}
+ private void finishStroke(){if(dragging){document.commit();dragging=false;}lastX=lastY=-1;}
+ @Override public void onClose(){if(importing){status="Wait for image import.";return;}finishStroke();syncTitle();draft=document.copy();saveProject(true);super.onClose();}
+ @Override public void removed(){finishStroke();}
+ @Override public void extractRenderState(GuiGraphicsExtractor g,int mx,int my,float tick){
+  g.fill(0,0,width,height,0xf0181c26);g.centeredText(font,"CANVAS STUDIO+ - made by SuprixZ",width/2,7,0xfff5ddaa);
+  g.fill(left-2,top-2,left+side+2,top+side+2,0xffaa8050);byte[] flat=document.flatten();int unit=scale*zoom,visible=128/zoom;
+  for(int y=0;y<visible;y++)for(int x=0;x<visible;){int start=x,c=Byte.toUnsignedInt(flat[(y+panY)*128+x+panX]);while(x<visible&&Byte.toUnsignedInt(flat[(y+panY)*128+x+panX])==c)x++;g.fill(left+start*unit,top+y*unit,left+x*unit,top+(y+1)*unit,palette[c]);}
+  if(document.grid&&unit>=3)for(int i=0;i<=visible;i++){g.fill(left+i*unit,top,left+i*unit+1,top+side,0x55333333);g.fill(left,top+i*unit,left+side,top+i*unit+1,0x55333333);}
+  for(int i=0;i<32;i++){int x=tools+i%8*16,y=top+i/8*12;g.fill(x,y,x+15,y+11,swatches[i]==selected?0xffffffff:0xff363b48);g.fill(x+1,y+1,x+14,y+10,palette[Byte.toUnsignedInt(swatches[i])]);}
+  g.text(font,font.plainSubstrByWidth((editingPainting?"Editing saved painting":tier.label+" | "+usageLabel())+" | "+zoom+"x",width-12),6,height-23,0xffbec8d8,false);
+  g.text(font,font.plainSubstrByWidth(status,width-12),6,height-11,0xffdddddd,false);super.extractRenderState(g,mx,my,tick);
+ }
+ private int px(double x){return PixelTools.snap((int)(x-left)/(scale*zoom)+panX,document.snap);}
+ private int py(double y){return PixelTools.snap((int)(y-top)/(scale*zoom)+panY,document.snap);}
+ private boolean inside(double x,double y){return x>=left&&x<left+side&&y>=top&&y<top+side;}
+ @Override public boolean mouseClicked(MouseButtonEvent e,boolean twice){
+  if(e.button()==0&&e.x()>=tools&&e.x()<tools+128&&e.y()>=top&&e.y()<top+48){selected=swatches[(int)(e.y()-top)/12*8+(int)(e.x()-tools)/16];document.selected=selected;return true;}
+  if((e.button()==0||e.button()==1)&&inside(e.x(),e.y())&&!importing){
+   if(getFocused()!=null)setFocused(null);int x=px(e.x()),y=py(e.y());
+   if(tool==PixelTools.Tool.EYEDROPPER&&e.button()==0){selected=document.flatten()[y*128+x];document.selected=selected;return true;}
+   document.begin();dragging=true;startX=lastX=x;startY=lastY=y;stroke=0;shapeDrag=tool==PixelTools.Tool.LINE||tool==PixelTools.Tool.RECTANGLE||tool==PixelTools.Tool.FILLED_RECTANGLE||tool==PixelTools.Tool.ELLIPSE||tool==PixelTools.Tool.FILLED_ELLIPSE;
+   byte color=e.button()==1||tool==PixelTools.Tool.ERASER?(document.active==0?white:0):selected;
+   if(fillTool||tool==PixelTools.Tool.FILL){PixelTools.flood(document,x,y,color);finishStroke();}else if(shapeDrag)PixelTools.shape(document,tool,x,y,x,y,color);else PixelTools.line(document,x,y,x,y,color,tool,stroke);return true;
+  }return super.mouseClicked(e,twice);
+ }
+ @Override public boolean mouseDragged(MouseButtonEvent e,double dx,double dy){
+  if(e.button()==2&&inside(e.x(),e.y())&&zoom>1){panX=Math.max(0,Math.min(128-128/zoom,panX-(int)(dx/(scale*zoom))));panY=Math.max(0,Math.min(128-128/zoom,panY-(int)(dy/(scale*zoom))));return true;}
+  if(dragging&&(e.button()==0||e.button()==1)&&!importing){int x=px(Math.max(left,Math.min(left+side-1,e.x()))),y=py(Math.max(top,Math.min(top+side-1,e.y())));byte c=e.button()==1||tool==PixelTools.Tool.ERASER?(document.active==0?white:0):selected;
+   if((e.modifiers()&1)!=0){int ax=x-startX,ay=y-startY;if(shapeDrag&&tool!=PixelTools.Tool.LINE){int n=Math.max(Math.abs(ax),Math.abs(ay));x=Math.max(0,Math.min(127,startX+(ax<0?-n:n)));y=Math.max(0,Math.min(127,startY+(ay<0?-n:n)));}else if(Math.abs(ax)>Math.abs(ay)*2)y=startY;else if(Math.abs(ay)>Math.abs(ax)*2)x=startX;else{int n=Math.max(Math.abs(ax),Math.abs(ay));x=Math.max(0,Math.min(127,startX+(ax<0?-n:n)));y=Math.max(0,Math.min(127,startY+(ay<0?-n:n)));}}
+   if(shapeDrag){document.previewReset();PixelTools.shape(document,tool,startX,startY,x,y,c);}else{PixelTools.line(document,lastX,lastY,x,y,c,tool,stroke);stroke+=Math.max(Math.abs(x-lastX),Math.abs(y-lastY));}lastX=x;lastY=y;return true;
+  }return super.mouseDragged(e,dx,dy);
+ }
+ @Override public boolean mouseReleased(MouseButtonEvent e){boolean handled=dragging;finishStroke();return handled||super.mouseReleased(e);}
+ @Override public boolean keyPressed(KeyEvent e){
+  if(getFocused() instanceof EditBox)return super.keyPressed(e);
+  if(e.key()==256&&dragging){document.cancel();dragging=false;syncPixels();return true;}
+  boolean ctrl=(e.modifiers()&2)!=0;
+  if(ctrl&&e.key()==90){document.undo();syncPixels();return true;}if(ctrl&&e.key()==89){document.redo();syncPixels();return true;}
+  if(e.key()==66)selectTool(PixelTools.Tool.BRUSH);else if(e.key()==69)selectTool(PixelTools.Tool.ERASER);else if(e.key()==73)selectTool(PixelTools.Tool.EYEDROPPER);else if(e.key()==71)document.grid=!document.grid;else return super.keyPressed(e);rebuild();return true;
+ }
+ void changeZoom(){zoom=zoom==1?2:zoom==2?4:1;panX=Math.min(panX,128-128/zoom);panY=Math.min(panY,128-128/zoom);}
+ void cyclePalette(){preset=(preset+1)%3;refreshPalette();}
+ void clearLayer(){document.begin();Arrays.fill(pixels,document.active==0?white:(byte)0);document.commit();status="Layer cleared; Undo restores it.";}
+ void toggleCrop(){crop=!crop;if(original!=null){document.begin();applyImage();document.commit();}status=crop?"Centre crop":"Whole image fit";}
+ private void savePainting(){if(importing)return;finishStroke();syncTitle();if(minecraft.player==null)return;ClientPacketDistributor.sendToServer(new SavePainting(hand,document.title,document.flatten(),paintingToken));draft=null;minecraft.setScreenAndShow(null);}
+ void finder(boolean browse){finishStroke();syncTitle();if(!browse&&!tier.canExchange()){status="Get Item requires a Molten or Infinity Canvas.";return;}minecraft.setScreenAndShow(new ItemMatchScreen(this,hand,document.flatten(),palette,browse));}
+ void saveProject(boolean recovery){
+  syncTitle();Artwork copy=document.copy();UUID id=recovery?RECOVERY:projectId==null?(projectId=UUID.randomUUID()):projectId;Path root=minecraft.gameDirectory.toPath();
+  CompletableFuture.runAsync(()->{try{new ProjectStore(root).save(id,copy);}catch(Exception e){throw new java.util.concurrent.CompletionException(e);}},ProjectStore.IO).whenComplete((v,e)->minecraft.execute(()->{if(!recovery)status=e==null?"Project saved in canvasstudio/projects.":"Project save failed: "+e.getCause().getMessage();}));
+ }
+ void loadProject(UUID id,Artwork d){document=d.copy();projectId=id.equals(RECOVERY)?null:id;titleBox=null;original=null;syncPixels();zoom=1;panX=panY=0;status="Project loaded; painting save is separate.";}
     private SDL_DialogFileCallback imageDialog;
     private SDL_DialogFileFilter.Buffer imageFilters;
     private java.nio.ByteBuffer filterName, filterPattern;
@@ -181,13 +135,14 @@ public final class CanvasScreen extends Screen {
     }
     @Override public void tick(){
         if(!sessionRequested && tier.canExchange()){sessionRequested=true;ClientPacketDistributor.sendToServer(new studio.canvas.OpenCanvas(hand,openRequest));}
+        if(++ticks%600==0 && !importing){saveProject(true);}
         // Linux portal dialogs require SDL event processing. Never block Minecraft.
         if(imageDialog!=null){
             org.lwjgl.sdl.SDLEvents.SDL_PumpEvents();
             if(dialogReturned)releaseDialog();
         }
     }
-    private void pickImage(){
+    void pickImage(){
         if(importing||imageDialog!=null)return;
         importing=true;status="Choose a PNG or JPEG image...";
         try{
@@ -206,7 +161,7 @@ public final class CanvasScreen extends Screen {
                     }).whenComplete((image,error)->minecraft.execute(()->{
                         importing=false;
                         if(error!=null){status="Import failed: "+error.getCause().getMessage();return;}
-                        snapshot();original=image;applyImage();
+                        document.begin();original=image;applyImage();document.commit();syncPixels();
                     }));
                 });
                 dialogReturned=true;
@@ -214,17 +169,7 @@ public final class CanvasScreen extends Screen {
             SDLDialog.SDL_ShowOpenFileDialog(imageDialog,0L,0L,imageFilters,(java.nio.ByteBuffer)null,false);
         }catch(Exception | LinkageError ex){releaseDialog();importing=false;status="Could not open file picker: "+ex.getMessage();}
     }
-    private void applyImage(){
-        byte[] converted=ImageImport.quantize(ImageImport.resize(original,crop),palette);
-        System.arraycopy(converted,0,pixels,0,pixels.length);status="Imported! Draw over it, or Save Painting.";
-    }
-    private void exportImage(){
-        try{
-            BufferedImage image=new BufferedImage(128,128,BufferedImage.TYPE_INT_RGB);
-            for(int y=0;y<128;y++)for(int x=0;x<128;x++)image.setRGB(x,y,palette[Byte.toUnsignedInt(pixels[y*128+x])]);
-            Path folder=minecraft.gameDirectory.toPath().resolve("canvasstudio/exports");java.nio.file.Files.createDirectories(folder);
-            Path path=folder.resolve("painting-"+java.util.UUID.randomUUID()+".png");
-            javax.imageio.ImageIO.write(image,"png",path.toFile());status="Exported to canvasstudio/exports.";
-        }catch(Exception ex){status="Export failed: "+ex.getMessage();}
-    }
+
+ private void applyImage(){BufferedImage fitted=ImageImport.resize(original,crop);byte[] converted=ImageImport.quantize(fitted,palette);System.arraycopy(converted,0,pixels,0,pixels.length);document.original=fitted.getRGB(0,0,128,128,null,0,128);status="Imported into active layer.";}
+ void exportImage(){finishStroke();byte[] flat=document.flatten();Path root=minecraft.gameDirectory.toPath();CompletableFuture.runAsync(()->{try{BufferedImage image=new BufferedImage(128,128,BufferedImage.TYPE_INT_RGB);for(int p=0;p<flat.length;p++)image.setRGB(p%128,p/128,palette[Byte.toUnsignedInt(flat[p])]);Path folder=root.resolve("canvasstudio/exports");if(java.nio.file.Files.isSymbolicLink(folder)||java.nio.file.Files.isSymbolicLink(folder.getParent()))throw new java.io.IOException("Unsafe export directory");java.nio.file.Files.createDirectories(folder);javax.imageio.ImageIO.write(image,"png",folder.resolve("painting-"+UUID.randomUUID()+".png").toFile());}catch(Exception e){throw new java.util.concurrent.CompletionException(e);}},ProjectStore.IO).whenComplete((v,e)->minecraft.execute(()->status=e==null?"PNG exported to canvasstudio/exports.":"Export failed: "+e.getCause().getMessage()));}
 }
