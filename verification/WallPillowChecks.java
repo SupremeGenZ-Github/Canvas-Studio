@@ -6,6 +6,8 @@ public class WallPillowChecks {
  static void check(boolean value,String why){if(!value)throw new AssertionError(why);}
  public static void main(String[] args)throws Exception {
   SharedConstants.tryDetectVersion();Bootstrap.bootStrap();
+  var defaults=net.minecraft.core.component.DataComponentMap.builder().set(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE,64).build();
+  net.minecraft.core.registries.BuiltInRegistries.ITEM.listElements().forEach(holder->holder.bindComponents(defaults));
   for(Direction direction:Direction.values()){
    check(WallPlacement.eligible(direction,true,true,true)==direction.getAxis().isHorizontal(),"Horizontal supported placement");
    check(!WallPlacement.eligible(direction,false,true,true),"Unlocked map rejected");
@@ -23,6 +25,7 @@ public class WallPillowChecks {
   var unsafeField=sun.misc.Unsafe.class.getDeclaredField("theUnsafe");unsafeField.setAccessible(true);var unsafe=(sun.misc.Unsafe)unsafeField.get(null);
   var painting=(WallPainting)unsafe.allocateInstance(WallPainting.class);var method=WallPainting.class.getDeclaredMethod("getFrameItemStack");method.setAccessible(true);
   check(((net.minecraft.world.item.ItemStack)method.invoke(painting)).isEmpty(),"Wall paintings have no frame item drop");
+  var icon=javax.imageio.ImageIO.read(java.nio.file.Path.of("src/main/resources/assets/canvasstudio/textures/item/kurlo_pillow.png").toFile());check(icon!=null&&icon.getWidth()==32&&icon.getHeight()==32&&icon.getColorModel().hasAlpha(),"Pillow PNG decodes with transparency");
   System.out.println("PASS wall-placement eligibility, no-frame item, completed/early/interrupted sleep rules and actual vanilla enchanted-apple effects");
  }
 }

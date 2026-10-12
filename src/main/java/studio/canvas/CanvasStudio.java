@@ -47,7 +47,7 @@ public final class CanvasStudio {
     public CanvasStudio(IEventBus bus, ModContainer container) {
         ITEMS.register(bus);
         ENTITIES.register(bus);
-        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(WallPlacement::place);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,WallPlacement::place);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(KurloPillow::tick);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(KurloPillow::wake);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(KurloPillow::logout);

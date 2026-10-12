@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        neoforge: ['26.3.1.0-beta', '26.3.0.76']
+        neoforge: ['26.3.0.0-beta', '26.3.0.76']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -69,7 +69,7 @@ jobs:
           versions=audit['versions']
           assert audit['passed'] and versions
           report=root/'VALIDATION.md'
-          report.write_text(report.read_text()+f"""\n## Executed release result\n\n**PASS** — clean Gradle build, all twelve Java verification suites and packaged artifact checks.\n\nRun: {run}\n\nJAR SHA-256: `{digest}`\n\nAPI audit: **PASS** across {len(versions)} published NeoForge 26.3 builds, from {versions[0]['neoforge']} through {versions[-1]['neoforge']}.\n\nEndpoint builds: **PASS** for 26.3.1.0-beta and 26.3.0.76; normal build **PASS** for 26.3.0.51-beta.\n\nInteractive in-game testing: **none**.\n""")
+          report.write_text(report.read_text()+f"""\n## Executed release result\n\n**PASS** — clean Gradle build, all twelve Java verification suites and packaged artifact checks.\n\nRun: {run}\n\nJAR SHA-256: `{digest}`\n\nAPI audit: **PASS** across {len(versions)} published NeoForge 26.3 builds, from {versions[0]['neoforge']} through {versions[-1]['neoforge']}.\n\nEndpoint builds: **PASS** for 26.3.0.0-beta and 26.3.0.76; normal build **PASS** for 26.3.0.51-beta.\n\nInteractive in-game testing: **none**.\n""")
           assets=root/'assets';assets.mkdir()
           (assets/jar.name).write_bytes(jar.read_bytes())
           for p in [report,root/'verification/build-3.1.0.log',root/'verification/artifact-3.1.0.log',root/'verification/neoforge-26.3-audit.json',root/'verification/neoforge-26.3-versions.txt',root/'verification/audit-26.3.log',root/'verification/ranges-26.3.log']:(assets/p.name).write_bytes(p.read_bytes())
