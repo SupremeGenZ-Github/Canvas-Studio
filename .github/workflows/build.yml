@@ -1,7 +1,7 @@
 name: Build
 on:
   push:
-    branches: [main, lite]
+    branches: [main, lite, studio-3.0]
   pull_request:
   workflow_dispatch:
 permissions:

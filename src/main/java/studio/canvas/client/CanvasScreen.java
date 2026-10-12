@@ -29,7 +29,10 @@ public final class CanvasScreen extends Screen {
     private final java.util.UUID openRequest=java.util.UUID.randomUUID();
     java.util.UUID exchangeToken;
     private boolean sessionRequested;
+    long uses; int maximum; boolean moddedRewards;
+    String usageLabel(){return tier==studio.canvas.CanvasTier.INFINITY?"Uses: "+uses+" / "+(maximum==0?"unlimited":maximum):tier.availability;}
     void reply(studio.canvas.CanvasReply reply){
+        uses=reply.uses();maximum=reply.maximum();moddedRewards=reply.modded();
         if(!reply.request().equals(openRequest))return;
         if(reply.code()==0)exchangeToken=reply.token();
         status=reply.message();
@@ -123,7 +126,7 @@ public final class CanvasScreen extends Screen {
             g.fill(x,y,x+15,y+11,swatches[i]==selected?0xffffffff:0xff363b48);
             g.fill(x+1,y+1,x+14,y+10,palette[Byte.toUnsignedInt(swatches[i])]);
         }
-        g.text(font,font.plainSubstrByWidth(tier.label+" | "+tier.availability,width-16),8,height-26,0xffbec8d8,false);
+        g.text(font,font.plainSubstrByWidth(tier.label+" | "+usageLabel(),width-16),8,height-26,0xffbec8d8,false);
         g.text(font,font.plainSubstrByWidth(status,width-16),8,height-13,0xffdddddd,false);
         super.extractRenderState(g,mouseX,mouseY,partialTick);
     }

@@ -26,13 +26,18 @@ public record DrawItem(InteractionHand hand,String item,byte[] pixels,java.util.
   return ink>=8;
  }
  public static boolean validItem(String item){if(item==null)return false;Identifier id=Identifier.tryParse(item);return id!=null && id.getNamespace().equals("minecraft") && BuiltInRegistries.ITEM.containsKey(id) && BuiltInRegistries.ITEM.getValue(id)!=Items.AIR;}
+ public static boolean registeredItem(String item){if(item==null)return false;Identifier id=Identifier.tryParse(item);return id!=null&&BuiltInRegistries.ITEM.containsKey(id)&&BuiltInRegistries.ITEM.getValue(id)!=Items.AIR;}
  public static void handle(DrawItem p,IPayloadContext context){
   if(!(context.player() instanceof ServerPlayer player))return;
   ItemStack held=player.getItemInHand(p.hand);
   CanvasTier tier=CanvasStudio.tier(held);
   var session=OpenCanvas.SESSIONS.get(player);
-  if(!CanvasExchange.authorize(session,held,p.hand==InteractionHand.OFF_HAND,tier,held.getCount(),p.token,p.pixels,validItem(p.item),player.level().getGameTime())){
-   context.reply(new CanvasReply(p.token,CanvasReply.NONE,3,"Request rejected. Reopen the held Molten or Infinity Canvas."));return;
+  if(!CanvasUsage.allowed(tier,CanvasUsage.count(held),ServerRules.MAX_INFINITY.get())){
+   context.reply(CanvasReply.server(p.token,CanvasReply.NONE,3,"Infinity Canvas usage limit reached.",held));return;
+  }
+
+  if(!CanvasExchange.authorize(session,held,p.hand==InteractionHand.OFF_HAND,tier,held.getCount(),p.token,p.pixels,registeredItem(p.item)&&ServerRules.permits(p.item),player.level().getGameTime())){
+   context.reply(CanvasReply.server(p.token,CanvasReply.NONE,3,"Request rejected: held canvas, drawing or reward is not allowed.",held));return;
   }
   // Preserve the existing vanilla-ID rules and local texture-based matching catalogue.
   ItemStack reward=CanvasExchange.createReward(p.item);
@@ -42,10 +47,11 @@ public record DrawItem(InteractionHand hand,String item,byte[] pixels,java.util.
    public boolean add(ItemStack item){return player.getInventory().add(item);}
    public boolean drop(ItemStack item){return player.drop(item,false,net.minecraft.util.Prediction.SERVER_ONLY)!=null;}
   });
-  if(!delivered){context.reply(new CanvasReply(p.token,CanvasReply.NONE,3,"Reward could not be dropped. Canvas retained; reopen to retry."));return;}
+  if(!delivered){context.reply(CanvasReply.server(p.token,CanvasReply.NONE,3,"Reward could not be dropped. Canvas retained; reopen to retry.",held));return;}
+  if(tier==CanvasTier.INFINITY)CanvasUsage.delivered(held);
   if(tier==CanvasTier.MOLTEN)OpenCanvas.SESSIONS.remove(player);
   player.inventoryMenu.broadcastChanges();
-  context.reply(new CanvasReply(p.token,session.token()==null?CanvasReply.NONE:session.token(),tier==CanvasTier.MOLTEN?1:2,"Received 1 "+rewardName.getString()));
+  context.reply(CanvasReply.server(p.token,session.token()==null?CanvasReply.NONE:session.token(),tier==CanvasTier.MOLTEN?1:2,"Received 1 "+rewardName.getString(),held));
   player.sendSystemMessage(Component.literal("Canvas Studio: received ").append(rewardName),false);
  }
 }

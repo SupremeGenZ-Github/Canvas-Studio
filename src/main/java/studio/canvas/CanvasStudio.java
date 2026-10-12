@@ -5,12 +5,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.ItemLore;
-import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 @Mod(CanvasStudio.ID)
@@ -24,6 +27,12 @@ public final class CanvasStudio {
     public static final DeferredItem<Item> INFINITY_CANVAS = ITEMS.registerSimpleItem("infinity_canvas", p -> p.stacksTo(1).component(DataComponents.LORE, lore("Draw, import and save paintings", CanvasTier.INFINITY.availability)));
     public static final DeferredItem<Item> MOLTEN_QUILL = ITEMS.registerSimpleItem("molder_quill", p -> p.component(DataComponents.LORE, lore("Crafts a single-use Molten Canvas")));
     public static final DeferredItem<Item> INFINITY_QUILL = ITEMS.registerSimpleItem("infinity_quill", p -> p.component(DataComponents.LORE, lore("Crafts a reusable Infinity Canvas")));
+    public static final DeferredRegister<net.minecraft.core.component.DataComponentType<?>> COMPONENTS=DeferredRegister.create(Registries.DATA_COMPONENT_TYPE,ID);
+    public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>,net.minecraft.core.component.DataComponentType<Long>> USES=COMPONENTS.register("infinity_uses",()->CanvasUsage.TYPE);
+    public static final DeferredRegister<CreativeModeTab> TABS=DeferredRegister.create(Registries.CREATIVE_MODE_TAB,ID);
+    public static final DeferredHolder<CreativeModeTab,CreativeModeTab> STUDIO_TAB=TABS.register("studio",()->CreativeModeTab.builder()
+      .title(Component.literal("Canvas Studio+")) .icon(()->new ItemStack(INFINITY_CANVAS.get()))
+      .displayItems((parameters,output)->{output.accept(CANVAS.get());output.accept(MOLTEN_CANVAS.get());output.accept(INFINITY_CANVAS.get());output.accept(QUILL.get());output.accept(MOLTEN_QUILL.get());output.accept(INFINITY_QUILL.get());}).build());
     private static ItemLore lore(String... lines){return new ItemLore(java.util.Arrays.stream(lines).map(Component::literal).map(c -> (Component)c).toList());}
     public static CanvasTier tier(ItemStack stack){
         if(stack.is(CANVAS.get()))return CanvasTier.BLANK;
@@ -32,19 +41,15 @@ public final class CanvasStudio {
         return null;
     }
     public static boolean isCanvas(ItemStack stack){return tier(stack)!=null;}
-    public CanvasStudio(IEventBus bus) {
+    public CanvasStudio(IEventBus bus, ModContainer container) {
         ITEMS.register(bus);
-        bus.addListener(CanvasStudio::creative);
+        COMPONENTS.register(bus);
+        TABS.register(bus);
+        container.registerConfig(ModConfig.Type.SERVER,ServerRules.SPEC);
         bus.addListener(CanvasStudio::network);
     }
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            event.accept(CANVAS); event.accept(MOLTEN_CANVAS); event.accept(INFINITY_CANVAS);
-            event.accept(QUILL); event.accept(MOLTEN_QUILL); event.accept(INFINITY_QUILL);
-        }
-    }
     private static void network(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("3").executesOn(net.neoforged.neoforge.network.registration.HandlerThread.MAIN);
+        var registrar = event.registrar("4").executesOn(net.neoforged.neoforge.network.registration.HandlerThread.MAIN);
         registrar.playToServer(SavePainting.TYPE, SavePainting.CODEC, SavePainting::handle);
         registrar.playToServer(DrawItem.TYPE, DrawItem.CODEC, DrawItem::handle);
         registrar.playToServer(OpenCanvas.TYPE, OpenCanvas.CODEC, OpenCanvas::handle);
