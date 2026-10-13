@@ -175,3 +175,11 @@ tasks.register('verifyGallery', JavaExec) {
  systemProperty 'minecraftValidationJar', vanillaValidationJar.get().asFile.absolutePath
 }
 tasks.named('check') { dependsOn tasks.named('verifyGallery') }
+
+tasks.register('verifyWallGeometry', JavaExec) {
+ dependsOn tasks.named('verificationClasses'), tasks.named('prepareVanillaValidation')
+ classpath = files(vanillaValidationJar) + sourceSets.verification.runtimeClasspath
+ mainClass = 'WallGeometryChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+}
+tasks.named('check') { dependsOn tasks.named('verifyWallGeometry') }
