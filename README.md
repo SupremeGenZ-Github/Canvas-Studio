@@ -27,10 +27,10 @@ Creative tools and matching run locally; no cloud account or image-upload servic
 
 **Choose the JAR that matches your Minecraft version.** This is shared documentation for two separate builds.
 
-| Minecraft Java | NeoForge family | v3.1.2 JAR | Source and validation |
+| Minecraft Java | NeoForge family | v3.1.2 release | Source and validation |
 |---|---|---|---|
-| **26.3** | **26.3.x**, including betas | [Download 26.3 JAR](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.2/canvas-studio-plus-26.3-3.1.2.jar) | [26.3 release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2) |
-| **26.2** | **26.2.x**, including betas | [Download 26.2 JAR](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.2-mc26.2/canvas-studio-plus-26.2-3.1.2.jar) | [26.2 release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2-mc26.2) |
+| **26.3** | **26.3.x**, including betas | [26.3 release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2) | [26.3 release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2) |
+| **26.2** | **26.2.x**, including betas | [26.2 release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2-mc26.2) | [26.2 release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2-mc26.2) |
 
 1. Use Minecraft 26.2 or 26.3 with the corresponding NeoForge family and **Java 25**.
 2. Remove the older Canvas Studio JAR from the instance's `mods` folder.
@@ -216,6 +216,6 @@ Both v3.1.2 editions passed **13 Java verification suites**, packaged-artifact c
 
 **No interactive in-game playtest, rendered world inspection, multiplayer session or live world save/reload test was performed.** Headless checks and API audits are not proof of every loader's gameplay behavior. The release files include source ZIPs, detailed validation, logs, audit data and SHA-256 checksums.
 
-[26.3 validation](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.2/VALIDATION.md) · [26.2 validation](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.2-mc26.2/VALIDATION.md) · [Full changelog](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/CHANGELOG.md)
+[26.3 validation and logs](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2) · [26.2 validation and logs](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2-mc26.2) · [Full changelog](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/CHANGELOG.md)
 
 **Canvas Studio+ — made by SuprixZ**
