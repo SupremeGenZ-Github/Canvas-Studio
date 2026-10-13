@@ -1,11 +1,22 @@
-# Canvas Studio+ 3.1.2 validation — Minecraft 26.3
+# Canvas Studio+ 3.2.0 validation — Minecraft 26.3
 
-Baseline: Canvas Studio+ 3.1.0, main commit a3d87a841e0f260d63fc3c3c4394e6fdc4426f18. Credit: **made by SuprixZ**.
+Baseline: v3.1.2, main commit d290dbe2431b8d37e4923fc3bfee0caadc9bdd9b. Credit: **made by SuprixZ**.
 
-Release gates: Gradle build/check on default and earliest/latest tested NeoForge targets, all thirteen Java verification suites, packaged artifact checks, published NeoForge API audit and dependency-range checks. Release-attached results record the exact run, hash and audited count.
+## Release gates
+- JDK 25 Gradle build/check, all 15 Java verification suites and packaged JAR checks.
+- Default and tested endpoint NeoForge dependency builds.
+- Referenced class/member API audit and dependency-range checks across published family builds.
+- A fresh headless dedicated server must reach readiness, accept an authenticated local stop command, save its world and exit cleanly.
+- Release assets include source, logs, exact audit data, the executed result and SHA-256 checksums.
 
-New automated checks enumerate all 64 width/height combinations in all four horizontal directions: unique occupied cells, lower-left anchor, top-right endpoint, physical bounds, wall thickness and production rendering plane transforms. They check persistent and wire codecs, invalid/truncated dimensions, CSP v3 roundtrip and v2 migration, copied artwork sizes and save/edit packet dimensions. Existing suites retain drawing, input, recipes, matching, reward handling, replay rejection, painting transfer and Kurlo Pillow coverage.
+## Automated scope
+The original 13 suites remain. GalleryChecks exercises actual production ownership/lock policy, UUID codec errors, bound session token/hand/map/revision/expiry checks, bounded sequential frame assembly and duplicate/out-of-order/expired handling, packet limits/codecs, native map-ID animation clocks, all size/layout combinations, independently editable frame layers, undo deletion, CSP1–4 migration, raw source/gallery filesystem persistence, owner/admin deletion, artist quotas and symlink target preservation. It decodes/converts all 51 actual Minecraft painting textures.
 
-No interactive Minecraft client, rendered painting inspection, actual wall placement, multiplayer session or live world save/reload was performed. The headless geometry and codec checks do not prove visual rendering or in-game behavior. Manual checks remaining: 1×1, 2×3 and 8×8 placement on each wall direction; edges and missing supports; obstruction and overlap rejection; survival drops retaining size; client reconnection and server restart; resizing a pre-3.1.2 map; all previous painting and item-finder workflows.
+WallGeometryChecks calls the production border/ghost code with captured vertices across all 64 sizes and four wall directions. It checks extents, normal depth, alpha and the bounded 32×32 preview raster.
 
-NeoForge 26.3.x, including betas, is supported by the declared family range. API audits establish referenced binary-member availability across published builds, not complete behavioral compatibility or a guarantee for future versions.
+The headless server smoke proves mod/registry loading and fresh-world startup plus clean save/stop. The storage tests reload studio data from disk. These are distinct from placing and editing an actual entity in a running world.
+
+## Not performed
+No interactive Minecraft client rendering, live player interactions, multiplayer gameplay, real painted-entity save/reload, input picker operation or player sleep was tested. Remaining manual checks include ghost transparency/orientation/culling at different GUI scales, all frame styles and layout modes, owner/non-owner/admin interactions, wall resize collisions, two viewers seeing animation, pickup/replacement retaining all frames, importing resource-pack and placed vanilla paintings, gallery workflows and full world backup/restore.
+
+An API audit establishes referenced binary-member availability, not complete behavioral compatibility or a guarantee for future NeoForge releases. The release-attached report records actual execution results.

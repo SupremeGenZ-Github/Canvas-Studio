@@ -1,5 +1,61 @@
 # Canvas Studio+ · Changelog
 
+## Canvas Studio+ v3.2.0 — Living Gallery
+
+**made by SuprixZ**
+
+Living Gallery adds all seven requested features and access to Minecraft's existing paintings while retaining the v3.1.2 editor, 8×8 wall sizes, item finder, crafting progression and Kurlo Pillow.
+
+## Placement and wall editing
+
+Holding a locked map gives a translucent world preview with green/red support and collision feedback. It is local-only, non-pickable and never saved to the server world. Server permissions remain authoritative.
+
+Shift-right-click a placed Canvas Studio painting to edit it directly. The server binds the session to the wall entity, dimension, hand, map identity, revision and a 20-minute deadline. Saving creates new map data and updates that entity; other copies retain their previous art. Invalid or obstructed resizing leaves the original painting in place.
+
+## Display and access controls
+
+Studio menu → Display / access selects Stretch, Fit or Crop and optional Wood, Gold, Iron or Diamond cosmetic borders. Fit preserves the square artwork's proportions within the physical rectangle; Crop fills the area by trimming source edges. Borders remain inside the painting bounds and require no extra crafting ingredients.
+
+New paintings receive a server-owned creator UUID. Public paintings permit editing; locked paintings permit only the owner or an administrator with gamemaster permission to edit, rotate or remove them as a player. Only owners/admins may change the lock. Native environmental drop rules are retained.
+
+## Animation and project files
+
+Studio menu → Animation supports up to 16 frames, each retaining up to 16 editable layers and its fitted reference image. Add blank/copied frames, change the selected frame, delete, undo frame operations, preview playback and choose 0.5/1/2/4/8-second intervals. The fastest playback is 2 FPS, matching the bounded native-map synchronization design.
+
+Animations use native locked map data and loop on the server clock. The item's small map-ID sequence persists and synchronizes; original palette frames are retained in the world's studio folder for later editing.
+
+CSP format 4 stores animation/layer data and display settings, with an 8 MiB file cap. Formats 1–3 still import as static projects, retaining version-3 wall dimensions. Format 4 is not readable by older mod versions.
+
+## Minecraft painting imports
+
+Studio menu → Minecraft paintings reads the active painting registry and texture resources. Search by name/asset ID and import any available registered painting PNG into the active layer. Vanilla artwork is read from the installed game/resource packs, never bundled in the mod.
+
+Hold a Canvas Studio canvas and Shift-right-click an existing vanilla painting to copy its registered texture into the editor. The original entity remains in place. Imported art uses Minecraft map colors and the normal 128×128 per-frame raster, with the variant's dimensions capped at 8×8.
+
+The automated asset checks convert all 51 built-in painting textures. Missing/unavailable modded textures are omitted; resource-pack texture animation is not automatically converted into an editable timeline.
+
+## Shared server gallery
+
+Studio menu → Server art gallery supports browsing, publishing the current artwork, importing a selected entry and owner/admin deletion. Publishing shares flattened palette frames and display settings, not local paths, full-resolution files or editable layers. It creates no item reward and consumes no canvas. Imported artwork can be saved using a held canvas or authorized edit session.
+
+Entries persist in the server world's studio folder. Limits are 64 entries per artist and 1,000 per world; enableServerGallery can disable the gallery. Each source file is bounded, uses managed IDs and rejects unsafe symlink targets. Include the studio folders in world backups alongside vanilla map data.
+
+## Validation and compatibility
+
+Transfers send one bounded 16 KiB palette frame per packet, under Minecraft's serverbound payload limit. Incomplete, reordered, duplicate, expired, changed-header and unauthorized uploads are rejected before a save. Completed uploads are replay-guarded; wall revisions reject stale edits.
+
+Release gates include 15 Java verification suites, packaged artifact checks, default/endpoint builds, published NeoForge binary API/range audits and fresh headless server readiness/save/stop. New tests cover ownership, edit capabilities, transfer limits, all fit/layout sizes, actual rendering geometry, animation layers/CSP migration, gallery storage reload and native painting import.
+
+No interactive Minecraft rendering, multiplayer gameplay or actual placed-painting save/reload was tested. Headless geometry and a ready dedicated server do not prove visual/gameplay behavior. Read the attached validation report and logs.
+
+Use matching v3.2.0 client/server editions: network protocol 6 replaces protocol 5. Separate downloads target Minecraft 26.3/NeoForge 26.3.x and Minecraft 26.2/NeoForge 26.2.x, including beta builds. Future family builds are accepted by metadata, with future API changes requiring verification.
+
+[26.3 release](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.0) · [26.2 release](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.0-mc26.2)
+
+---
+
+# Canvas Studio+ · Changelog
+
 **made by SuprixZ**
 
 Detailed release notes for the Minecraft 26.2 and 26.3 editions. Features are shared; download the JAR for your Minecraft version. Each release links to its source, validation and checksums.
