@@ -25,7 +25,7 @@ public class PaintingSizeChecks {
     near(face.getAxis()==Direction.Axis.X?box.getZsize():box.getXsize(),w,"Actual hit-box width");
     near(face.getAxis()==Direction.Axis.X?box.getXsize():box.getZsize(),1.0/16,"No enlarged depth");
     for(BlockPos cell:cells){
-     var center=cell.getCenter().add(-face.getStepX()*.46875,0,-face.getStepZ()*.46875);
+     var center=new net.minecraft.world.phys.Vec3(cell.getX()+.5,cell.getY()+.5,cell.getZ()+.5).add(-face.getStepX()*.46875,0,-face.getStepZ()*.46875);
      check(box.contains(center),"Every occupied tile lies in hit box");
      check(!box.contains(center.add(face.getStepX(),0,face.getStepZ())),"Box stays on wall face");
     }
