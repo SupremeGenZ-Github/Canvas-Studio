@@ -28,3 +28,10 @@ jobs:
           for block in Path('serverentity.txt').read_text().split('\n\n'):
             if 'sendChanges(' in block.split('\n')[0]:print(block)
           PY
+      - name: Inspect relocated and collector APIs
+        run: |
+          jar tf game.jar | grep -E '/Painting|/painting/|/ShapeRenderer|/DimensionData|RenderType.class'
+          javap -p -classpath game.jar net.minecraft.client.renderer.OrderedSubmitNodeCollector net.minecraft.client.renderer.rendertype.RenderTypes net.minecraft.world.entity.decoration.painting.Painting net.minecraft.world.entity.decoration.painting.PaintingVariant net.minecraft.world.entity.decoration.ItemFrame net.minecraft.core.Registry net.minecraft.server.MinecraftServer net.minecraft.client.multiplayer.ClientLevel net.minecraft.server.permissions.PermissionSet net.minecraft.server.permissions.Permissions net.minecraft.server.permissions.PermissionLevel net.minecraft.world.level.storage.LevelResource || true
+          javap -p -classpath nf.jar 'net.neoforged.neoforge.client.event.RenderGuiEvent' || true
+          curl -fsSL https://piston-data.mojang.com/v1/objects/2dc72797acbc1b63fc16a11c4ac393605f453754/client.jar -o game262.jar
+          javap -p -classpath game262.jar net.minecraft.world.entity.decoration.painting.Painting net.minecraft.server.level.ServerPlayer net.minecraft.server.players.PlayerList net.minecraft.client.multiplayer.ClientLevel net.minecraft.client.renderer.OrderedSubmitNodeCollector net.minecraft.client.renderer.rendertype.RenderTypes || true
