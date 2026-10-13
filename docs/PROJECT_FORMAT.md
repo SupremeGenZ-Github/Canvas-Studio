@@ -9,3 +9,7 @@ Version 1 migration: the same magic, version `1`, width, height and title, follo
 History is in-memory only. Zoom/pan and preview wall arrangements are transient UI state. The original import is stored as a fitted 128 × 128 image; full-resolution source files are not embedded. Palette values are Minecraft map-palette indexes; each Minecraft edition must preserve that mapping for appearance to remain identical.
 
 Managed filenames are UUIDs, independent of project titles. Writes use a temporary file and atomic replacement where supported. Project and export directory symlinks and project-file symlinks are rejected. Imports are bounded and validated before creating a new managed project. The fixed recovery UUID is `00000000-0000-0000-0000-000000000001`.
+
+## Version 3 (3.1.2)
+
+Version 3 retains the complete version-2 layout and appends two unsigned bytes: wall width, then wall height. Both must be 1–8. Artwork pixels remain 128×128 regardless of wall display size. Version-1 and version-2 files load as 1×1. Invalid or truncated dimensions are rejected.

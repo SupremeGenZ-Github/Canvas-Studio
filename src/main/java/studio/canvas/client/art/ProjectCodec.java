@@ -2,7 +2,7 @@ package studio.canvas.client.art;
 import java.io.*;
 /** Bounded, uncompressed CSP binary format. It contains no paths or executable data. */
 public final class ProjectCodec {
- public static final int MAX_BYTES=512*1024,MAGIC=0x43535031,VERSION=2;
+ public static final int MAX_BYTES=512*1024,MAGIC=0x43535031,VERSION=3;
  private ProjectCodec(){}
  public static byte[] encode(Artwork d)throws IOException{
   var bytes=new ByteArrayOutputStream();try(var out=new DataOutputStream(bytes)){
@@ -10,6 +10,7 @@ public final class ProjectCodec {
    out.writeInt(d.active);out.writeInt(d.brush);out.writeInt(d.snap);out.writeBoolean(d.grid);out.writeBoolean(d.mirrorX);out.writeBoolean(d.mirrorY);out.writeUTF(d.tool);out.writeByte(d.selected);
    out.writeInt(d.layers.size());for(var l:d.layers){out.writeUTF(text(l.name));out.writeBoolean(l.visible);checkPixels(l.pixels);out.write(l.pixels);}
    out.writeBoolean(d.original!=null);if(d.original!=null){if(d.original.length!=Artwork.PIXELS)throw new IOException("Invalid source image");for(int c:d.original)out.writeInt(c);}
+   if(!studio.canvas.PaintingSize.valid(d.wallWidth,d.wallHeight))throw new IOException("Invalid wall size");out.writeByte(d.wallWidth);out.writeByte(d.wallHeight);
   }
   byte[] encoded=bytes.toByteArray();decode(encoded);return encoded;
  }
@@ -29,6 +30,7 @@ public final class ProjectCodec {
     d.layers.clear();for(int i=0;i<n;i++){String name=text(in.readUTF());boolean visible=in.readBoolean();byte[] pixels=new byte[Artwork.PIXELS];in.readFully(pixels);checkPixels(pixels);var l=new Artwork.Layer(name,pixels);l.visible=visible;d.layers.add(l);}
     if(in.readBoolean()){d.original=new int[Artwork.PIXELS];for(int i=0;i<d.original.length;i++)d.original[i]=in.readInt();}
    }
+   if(version>=3){d.wallWidth=in.readUnsignedByte();d.wallHeight=in.readUnsignedByte();if(!studio.canvas.PaintingSize.valid(d.wallWidth,d.wallHeight))throw new IOException("Invalid wall size");}
    if(in.available()!=0)throw new IOException("Unexpected project data");return d;
   }catch(EOFException e){throw new IOException("Incomplete project file",e);}
  }

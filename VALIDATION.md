@@ -1,31 +1,11 @@
-# Canvas Studio+ 3.1.0 validation — Minecraft 26.2
+# Canvas Studio+ 3.1.2 validation — Minecraft 26.2
 
-Baseline: completed Studio 3.1.0 for Minecraft 26.3, commit `e0fefde73e0ed4e514e8889e0f338f0e04a526e2`. This separate port retains every creative feature, wall painting and Pillow, and adapts the native picker, item drop signature and recipes to Minecraft 26.2. Credit: **made by SuprixZ**.
+Baseline: Canvas Studio+ 3.1.0, main commit b19acf4ea76758cca88cd1557e56e8d6c893fe28. Credit: **made by SuprixZ**.
 
-## Release gates
+Release gates: Gradle build/check on default and earliest/latest tested NeoForge targets, all thirteen Java verification suites, packaged artifact checks, published NeoForge API audit and dependency-range checks. Release-attached results record the exact run, hash and audited count.
 
-JDK 25 Gradle build/check on the selected development target and published compatibility endpoints; packaged artifact checks; class/member API audit of every published NeoForge 26.2 build; Maven version-range checks against every published loader pair. Publication is gated by successful checks. The release-attached copy records the final run, artifact hash and exact audited count.
+New automated checks enumerate all 64 width/height combinations in all four horizontal directions: unique occupied cells, lower-left anchor, top-right endpoint, physical bounds, wall thickness and production rendering plane transforms. They check persistent and wire codecs, invalid/truncated dimensions, CSP v3 roundtrip and v2 migration, copied artwork sizes and save/edit packet dimensions. Existing suites retain drawing, input, recipes, matching, reward handling, replay rejection, painting transfer and Kurlo Pillow coverage.
 
-## Automated scope
+No interactive Minecraft client, rendered painting inspection, actual wall placement, multiplayer session or live world save/reload was performed. The headless geometry and codec checks do not prove visual rendering or in-game behavior. Manual checks remaining: 1×1, 2×3 and 8×8 placement on each wall direction; edges and missing supports; obstruction and overlap rejection; survival drops retaining size; client reconnection and server restart; resizing a pre-3.1.2 map; all previous painting and item-finder workflows.
 
-Existing checks cover real Minecraft recipe/advancement codecs, palette conversion and image rejection, packet roundtrips, vanilla asset matching, server sessions and replay rejection, inventory/drop reward delivery adapters and texture integrity.
-
-Added checks cover persistent counter codec and boundaries, finite/unlimited policy, independent counters, failed delivery, Molten independence and the production exchange transaction with replayed packets. Artwork tests cover stroke undo/redo, rectangles/ellipses, mirroring, layer visibility/duplication/order/merge, project source-image/layer/settings roundtrips, version-1 migration, invalid versions/truncation/size rejection, gallery save/load/rename/duplicate/delete, sharing and symlink-target preservation. Headless editor tests cover actual mouse constants at three GUI scales, shortcut focus guards, undo/redo shortcuts and zoom/pan pointer mapping. Catalogue tests resolve a synthetic modded model parent and texture alias and skip an unsupported special model. Painting-transfer packets are roundtrip-tested.
-
-The API audit checks referenced NeoForge/FML/bus classes and binary members. It does not prove complete behavioral compatibility. Reference availability and headless checks are distinct from launching every loader version.
-
-## Not performed
-
-No interactive Minecraft client, multiplayer session, live world-save migration, native image-picker operation, rendered UI inspection or actual server restart was tested in this environment. Persistent usage uses Minecraft's registered saved and network-synchronized data component; its codec and item operations are tested, while actual world save/reload remains a manual check. Saved-map editing packet transfer is tested; the live hold/map/session workflow still requires in-game verification.
-
-Before relying on a production world, verify: all controls at intended GUI scales; drawing and typing; library/recovery and sharing; resource-pack reload while matching; modded rewards with server configuration; both hands; inventory-full drops; limits across item transfer/relog/world restart; editing an older held locked painting and confirming other map copies remain unchanged; normal/glowing frame and wall previews. Back up worlds before upgrading Minecraft itself.
-
-## Feature boundaries
-
-Model-based matching supports simple texture references, not full GPU model capture. Previews are 2D mock-ups. Maps reopen as one flattened layer; `.csp` files preserve layers. Project gallery is capped at 200 valid entries and asset indexing at 5,000 sources. Future NeoForge 26.2 builds are accepted by metadata but cannot be guaranteed free of API-breaking changes.
-
-## Frameless paintings and Kurlo Pillow
-
-Additional automated checks cover placement eligibility, build/space/locked-map restrictions, the absence of an item-frame drop, completed versus interrupted/early sleep, and the installed game's actual enchanted golden apple status-effect catalogue. Recipe checks include all nine Pillow crafting slots. Wall entities reuse Minecraft hanging-map synchronization and serialization; native map rendering is registered for the custom type.
-
-No live placement, support-removal drop, world save/reload, sleep cycle or rendered wall entity was tested here. These remain explicit in-game checks alongside the existing manual checklist.
+NeoForge 26.2.x, including betas, is supported by the declared family range. API audits establish referenced binary-member availability across published builds, not complete behavioral compatibility or a guarantee for future versions.

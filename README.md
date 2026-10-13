@@ -1,4 +1,4 @@
-# Canvas Studio+ 3.1.0
+# Canvas Studio+ 3.1.2
 
 **made by SuprixZ**
 
@@ -28,13 +28,13 @@ Right-click a canvas to open the editor. The Canvas Studio+ creative tab contain
 - **B/E/I** select brush/eraser/eyedropper; **G** toggles grid; **Ctrl+Z/Y** undo/redo. Tool shortcuts are ignored while typing in text fields. Escape cancels an active stroke, or returns/closes the current screen.
 - Options include horizontal/vertical mirrors, grid, snapping, 1×/2×/4× zoom and Default/Grayscale/Retro 8 palettes. Middle-drag pans a zoomed canvas. The pixel grid becomes visible at sufficiently enlarged scales.
 - Undo groups a complete stroke or shape into one action. History retains up to 32 operations in memory; new edits clear redo.
-- Studio menu contains image import, fit/crop, PNG export, project saving, layers, preview, catalogue and active-layer clearing.
+- Studio menu contains painting size, image import, fit/crop, PNG export, project saving, layers, preview, catalogue and active-layer clearing.
 
 ## Edit an existing saved painting
 
 Remove the painting from its frame, hold **one locked painting map**, then **Shift + right-click in the air**. The server sends its pixels to the editor. This also supports older Canvas Studio paintings and other held locked maps.
 
-Saving replaces the held map with a **new locked map** containing the edited artwork. Other copies of the original retain their artwork. Put the edited map back into its frame. Map editing has no Get Item access and grants no extra canvas or reward.
+Saving replaces the held map with a **new locked map** containing the edited artwork. Other copies of the original retain their artwork. Place the edited map on a wall or put it back into its frame. Map editing has no Get Item access and grants no extra canvas or reward.
 
 A map stores finished pixels, so it reopens as one layer. Keep a `.csp` project when you need to retain editable layers. Editing sessions expire after 20 minutes; if a session expires, save a project and reopen the held painting before saving the edited map.
 
@@ -76,7 +76,7 @@ blockedRewardItems = []
 
 `0` means unlimited. A positive maximum limits successful rewards per individual Infinity Canvas. Counts remain on the item through transfers and saves, and accumulate even while unlimited. Older canvases begin at zero. Lowering a limit below an existing count blocks further rewards; returning to zero restores unlimited eligibility. Normal painting, projects and crafting are unaffected. Administrative/creative duplication and external item-data editing are outside normal-play quota guarantees.
 
-Blocked IDs reject individual rewards, including Molten requests for those IDs. There is no global Molten disable switch, Infinity cooldown applied to Molten, or player-wide quota. Configure item restrictions sensibly if Molten rewards must remain available. Protocol **4** requires matching client/server releases. Clients never supply trusted usage counts, item components or project paths to the server.
+Blocked IDs reject individual rewards, including Molten requests for those IDs. There is no global Molten disable switch, Infinity cooldown applied to Molten, or player-wide quota. Configure item restrictions sensibly if Molten rewards must remain available. Protocol **5** requires matching client/server releases. Clients never supply trusted usage counts, item components or project paths to the server.
 
 ## Recipes and compatibility
 
@@ -91,13 +91,23 @@ All registry IDs, existing recipes and item textures are retained. Legacy `molde
 
 Build with JDK 25: `./gradlew build`. Alternate supported dependency: `./gradlew build -PneoForgeVersion=<version>`. See [validation](VALIDATION.md) for executed checks and limitations. No telemetry, cloud account or network service is required for creative tools or matching.
 
-## Downloads — 3.1.0
+## Downloads — 3.1.2
 
 | Minecraft | NeoForge family | JAR | Source, logs and validation |
 |---|---|---|---|
-| 26.3 | 26.3.x, including betas | [Download](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.0/canvas-studio-plus-26.3-3.1.0.jar) | [Release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.0) |
-| 26.2 | 26.2.x, including betas | [Download](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.0-mc26.2/canvas-studio-plus-26.2-3.1.0.jar) | [Release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.0-mc26.2) |
+| 26.3 | 26.3.x, including betas | [Download](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.2/canvas-studio-plus-26.3-3.1.2.jar) | [Release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2) |
+| 26.2 | 26.2.x, including betas | [Download](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.2-mc26.2/canvas-studio-plus-26.2-3.1.2.jar) | [Release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2-mc26.2) |
 
-All twelve Java suites passed on the selected build targets for each edition. API/range auditing passed for 75 published 26.3 builds and 91 published 26.2 builds on 12 October 2026. Future builds are accepted by metadata, with future API changes requiring verification. No interactive in-game tests were performed.
+Thirteen Java verification suites and published NeoForge API/range audits gate each release. See the release-attached validation report for the executed results. Future builds are accepted by metadata, with future API changes requiring verification. No interactive in-game tests were performed.
 
 Current source: `main` for 26.3 and `minecraft-26.2` for 26.2.
+
+## Large wall paintings (3.1.2)
+
+Open the canvas editor, then **Studio menu → Painting size**. Choose width and height from **1 to 8 blocks** (up to 8×8); keep square enabled or disable it for a rectangle. Save the painting to apply its display size. The original 128×128 artwork scales to fill the selected area; rectangles stretch it.
+
+Right-click the wall at the painting's **lower-left corner**, as viewed from the front. It grows upward and to your right. The entire area needs a supported wall, free space, loaded chunks and build permission. Failed placement does not consume the map. Breaking the painting returns its saved map with the same size under normal survival drop rules.
+
+Existing paintings and projects default to 1×1. To resize a saved painting, hold it and **Shift-right-click in the air**, change its size, then **Save Edited Painting** and place the resulting map. Older copies remain unchanged. Size is preserved in version-3 CSP projects, saved-map items and placed entities. Vanilla item frames still display a normal one-block map.
+
+Install the same 3.1.2 edition on client and server (network protocol 5). Credit: **made by SuprixZ**.

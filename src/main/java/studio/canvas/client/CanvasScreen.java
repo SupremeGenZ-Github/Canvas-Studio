@@ -81,7 +81,7 @@ public final class CanvasScreen extends Screen {
   for(int y=0;y<visible;y++)for(int x=0;x<visible;){int start=x,c=Byte.toUnsignedInt(flat[(y+panY)*128+x+panX]);while(x<visible&&Byte.toUnsignedInt(flat[(y+panY)*128+x+panX])==c)x++;g.fill(left+start*unit,top+y*unit,left+x*unit,top+(y+1)*unit,palette[c]);}
   if(document.grid&&unit>=3)for(int i=0;i<=visible;i++){g.fill(left+i*unit,top,left+i*unit+1,top+side,0x55333333);g.fill(left,top+i*unit,left+side,top+i*unit+1,0x55333333);}
   for(int i=0;i<32;i++){int x=tools+i%8*16,y=top+i/8*12;g.fill(x,y,x+15,y+11,swatches[i]==selected?0xffffffff:0xff363b48);g.fill(x+1,y+1,x+14,y+10,palette[Byte.toUnsignedInt(swatches[i])]);}
-  g.text(font,font.plainSubstrByWidth((editingPainting?"Editing saved painting":tier.label+" | "+usageLabel())+" | "+zoom+"x",width-12),6,height-23,0xffbec8d8,false);
+  g.text(font,font.plainSubstrByWidth((editingPainting?"Editing saved painting":tier.label+" | "+usageLabel())+" | Wall "+document.wallWidth+" x "+document.wallHeight+" | "+zoom+"x",width-12),6,height-23,0xffbec8d8,false);
   g.text(font,font.plainSubstrByWidth(status,width-12),6,height-11,0xffdddddd,false);super.extractRenderState(g,mx,my,tick);
  }
  private int px(double x){return PixelTools.snap((int)(x-left)/(scale*zoom)+panX,document.snap);}
@@ -123,7 +123,7 @@ public final class CanvasScreen extends Screen {
  void cyclePalette(){preset=(preset+1)%3;refreshPalette();}
  void clearLayer(){document.begin();Arrays.fill(pixels,document.active==0?white:(byte)0);document.commit();status="Layer cleared; Undo restores it.";}
  void toggleCrop(){crop=!crop;if(original!=null){document.begin();applyImage();document.commit();}status=crop?"Centre crop":"Whole image fit";}
- private void savePainting(){if(importing||saving)return;finishStroke();syncTitle();if(minecraft.player==null)return;saveProject(true);saving=true;status="Saving painting on server...";ClientPacketDistributor.sendToServer(new SavePainting(hand,document.title,document.flatten(),paintingToken));}
+ private void savePainting(){if(importing||saving)return;finishStroke();syncTitle();if(minecraft.player==null)return;saveProject(true);saving=true;status="Saving painting on server...";ClientPacketDistributor.sendToServer(new SavePainting(hand,document.title,document.flatten(),paintingToken,document.wallWidth,document.wallHeight));}
  void finder(boolean browse){finishStroke();syncTitle();if(!browse&&!tier.canExchange()){status="Get Item requires a Molten or Infinity Canvas.";return;}minecraft.setScreenAndShow(new ItemMatchScreen(this,hand,document.flatten(),palette,browse));}
  void saveProject(boolean recovery){
   syncTitle();Artwork copy=document.copy();UUID id=recovery?RECOVERY:projectId==null?(projectId=UUID.randomUUID()):projectId;Path root=minecraft.gameDirectory.toPath();
