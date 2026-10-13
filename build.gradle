@@ -165,3 +165,13 @@ tasks.register('verifyPaintingSize', JavaExec) {
  systemProperty 'java.awt.headless', 'true'
 }
 tasks.named('check') { dependsOn tasks.named('verifyPaintingSize') }
+
+tasks.register('verifyGallery', JavaExec) {
+ dependsOn tasks.named('verificationClasses'), tasks.named('prepareVanillaValidation')
+ classpath = files(vanillaValidationJar) + sourceSets.verification.runtimeClasspath
+ mainClass = 'GalleryChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+ systemProperty 'java.awt.headless', 'true'
+ systemProperty 'minecraftValidationJar', vanillaValidationJar.get().asFile.absolutePath
+}
+tasks.named('check') { dependsOn tasks.named('verifyGallery') }

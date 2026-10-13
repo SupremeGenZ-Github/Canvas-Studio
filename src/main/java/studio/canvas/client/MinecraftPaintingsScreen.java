@@ -19,7 +19,7 @@ public final class MinecraftPaintingsScreen extends Screen {
  MinecraftPaintingsScreen(CanvasScreen p){super(Component.literal("Import Minecraft paintings"));parent=p;
   var mc=net.minecraft.client.Minecraft.getInstance();if(mc.level==null)return;
   var registry=mc.level.registryAccess().lookupOrThrow(Registries.PAINTING_VARIANT);
-  registry.listElements().limit(512).forEach(holder->{var v=holder.value();var asset=v.assetId();var texture=Identifier.fromNamespaceAndPath(asset.getNamespace(),"textures/painting/"+asset.getPath()+".png");mc.getResourceManager().getResource(texture).ifPresent(r->all.add(new Entry(asset,v.title().map(Component::getString).orElse(asset.getPath().replace('_',' ')),v.width(),v.height(),r)));});
+  registry.listElements().forEach(holder->{var v=holder.value();var asset=v.assetId();var texture=Identifier.fromNamespaceAndPath(asset.getNamespace(),"textures/painting/"+asset.getPath()+".png");mc.getResourceManager().getResource(texture).ifPresent(r->all.add(new Entry(asset,v.title().map(Component::getString).orElse(asset.getPath().replace('_',' ')),v.width(),v.height(),r)));});
   all.sort(Comparator.comparing(e->e.asset.toString()));filter();
  }
  private void filter(){String q=query.toLowerCase(Locale.ROOT);shown=all.stream().filter(e->e.title.toLowerCase(Locale.ROOT).contains(q)||e.asset.toString().contains(q)).toList();page=Math.min(page,Math.max(0,(shown.size()-1)/6));}
@@ -32,11 +32,9 @@ public final class MinecraftPaintingsScreen extends Screen {
  public void importExisting(Identifier asset){var entry=all.stream().filter(e->e.asset.equals(asset)).findFirst();if(entry.isPresent())importPainting(entry.get());else status="This painting texture is unavailable in the active resource packs.";}
  private void importPainting(Entry entry){
   if(busy)return;busy=true;status="Loading "+entry.title+"...";
-  CompletableFuture.supplyAsync(()->{try(var stream=entry.resource.open();var input=ImageIO.createImageInputStream(stream)){
-   var readers=ImageIO.getImageReaders(input);if(!readers.hasNext())throw new java.io.IOException("Unsupported painting image");var reader=readers.next();try{reader.setInput(input,true,true);int w=reader.getWidth(0),h=reader.getHeight(0);if(w<1||h<1||w>8192||h>8192||(long)w*h>16_000_000)throw new java.io.IOException("Painting texture too large");return reader.read(0);}finally{reader.dispose();}
-  }catch(Exception e){throw new java.util.concurrent.CompletionException(e);}}).whenComplete((image,error)->minecraft.execute(()->{
+  CompletableFuture.supplyAsync(()->{try(var stream=entry.resource.open()){return PaintingImport.read(stream);}catch(Exception e){throw new java.util.concurrent.CompletionException(e);}}).whenComplete((image,error)->minecraft.execute(()->{
    busy=false;if(error!=null){status="Import failed: "+error.getCause().getMessage();return;}
-   var resized=new BufferedImage(128,128,BufferedImage.TYPE_INT_RGB);var graphics=resized.createGraphics();try{graphics.setColor(java.awt.Color.WHITE);graphics.fillRect(0,0,128,128);graphics.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION,java.awt.RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);graphics.drawImage(image,0,0,128,128,null);}finally{graphics.dispose();}
+   var resized=PaintingImport.square(image);
    var d=parent.document;d.begin();byte[] pixels=ImageImport.quantize(resized,parent.palette);System.arraycopy(pixels,0,d.pixels(),0,pixels.length);d.original=resized.getRGB(0,0,128,128,null,0,128);d.title=entry.title.replaceAll("[\\p{Cntrl}§]","");if(d.title.length()>64)d.title=d.title.substring(0,64);d.wallWidth=Math.max(1,Math.min(8,entry.width));d.wallHeight=Math.max(1,Math.min(8,entry.height));d.fitMode=0;d.commit();parent.syncPixels();parent.titleBoxReset();parent.status="Imported "+entry.asset+". Save Painting to create your editable copy.";minecraft.setScreenAndShow(parent);
   }));
  }

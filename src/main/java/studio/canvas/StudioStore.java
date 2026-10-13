@@ -14,7 +14,7 @@ public final class StudioStore {
  public void saveMap(int map,ArtBundle art)throws IOException{if(map<0)throw new IOException("Map ID");atomic(folder("paintings").resolve(map+".csa"),art.encode());}
  public Optional<ArtBundle> readMap(int map)throws IOException{if(map<0)return Optional.empty();Path p=folder("paintings").resolve(map+".csa");return Files.exists(p,LinkOption.NOFOLLOW_LINKS)?Optional.of(ArtBundle.decode(bounded(p,ArtBundle.MAX_FILE))):Optional.empty();}
  private void load()throws IOException{
-  if(loaded)return;Path index=folder("gallery").resolve("index.json");if(Files.exists(index,LinkOption.NOFOLLOW_LINKS))try{
+  if(loaded)return;entries.clear();Path index=folder("gallery").resolve("index.json");if(Files.exists(index,LinkOption.NOFOLLOW_LINKS))try{
    JsonArray data=JsonParser.parseString(new String(bounded(index,512*1024),java.nio.charset.StandardCharsets.UTF_8)).getAsJsonArray();if(data.size()>1000)throw new IOException("Gallery index too large");
    for(JsonElement element:data){var o=element.getAsJsonObject();var e=new Entry(UUID.fromString(o.get("id").getAsString()),UUID.fromString(o.get("owner").getAsString()),o.get("author").getAsString(),o.get("title").getAsString(),o.get("width").getAsInt(),o.get("height").getAsInt(),o.get("frames").getAsInt(),o.get("created").getAsLong());if(e.title.length()>64||e.author.length()>64||!PaintingSize.valid(e.width,e.height)||e.frames<1||e.frames>16)throw new IOException("Invalid gallery entry");entries.add(e);}
   }catch(RuntimeException e){entries.clear();throw new IOException("Invalid gallery index",e);}loaded=true;

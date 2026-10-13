@@ -44,7 +44,7 @@ public final class Artwork {
  public boolean undo(){commit();if(undo.isEmpty())return false;push(redo,copy());restore(undo.removeLast());return true;}
  public boolean redo(){if(redo.isEmpty())return false;push(undo,copy());restore(redo.removeLast());return true;}
  public void addLayer(){if(layers.size()>=MAX_LAYERS)return;begin();layers.add(new Layer("Layer "+(layers.size()+1),new byte[PIXELS]));active=layers.size()-1;commit();}
- public void duplicateLayer(){if(layers.size()>=MAX_LAYERS)return;begin();var l=layers.get(active).copy();l.name+=" copy";layers.add(active+1,l);active++;commit();}
+ public void duplicateLayer(){if(layers.size()>=MAX_LAYERS)return;begin();var l=layers.get(active).copy();l.name=(l.name.length()>59?l.name.substring(0,59):l.name)+" copy";layers.add(active+1,l);active++;commit();}
  public void moveLayer(int direction){int n=active+direction;if(n<0||n>=layers.size())return;begin();Collections.swap(layers,active,n);active=n;commit();}
  public void mergeDown(){if(active==0)return;begin();var upper=layers.get(active);var lower=layers.get(active-1);if(!lower.visible)Arrays.fill(lower.pixels,(byte)0);if(upper.visible)for(int i=0;i<PIXELS;i++)if(Byte.toUnsignedInt(upper.pixels[i])>=4)lower.pixels[i]=upper.pixels[i];lower.visible=lower.visible||upper.visible;layers.remove(active);active--;commit();}
 }

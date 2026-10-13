@@ -39,7 +39,7 @@ public class PaintingSizeChecks {
    byte[] bytes=ProjectCodec.encode(art);var restored=ProjectCodec.decode(bytes);
    check(restored.wallWidth==w&&restored.wallHeight==h,"Project dimensions");
    check(art.copy().wallWidth==w&&art.copy().wallHeight==h,"Copied dimensions");
-   byte[] v2=Arrays.copyOf(bytes,bytes.length-2);v2[7]=2;var old=ProjectCodec.decode(v2);
+   byte[] v2=LegacyProjects.encode(art,2);var old=ProjectCodec.decode(v2);
    check(old.wallWidth==1&&old.wallHeight==1,"Version-2 migration");
   }
   for(int bad:new int[]{-1,0,9,255}){
@@ -59,7 +59,7 @@ public class PaintingSizeChecks {
    PaintingData.CODEC.encode(b,data);var read=PaintingData.CODEC.decode(b);check(read.width()==3&&read.height()==8&&Arrays.equals(read.pixels(),pixels),"Editing packet keeps size");
   }finally{b.release();}
   var invalid=new Artwork();invalid.wallWidth=9;try{ProjectCodec.encode(invalid);throw new AssertionError("Accepted oversized project");}catch(java.io.IOException expected){}
-  byte[] corrupt=ProjectCodec.encode(new Artwork());corrupt[corrupt.length-1]=0;try{ProjectCodec.decode(corrupt);throw new AssertionError("Accepted forged project size");}catch(java.io.IOException expected){}
+  byte[] corrupt=LegacyProjects.encode(new Artwork(),3);corrupt[corrupt.length-1]=0;try{ProjectCodec.decode(corrupt);throw new AssertionError("Accepted forged project size");}catch(java.io.IOException expected){}
   System.out.println("PASS all 64 wall sizes/four faces: exact cells, physical bounds, persistent/wire codecs, invalid/truncated dimensions, project v2 migration and save/edit packet dimensions.");
  }
 }
