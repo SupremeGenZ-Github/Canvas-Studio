@@ -21,6 +21,11 @@ public class PaintingSizeChecks {
     var cells=size.cells(anchor,face);check(cells.size()==w*h&&new HashSet<>(cells).size()==w*h,"Unique occupied cells");
     check(cells.getFirst().equals(anchor),"Lower-left anchor");
     check(cells.getLast().equals(anchor.relative(face.getCounterClockWise(),w-1).above(h-1)),"Top-right endpoint");
+    var pose=new com.mojang.blaze3d.vertex.PoseStack();studio.canvas.client.WallPaintingRenderer.scaleWall(pose,face,w,h);
+    var right=face.getCounterClockWise();var matrix=pose.last().pose();
+    var planar=new org.joml.Vector3f(right.getStepX()*.5f,.5f,right.getStepZ()*.5f);matrix.transformPosition(planar);
+    near(planar.y,h/2.0,"Render height matches physical height");near(planar.x*right.getStepX()+planar.z*right.getStepZ(),w/2.0,"Render width matches physical width");
+    var normal=new org.joml.Vector3f(face.getStepX(),0,face.getStepZ());matrix.transformPosition(normal);near(normal.length(),1,"Renderer preserves normal depth");
     var box=size.bounds(anchor,face);near(box.getYsize(),h,"Actual hit-box height");
     near(face.getAxis()==Direction.Axis.X?box.getZsize():box.getXsize(),w,"Actual hit-box width");
     near(face.getAxis()==Direction.Axis.X?box.getXsize():box.getZsize(),1.0/16,"No enlarged depth");
