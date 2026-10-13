@@ -33,7 +33,8 @@ public final class CanvasScreen extends Screen {
  private int left,top,scale,side,tools,brush=2,lastX=-1,lastY=-1,startX,startY,stroke,ticks;
  private byte selected,white; private boolean fillTool,crop,importing,dragging,shapeDrag,saving;
  int zoom=1,panX,panY,preset; String status="Left: draw | Right: erase | Shift: constrain | Middle: pan";
- private BufferedImage original; private UUID projectId; boolean editingPainting; UUID paintingToken=CanvasReply.NONE;
+ private BufferedImage original; private UUID projectId; boolean editingPainting,editingWall; UUID paintingToken=CanvasReply.NONE;
+ private UUID pendingUpload;
  PixelTools.Tool tool=PixelTools.Tool.BRUSH;
  public CanvasScreen(InteractionHand hand){this(hand,CanvasTier.BLANK);}
  public CanvasScreen(InteractionHand hand,CanvasTier tier){
@@ -44,7 +45,7 @@ public final class CanvasScreen extends Screen {
  }
  String usageLabel(){return tier==CanvasTier.INFINITY?"Uses: "+uses+" / "+(maximum==0?"unlimited":maximum):tier.availability;}
  void reply(CanvasReply reply){
-  if(saving&&reply.request().equals(paintingToken)){
+  if(saving&&reply.request().equals(pendingUpload)){
    saving=false;status=reply.message();if(reply.code()==4){draft=null;minecraft.setScreenAndShow(null);}return;
   }
   if(!reply.request().equals(openRequest)&&!reply.request().equals(exchangeToken))return;
@@ -69,6 +70,7 @@ public final class CanvasScreen extends Screen {
  private void openPanel(int page){finishStroke();syncTitle();minecraft.setScreenAndShow(new StudioPanel(this,page));}
  void syncTitle(){if(titleBox!=null)document.title=titleBox.getValue();}
  void syncPixels(){pixels=document.pixels();brush=document.brush;selected=document.selected;try{tool=PixelTools.Tool.valueOf(document.tool);}catch(Exception e){tool=PixelTools.Tool.BRUSH;}fillTool=tool==PixelTools.Tool.FILL;}
+ void titleBoxReset(){titleBox=null;}
  void rebuild(){syncTitle();clearWidgets();init();}
  private Button button(int x,int y,int w,String label,Runnable action){return addRenderableWidget(Button.builder(Component.literal(label),b->action.run()).bounds(x,y,w,18).build());}
  void selectTool(PixelTools.Tool t){tool=t;document.tool=t.name();fillTool=t==PixelTools.Tool.FILL;}
@@ -125,8 +127,14 @@ public final class CanvasScreen extends Screen {
  void cyclePalette(){preset=(preset+1)%3;refreshPalette();}
  void clearLayer(){document.begin();Arrays.fill(pixels,document.active==0?white:(byte)0);document.commit();status="Layer cleared; Undo restores it.";}
  void toggleCrop(){crop=!crop;if(original!=null){document.begin();applyImage();document.commit();}status=crop?"Centre crop":"Whole image fit";}
- private void savePainting(){if(importing||saving)return;finishStroke();syncTitle();if(minecraft.player==null)return;saveProject(true);saving=true;status="Saving painting on server...";ClientPacketDistributor.sendToServer(new SavePainting(hand,document.title,document.flatten(),paintingToken,document.wallWidth,document.wallHeight));}
- void finder(boolean browse){finishStroke();syncTitle();if(!browse&&!tier.canExchange()){status="Get Item requires a Molten or Infinity Canvas.";return;}minecraft.setScreenAndShow(new ItemMatchScreen(this,hand,document.flatten(),palette,browse));}
+ private void savePainting(){uploadArtwork(editingWall?ArtUpload.WALL:ArtUpload.HELD);}
+ void publishGallery(){uploadArtwork(ArtUpload.PUBLISH);}
+ private void uploadArtwork(int action){
+  if(importing||saving||minecraft.player==null)return;finishStroke();syncTitle();saveProject(true);saving=true;pendingUpload=UUID.randomUUID();status=action==ArtUpload.PUBLISH?"Publishing artwork...":"Saving painting on server...";
+  var frames=document.imageSequence();var options=new PaintOptions(document.frameStyle,document.fitMode,document.frameDelay,document.locked);var size=new PaintingSize(document.wallWidth,document.wallHeight);
+  for(int i=0;i<frames.size();i++)ClientPacketDistributor.sendToServer(new ArtUpload(pendingUpload,action,hand,paintingToken,document.title,size,options,i,frames.size(),frames.get(i)));
+ }
+ void finder(boolean browse){finishStroke();syncTitle();if(!browse&&(editingPainting||!tier.canExchange())){status="Get Item requires a Molten or Infinity Canvas.";return;}minecraft.setScreenAndShow(new ItemMatchScreen(this,hand,document.flatten(),palette,browse));}
  void saveProject(boolean recovery){
   syncTitle();Artwork copy=document.copy();UUID id=recovery?RECOVERY:projectId==null?(projectId=UUID.randomUUID()):projectId;Path root=minecraft.gameDirectory.toPath();
   CompletableFuture.runAsync(()->{try{new ProjectStore(root).save(id,copy);}catch(Exception e){throw new java.util.concurrent.CompletionException(e);}},ProjectStore.IO).whenComplete((v,e)->minecraft.execute(()->{if(!recovery)status=e==null?"Project saved in canvasstudio/projects.":"Project save failed: "+e.getCause().getMessage();}));
@@ -144,7 +152,7 @@ public final class CanvasScreen extends Screen {
         dialogReturned=false;
     }
     @Override public void tick(){
-        if(!sessionRequested && tier.canExchange()){sessionRequested=true;ClientPacketDistributor.sendToServer(new studio.canvas.OpenCanvas(hand,openRequest));}
+        if(!sessionRequested && !editingPainting && tier.canExchange()){sessionRequested=true;ClientPacketDistributor.sendToServer(new studio.canvas.OpenCanvas(hand,openRequest));}
         if(++ticks%600==0 && !importing){saveProject(true);}
         // Linux portal dialogs require SDL event processing. Never block Minecraft.
         if(imageDialog!=null){

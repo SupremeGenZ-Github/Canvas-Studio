@@ -107,3 +107,4 @@ report['passed']=all(not any(row['missing_references'].values()) for row in repo
 (ROOT/'verification/neoforge-26.3-versions.txt').write_text(''.join(v+' '+deps['loader'][2]+'\n' for v,_,deps in downloads))
 print(json.dumps({'passed':report['passed'],'versions':len(versions),'reference_counts':report['reference_counts'],'neoform_versions':sorted({x['neoform'] for x in report['versions']})}),flush=True)
 if not report['passed']:raise SystemExit(1)
+
