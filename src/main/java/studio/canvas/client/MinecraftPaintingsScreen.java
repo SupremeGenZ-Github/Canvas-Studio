@@ -33,7 +33,7 @@ public final class MinecraftPaintingsScreen extends Screen {
  private void importPainting(Entry entry){
   if(busy)return;busy=true;status="Loading "+entry.title+"...";
   CompletableFuture.supplyAsync(()->{try(var stream=entry.resource.open()){return PaintingImport.read(stream);}catch(Exception e){throw new java.util.concurrent.CompletionException(e);}}).whenComplete((image,error)->minecraft.execute(()->{
-   busy=false;if(error!=null){status="Import failed: "+error.getCause().getMessage();return;}
+   busy=false;if(minecraft.player==null||minecraft.level==null||minecraft.gui.screen()!=this)return;if(error!=null){status="Import failed: "+error.getCause().getMessage();return;}
    var resized=PaintingImport.square(image);
    var d=parent.document;d.begin();byte[] pixels=ImageImport.quantize(resized,parent.palette);System.arraycopy(pixels,0,d.pixels(),0,pixels.length);d.original=resized.getRGB(0,0,128,128,null,0,128);d.title=entry.title.replaceAll("[\\p{Cntrl}§]","");if(d.title.length()>64)d.title=d.title.substring(0,64);d.wallWidth=Math.max(1,Math.min(8,entry.width));d.wallHeight=Math.max(1,Math.min(8,entry.height));d.fitMode=0;d.commit();parent.syncPixels();parent.titleBoxReset();parent.status="Imported "+entry.asset+". Save Painting to create your editable copy.";minecraft.setScreenAndShow(parent);
   }));

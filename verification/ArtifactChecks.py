@@ -43,6 +43,10 @@ with zipfile.ZipFile(jar) as z:
  for required in ['version="3.2.0"','displayName="Canvas Studio+"','made by SuprixZ','[26.3-alpha,26.4-alpha)','[26.3]']:assert required in metadata
  assert lang['item.canvasstudio.kurlo_pillow']=='Kurlo Pillow'
  assert 'studio/canvas/PaintingSize.class' in files and 'studio/canvas/client/WallPaintingRenderer.class' in files
+ for required in ['PaintingProperties','PaintingAnimation','ArtBundle','ArtUpload','ArtDownload','StudioSessions','StudioService','StudioStore','GalleryRequest','GalleryPage']:
+  assert f'studio/canvas/{required}.class' in files, 'Living Gallery component '+required
+ for required in ['PlacementPreview','WallGeometry','PaintingOptionsScreen','AnimationScreen','MinecraftPaintingsScreen','ServerGalleryScreen','StudioDownloads','PaintingImport']:
+  assert f'studio/canvas/client/{required}.class' in files, 'Living Gallery client '+required
  assert 'studio/canvas/WallPainting.class' in files and 'studio/canvas/KurloPillow.class' in files
  pillow=json.loads(z.read('data/canvasstudio/recipe/kurlo_pillow.json'))
  assert pillow['pattern']==['WWW','WAW','WWW'] and pillow['key']=={'W':'minecraft:white_wool','A':'minecraft:enchanted_golden_apple'}
