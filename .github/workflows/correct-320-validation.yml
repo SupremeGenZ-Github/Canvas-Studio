@@ -1,0 +1,48 @@
+name: Correct 3.2.0 Minecraft 26.2 validation label
+on:
+  push:
+    branches: [studio-3.2-mc26.2]
+    paths: ['.github/workflows/correct-320-validation.yml']
+permissions:
+  contents: write
+jobs:
+  correct:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Correct report and source archive without changing the JAR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir assets
+          gh release download v3.2.0-mc26.2 --repo "$GITHUB_REPOSITORY" --dir assets --pattern 'VALIDATION.md' --pattern '*source.zip' --pattern 'SHA256SUMS.txt'
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile, hashlib, os
+          root=Path('assets')
+          report=root/'VALIDATION.md'
+          old='Endpoint builds: **PASS** for 26.2.0.0-beta and 26.2.0.76;'
+          new='Endpoint builds: **PASS** for 26.2.0.0-beta and 26.2.0.90;'
+          text=report.read_text()
+          assert old in text or new in text
+          report.write_text(text.replace(old,new))
+          source=root/'Canvas-Studio-Plus-3.2.0-MC26.2-source.zip'
+          temp=root/'source-corrected.zip'
+          with zipfile.ZipFile(source) as original, zipfile.ZipFile(temp,'w') as output:
+            for item in original.infolist():
+              data=original.read(item.filename)
+              if item.filename.endswith('/VALIDATION.md'):data=report.read_bytes()
+              if item.filename.endswith('/.github/workflows/publish-v3.2.0-mc26.2.yml'):data=data.decode().replace('26.2.0.76','26.2.0.90').encode()
+              output.writestr(item,data)
+          os.replace(temp,source)
+          sums=root/'SHA256SUMS.txt'
+          lines=[]
+          for line in sums.read_text().splitlines():
+            digest,name=line.split('  ',1)
+            if name in (report.name,source.name):digest=hashlib.sha256((root/name).read_bytes()).hexdigest()
+            lines.append(digest+'  '+name)
+          sums.write_text('\n'.join(lines)+'\n')
+          assert '31fc6c39af25f91ec1f4657531ad174893757daef41f70ad8d44ce43871d57b7  canvas-studio-plus-26.2-3.2.0.jar' in sums.read_text()
+          print('PASS corrected report/source documentation and checksums; JAR unchanged.')
+          PY
+          gh release upload v3.2.0-mc26.2 assets/VALIDATION.md assets/Canvas-Studio-Plus-3.2.0-MC26.2-source.zip assets/SHA256SUMS.txt --clobber --repo "$GITHUB_REPOSITORY"

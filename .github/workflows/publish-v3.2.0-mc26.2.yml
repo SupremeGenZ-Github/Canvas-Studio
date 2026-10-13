@@ -2,6 +2,7 @@ name: Build and publish Canvas Studio+ 3.2.0 for Minecraft 26.2
 on:
   push:
     branches: [studio-3.2-mc26.2]
+    paths-ignore: ['**.md', '.github/workflows/correct-320-validation.yml', '.github/workflows/publish-v3.2.0-mc26.2.yml']
   workflow_dispatch:
 concurrency:
   group: studio-3.2.0-mc26.2-${{ github.ref }}
@@ -74,7 +75,7 @@ jobs:
           versions=audit['versions']
           assert audit['passed'] and versions
           report=root/'VALIDATION.md'
-          report.write_text(report.read_text()+f"""\n## Executed release result\n\n**PASS** — clean Gradle build, all fifteen Java verification suites and packaged artifact checks.\n\nRun: {run}\n\nJAR SHA-256: `{digest}`\n\nAPI audit: **PASS** across {len(versions)} published NeoForge 26.2 builds, from {versions[0]['neoforge']} through {versions[-1]['neoforge']}.\n\nEndpoint builds: **PASS** for 26.2.0.0-beta and 26.2.0.76; normal build **PASS** for 26.2.0.88.\n\nHeadless dedicated server: **PASS**, fresh world readiness and clean save/stop. Interactive client rendering and player gameplay: **none**.\n""")
+          report.write_text(report.read_text()+f"""\n## Executed release result\n\n**PASS** — clean Gradle build, all fifteen Java verification suites and packaged artifact checks.\n\nRun: {run}\n\nJAR SHA-256: `{digest}`\n\nAPI audit: **PASS** across {len(versions)} published NeoForge 26.2 builds, from {versions[0]['neoforge']} through {versions[-1]['neoforge']}.\n\nEndpoint builds: **PASS** for 26.2.0.0-beta and 26.2.0.90; normal build **PASS** for 26.2.0.88.\n\nHeadless dedicated server: **PASS**, fresh world readiness and clean save/stop. Interactive client rendering and player gameplay: **none**.\n""")
           assets=root/'assets';assets.mkdir()
           (assets/jar.name).write_bytes(jar.read_bytes())
           for p in [report,root/'verification/build-3.2.0.log',root/'verification/artifact-3.2.0.log',root/'verification/server-smoke.log',root/'verification/neoforge-26.2-audit.json',root/'verification/neoforge-26.2-versions.txt',root/'verification/audit-26.2.log',root/'verification/ranges-26.2.log']:(assets/p.name).write_bytes(p.read_bytes())
