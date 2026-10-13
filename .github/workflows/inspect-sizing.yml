@@ -24,3 +24,15 @@ jobs:
               if any(name in block.split('\n')[0] for name in ['recalculateBoundingBox(', 'survives(', 'setDirection(', 'ItemFrame(']):
                   print(block)
           PY
+      - name: Inspect rendering and spawning contracts
+        run: |
+          javap -c -p -classpath game.jar net.minecraft.client.renderer.entity.ItemFrameRenderer
+          javap -c -p -classpath game.jar net.minecraft.world.entity.decoration.ItemFrame > spawn.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          for block in Path('spawn.txt').read_text().split('\n\n'):
+              if any(name in block.split('\n')[0] for name in ['getAddEntityPacket(', 'recreateFromPacket(']):
+                  print(block)
+          PY
+          curl -fsSL https://piston-data.mojang.com/v1/objects/2dc72797acbc1b63fc16a11c4ac393605f453754/client.jar -o game262.jar
+          javap -p -classpath game262.jar net.minecraft.client.renderer.entity.ItemFrameRenderer net.minecraft.world.entity.decoration.ItemFrame net.minecraft.world.entity.decoration.HangingEntity

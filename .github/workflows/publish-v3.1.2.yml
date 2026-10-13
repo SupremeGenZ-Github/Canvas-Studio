@@ -3,6 +3,9 @@ on:
   push:
     branches: [studio-3.1.2]
   workflow_dispatch:
+concurrency:
+  group: studio-3.1.2-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: write
 jobs:

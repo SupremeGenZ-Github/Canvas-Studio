@@ -28,13 +28,13 @@ Right-click a canvas to open the editor. The Canvas Studio+ creative tab contain
 - **B/E/I** select brush/eraser/eyedropper; **G** toggles grid; **Ctrl+Z/Y** undo/redo. Tool shortcuts are ignored while typing in text fields. Escape cancels an active stroke, or returns/closes the current screen.
 - Options include horizontal/vertical mirrors, grid, snapping, 1×/2×/4× zoom and Default/Grayscale/Retro 8 palettes. Middle-drag pans a zoomed canvas. The pixel grid becomes visible at sufficiently enlarged scales.
 - Undo groups a complete stroke or shape into one action. History retains up to 32 operations in memory; new edits clear redo.
-- Studio menu contains image import, fit/crop, PNG export, project saving, layers, preview, catalogue and active-layer clearing.
+- Studio menu contains painting size, image import, fit/crop, PNG export, project saving, layers, preview, catalogue and active-layer clearing.
 
 ## Edit an existing saved painting
 
 Remove the painting from its frame, hold **one locked painting map**, then **Shift + right-click in the air**. The server sends its pixels to the editor. This also supports older Canvas Studio paintings and other held locked maps.
 
-Saving replaces the held map with a **new locked map** containing the edited artwork. Other copies of the original retain their artwork. Put the edited map back into its frame. Map editing has no Get Item access and grants no extra canvas or reward.
+Saving replaces the held map with a **new locked map** containing the edited artwork. Other copies of the original retain their artwork. Place the edited map on a wall or put it back into its frame. Map editing has no Get Item access and grants no extra canvas or reward.
 
 A map stores finished pixels, so it reopens as one layer. Keep a `.csp` project when you need to retain editable layers. Editing sessions expire after 20 minutes; if a session expires, save a project and reopen the held painting before saving the edited map.
 
@@ -76,7 +76,7 @@ blockedRewardItems = []
 
 `0` means unlimited. A positive maximum limits successful rewards per individual Infinity Canvas. Counts remain on the item through transfers and saves, and accumulate even while unlimited. Older canvases begin at zero. Lowering a limit below an existing count blocks further rewards; returning to zero restores unlimited eligibility. Normal painting, projects and crafting are unaffected. Administrative/creative duplication and external item-data editing are outside normal-play quota guarantees.
 
-Blocked IDs reject individual rewards, including Molten requests for those IDs. There is no global Molten disable switch, Infinity cooldown applied to Molten, or player-wide quota. Configure item restrictions sensibly if Molten rewards must remain available. Protocol **4** requires matching client/server releases. Clients never supply trusted usage counts, item components or project paths to the server.
+Blocked IDs reject individual rewards, including Molten requests for those IDs. There is no global Molten disable switch, Infinity cooldown applied to Molten, or player-wide quota. Configure item restrictions sensibly if Molten rewards must remain available. Protocol **5** requires matching client/server releases. Clients never supply trusted usage counts, item components or project paths to the server.
 
 ## Recipes and compatibility
 
@@ -98,7 +98,7 @@ Build with JDK 25: `./gradlew build`. Alternate supported dependency: `./gradlew
 | 26.3 | 26.3.x, including betas | [Download](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.2/canvas-studio-plus-26.3-3.1.2.jar) | [Release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2) |
 | 26.2 | 26.2.x, including betas | [Download](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.2-mc26.2/canvas-studio-plus-26.2-3.1.2.jar) | [Release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2-mc26.2) |
 
-All twelve Java suites passed on the selected build targets for each edition. API/range auditing passed for 75 published 26.3 builds and 91 published 26.2 builds on 12 October 2026. Future builds are accepted by metadata, with future API changes requiring verification. No interactive in-game tests were performed.
+Thirteen Java verification suites and published NeoForge API/range audits gate each release. See the release-attached validation report for the executed results. Future builds are accepted by metadata, with future API changes requiring verification. No interactive in-game tests were performed.
 
 Current source: `main` for 26.3 and `minecraft-26.2` for 26.2.
 
