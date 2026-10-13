@@ -18,8 +18,10 @@ public final class WallPlacement {
   var anchor=event.getPos().relative(face);var held=player.getItemInHand(event.getHand());
   boolean permission=player.mayBuild()&&level.mayInteract(player,event.getPos())&&player.mayUseItemAt(anchor,face,held);
   if(!permission){event.setCancellationResult(InteractionResult.FAIL);return;}
-  var painting=new WallPainting(level,anchor,face);
-  if(!eligible(face,true,permission,painting.survives())){event.setCancellationResult(InteractionResult.FAIL);player.sendSystemMessage(net.minecraft.network.chat.Component.literal("Painting needs a supported wall and an empty space."),false);return;}
+  var size=held.getOrDefault(PaintingSize.TYPE,PaintingSize.ONE);
+  for(var front:size.cells(anchor,face)){var back=front.relative(face.getOpposite());if(!level.hasChunkAt(back)||!level.hasChunkAt(front)||!level.mayInteract(player,back)||!player.mayUseItemAt(front,face,held)){event.setCancellationResult(InteractionResult.FAIL);return;}}
+  var painting=new WallPainting(level,anchor,face);painting.setDisplaySize(size);
+  if(!eligible(face,true,permission,painting.survives())){event.setCancellationResult(InteractionResult.FAIL);player.sendSystemMessage(net.minecraft.network.chat.Component.literal("The whole painting needs a supported wall and an empty space."),false);return;}
   painting.setItem(held.copyWithCount(1),false);
   if(!level.addFreshEntity(painting)){event.setCancellationResult(InteractionResult.FAIL);return;}
   painting.playPlacementSound();if(!player.hasInfiniteMaterials())held.shrink(1);

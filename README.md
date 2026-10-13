@@ -1,4 +1,4 @@
-# Canvas Studio+ 3.1.0
+# Canvas Studio+ 3.1.2
 
 **made by SuprixZ**
 
@@ -91,13 +91,23 @@ All registry IDs, existing recipes and item textures are retained. Legacy `molde
 
 Build with JDK 25: `./gradlew build`. Alternate supported dependency: `./gradlew build -PneoForgeVersion=<version>`. See [validation](VALIDATION.md) for executed checks and limitations. No telemetry, cloud account or network service is required for creative tools or matching.
 
-## Downloads — 3.1.0
+## Downloads — 3.1.2
 
 | Minecraft | NeoForge family | JAR | Source, logs and validation |
 |---|---|---|---|
-| 26.3 | 26.3.x, including betas | [Download](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.0/canvas-studio-plus-26.3-3.1.0.jar) | [Release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.0) |
-| 26.2 | 26.2.x, including betas | [Download](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.0-mc26.2/canvas-studio-plus-26.2-3.1.0.jar) | [Release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.0-mc26.2) |
+| 26.3 | 26.3.x, including betas | [Download](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.2/canvas-studio-plus-26.3-3.1.2.jar) | [Release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2) |
+| 26.2 | 26.2.x, including betas | [Download](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/download/v3.1.2-mc26.2/canvas-studio-plus-26.2-3.1.2.jar) | [Release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2-mc26.2) |
 
 All twelve Java suites passed on the selected build targets for each edition. API/range auditing passed for 75 published 26.3 builds and 91 published 26.2 builds on 12 October 2026. Future builds are accepted by metadata, with future API changes requiring verification. No interactive in-game tests were performed.
 
 Current source: `main` for 26.3 and `minecraft-26.2` for 26.2.
+
+## Large wall paintings (3.1.2)
+
+Open the canvas editor, then **Studio menu → Painting size**. Choose width and height from **1 to 8 blocks** (up to 8×8); keep square enabled or disable it for a rectangle. Save the painting to apply its display size. The original 128×128 artwork scales to fill the selected area; rectangles stretch it.
+
+Right-click the wall at the painting's **lower-left corner**, as viewed from the front. It grows upward and to your right. The entire area needs a supported wall, free space, loaded chunks and build permission. Failed placement does not consume the map. Breaking the painting returns its saved map with the same size under normal survival drop rules.
+
+Existing paintings and projects default to 1×1. To resize a saved painting, hold it and **Shift-right-click in the air**, change its size, then **Save Edited Painting** and place the resulting map. Older copies remain unchanged. Size is preserved in version-3 CSP projects, saved-map items and placed entities. Vanilla item frames still display a normal one-block map.
+
+Install the same 3.1.2 edition on client and server (network protocol 5). Credit: **made by SuprixZ**.

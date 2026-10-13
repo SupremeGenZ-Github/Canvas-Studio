@@ -11,6 +11,22 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 /** Saved-map hanging entity using vanilla map synchronization/rendering, without a frame model or frame item. */
 public final class WallPainting extends ItemFrame {
+ private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> DISPLAY_WIDTH=net.minecraft.network.syncher.SynchedEntityData.defineId(WallPainting.class,net.minecraft.network.syncher.EntityDataSerializers.INT);
+ private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> DISPLAY_HEIGHT=net.minecraft.network.syncher.SynchedEntityData.defineId(WallPainting.class,net.minecraft.network.syncher.EntityDataSerializers.INT);
+ @Override protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder){super.defineSynchedData(builder);builder.define(DISPLAY_WIDTH,1);builder.define(DISPLAY_HEIGHT,1);}
+ public PaintingSize displaySize(){return PaintingSize.fromSaved(getEntityData().get(DISPLAY_WIDTH),getEntityData().get(DISPLAY_HEIGHT));}
+ public void setDisplaySize(PaintingSize size){getEntityData().set(DISPLAY_WIDTH,size.width());getEntityData().set(DISPLAY_HEIGHT,size.height());recalculateBoundingBox();}
+ @Override protected net.minecraft.world.phys.AABB calculateBoundingBox(BlockPos anchor,Direction face){return displaySize().bounds(anchor,face);}
+ @Override protected net.minecraft.world.phys.AABB getPopBox(){return getBoundingBox();}
+ @Override public void onSyncedDataUpdated(net.minecraft.network.syncher.EntityDataAccessor<?> key){super.onSyncedDataUpdated(key);if(key.equals(DISPLAY_WIDTH)||key.equals(DISPLAY_HEIGHT))recalculateBoundingBox();}
+ @Override protected void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput output){super.addAdditionalSaveData(output);output.putInt("CanvasWidth",displaySize().width());output.putInt("CanvasHeight",displaySize().height());}
+ @Override protected void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput input){super.readAdditionalSaveData(input);var fallback=getItem().getOrDefault(PaintingSize.TYPE,PaintingSize.ONE);setDisplaySize(PaintingSize.fromSaved(input.getIntOr("CanvasWidth",fallback.width()),input.getIntOr("CanvasHeight",fallback.height())));}
+ @Override public boolean survives(){
+  if(!super.survives())return false;
+  var face=getDirection();if(!face.getAxis().isHorizontal())return false;
+  for(BlockPos front:displaySize().cells(getPos(),face)){var back=front.relative(face.getOpposite());if(!level().hasChunkAt(back)||!level().hasChunkAt(front)||!level().getBlockState(back).isFaceSturdy(level(),back,face))return false;}
+  return true;
+ }
  public WallPainting(EntityType<? extends ItemFrame> type,Level level){super(type,level);setInvisible(true);}
  public WallPainting(Level level,BlockPos position,Direction face){super(CanvasStudio.WALL_PAINTING.get(),level,position,face);setInvisible(true);}
  @Override public void tick(){super.tick();if(!isInvisible())setInvisible(true);}

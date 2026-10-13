@@ -15,7 +15,7 @@ public final class CanvasClient {
     static CanvasScreen activeCanvas;
     public CanvasClient(IEventBus bus) {
         NeoForge.EVENT_BUS.addListener(CanvasClient::rightClick);
-        bus.addListener((net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event)->event.registerEntityRenderer(CanvasStudio.WALL_PAINTING.get(),context->new net.minecraft.client.renderer.entity.ItemFrameRenderer<>(context)));
+        bus.addListener((net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event)->event.registerEntityRenderer(CanvasStudio.WALL_PAINTING.get(),context->new WallPaintingRenderer(context)));
         bus.addListener((net.neoforged.neoforge.client.event.AddClientReloadListenersEvent event)->event.addListener(net.minecraft.resources.Identifier.fromNamespaceAndPath(CanvasStudio.ID,"catalogue_reload"),(net.minecraft.server.packs.resources.ResourceManagerReloadListener)resources->ItemMatchCatalog.RESOURCE_EPOCH.incrementAndGet()));
     }
     public static void reply(studio.canvas.CanvasReply reply){
@@ -28,7 +28,7 @@ public final class CanvasClient {
         Minecraft mc=Minecraft.getInstance();
         if(!data.request().equals(paintingRequest)||mc.player==null||!mc.player.getItemInHand(data.hand()).is(net.minecraft.world.item.Items.FILLED_MAP))return;
         paintingRequest=null;var screen=new CanvasScreen(data.hand());
-        var document=new studio.canvas.client.art.Artwork(data.pixels());document.title=data.title();
+        var document=new studio.canvas.client.art.Artwork(data.pixels());document.title=data.title();document.wallWidth=data.width();document.wallHeight=data.height();
         screen.loadProject(java.util.UUID.randomUUID(),document);screen.editingPainting=true;screen.paintingToken=data.token();
         mc.setScreenAndShow(screen);
     }

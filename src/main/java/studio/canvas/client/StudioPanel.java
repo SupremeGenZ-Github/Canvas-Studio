@@ -21,6 +21,7 @@ public final class StudioPanel extends Screen {
    add(2,"Export PNG",()->{parent.exportImage();onClose();});add(3,"Save editable project",()->{parent.saveProject(false);onClose();});
    add(4,"Layers",()->minecraft.setScreenAndShow(new LayerScreen(parent)));add(5,"Preview / wall",()->minecraft.setScreenAndShow(new PaintingPreview(parent)));
    add(6,parent.tier.canExchange()?"Draw to Get Item":"Get Item: locked",()->{onClose();parent.finder(false);});add(7,"Browse catalogue",()->parent.finder(true));
+   add(9,"Painting size",()->minecraft.setScreenAndShow(new PaintingSizeScreen(parent)));
    add(8,"Clear active layer",()->{parent.clearLayer();onClose();});
   }
   addRenderableWidget(Button.builder(Component.literal("Back to drawing"),b->onClose()).bounds(width/2-70,height-28,140,20).build());
