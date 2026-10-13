@@ -18,11 +18,6 @@ public record OpenPainting(InteractionHand hand,UUID request) implements CustomP
   public void encode(RegistryFriendlyByteBuf b,OpenPainting p){b.writeBoolean(p.hand==InteractionHand.OFF_HAND);b.writeUUID(p.request);}
  };
  public Type<? extends CustomPacketPayload> type(){return TYPE;}
- public static void handle(OpenPainting p,IPayloadContext context){
-  if(!(context.player() instanceof ServerPlayer player))return;var held=player.getItemInHand(p.hand);
-  if(!held.is(Items.FILLED_MAP)||held.getCount()!=1)return;var data=MapItem.getSavedData(held,player.level());if(data==null||!data.locked){player.sendSystemMessage(net.minecraft.network.chat.Component.literal("Hold one saved, locked painting map to edit."),false);return;}
-  UUID token=UUID.randomUUID();SESSIONS.put(player,new EditSession(held,p.hand,token,player.level().getGameTime()+24000));String title=held.getHoverName().getString();if(title.length()>64)title=title.substring(0,64);
-  var size=held.getOrDefault(PaintingSize.TYPE,PaintingSize.ONE);context.reply(new PaintingData(p.hand,p.request,token,title,data.colors.clone(),size.width(),size.height()));
- }
- public static boolean claim(ServerPlayer player,InteractionHand hand,ItemStack held,UUID token){var s=SESSIONS.get(player);if(s==null||s.held!=held||s.hand!=hand||!s.token.equals(token)||player.level().getGameTime()>s.expires||!held.is(Items.FILLED_MAP)||held.getCount()!=1)return false;SESSIONS.remove(player);return true;}
+ public static void handle(OpenPainting p,IPayloadContext context){if(context.player() instanceof ServerPlayer player)StudioService.openHeld(player,p.hand,p.request);}
+ public static boolean claim(ServerPlayer p,InteractionHand hand,ItemStack held,UUID token){var s=StudioSessions.validate(p,hand,token,false);if(s==null)return false;StudioSessions.close(p);return true;}
 }

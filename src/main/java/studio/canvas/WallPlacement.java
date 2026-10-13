@@ -22,7 +22,9 @@ public final class WallPlacement {
   for(var front:size.cells(anchor,face)){var back=front.relative(face.getOpposite());if(!level.hasChunkAt(back)||!level.hasChunkAt(front)||!level.mayInteract(player,back)||!player.mayUseItemAt(front,face,held)){event.setCancellationResult(InteractionResult.FAIL);return;}}
   var painting=new WallPainting(level,anchor,face);painting.setDisplaySize(size);
   if(!eligible(face,true,permission,painting.survives())){event.setCancellationResult(InteractionResult.FAIL);player.sendSystemMessage(net.minecraft.network.chat.Component.literal("The whole painting needs a supported wall and an empty space."),false);return;}
-  painting.setItem(held.copyWithCount(1),false);
+  var display=held.copyWithCount(1);var properties=StudioSessions.properties(display);
+  if(properties.owner().equals(PaintingProperties.NONE))display.set(PaintingProperties.TYPE,new PaintingProperties(player.getUUID(),properties.options(),properties.revision()));
+  painting.setItem(display,false);
   if(!level.addFreshEntity(painting)){event.setCancellationResult(InteractionResult.FAIL);return;}
   painting.playPlacementSound();if(!player.hasInfiniteMaterials())held.shrink(1);
   player.inventoryMenu.broadcastChanges();event.setCancellationResult(InteractionResult.SUCCESS);

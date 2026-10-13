@@ -1,4 +1,4 @@
-# Canvas Studio+ · v3.1.2
+# Canvas Studio+ · v3.2.0 — Living Gallery
 
 **Draw. Import. Edit. Hang.** Turn your artwork into Minecraft paintings, or draw an item/block and find its closest supported visual match.
 
@@ -8,6 +8,19 @@
 
 [Download releases](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases) · [Changelog](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/CHANGELOG.md) · [Report an issue](https://github.com/SupremeGenZ-Github/Canvas-Studio/issues)
 
+## New in Living Gallery
+
+- **Placement preview:** holding a locked painting map shows a translucent wall preview. Green means the local space/support checks pass; red means blocked or unsupported. The server still decides whether placement is permitted.
+- **Edit on the wall:** Shift-right-click a placed Canvas Studio painting to edit pixels, size, frames or animation without breaking it first.
+- **Display settings:** Studio menu → Display / access provides **Stretch, Fit or Crop**, plus **None, Wood, Gold, Iron or Diamond** cosmetic borders.
+- **Ownership and locks:** new paintings have a server-assigned owner. Public paintings allow editing; locked paintings restrict editing, rotation and player removal to the owner or administrators with gamemaster-level permission. Only the owner/admin can change a lock. Environmental breakage still follows normal game rules.
+- **Animation:** Studio menu → Animation supports up to **16 frames**, each with its own editable layers. Add blank/copied frames, switch frames, delete, preview playback and choose **0.5, 1, 2, 4 or 8 seconds per frame**. Playback loops; the fastest setting is 2 frames per second.
+- **Server art gallery:** browse, publish, import and owner/admin-delete shared artwork. Publishing shares flattened palette pixels for each animation frame; local CSP files retain editable layers.
+- **Import Minecraft paintings:** browse **Studio menu → Minecraft paintings**, search names/asset IDs and import a painting into the active layer. The catalogue reads the current world's painting registry and installed resource packs.
+- **Copy an existing vanilla painting:** hold a Canvas Studio canvas and Shift-right-click the vanilla painting. Importing leaves the original painting in place; saving your copy uses your canvas.
+
+Frames are cosmetic and have no additional crafting cost. Painting size is still limited to **8×8 blocks**, and each animation frame remains **128×128 pixels**.
+
 ## What you can create
 
 | Feature | What it does |
@@ -16,6 +29,8 @@
 | Image import/export | Convert local PNG/JPEG images to Minecraft map colors and export finished PNGs |
 | Layered projects | Keep up to 16 editable layers in local `.csp` project files |
 | Saved-painting editing | Reopen an existing locked map and save an edited copy |
+| Living Gallery | Wall editing, cosmetic frames, ownership locks, animations and shared server artwork |
+| Minecraft painting imports | Import the active game's built-in painting textures or copy a placed vanilla painting |
 | Large wall paintings | Place frameless artwork from **1×1 to 8×8 blocks**, including rectangles |
 | Offline item finder | Compare a drawing with supported item/block artwork and choose a match |
 | Canvas progression | Blank for painting, Molten for one reward, Infinity for repeated rewards |
@@ -27,14 +42,14 @@ Creative tools and matching run locally; no cloud account or image-upload servic
 
 **Choose the JAR that matches your Minecraft version.** This is shared documentation for two separate builds.
 
-| Minecraft Java | NeoForge family | v3.1.2 release | Source and validation |
+| Minecraft Java | NeoForge family | v3.2.0 release | Source and validation |
 |---|---|---|---|
-| **26.3** | **26.3.x**, including betas | [26.3 release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2) | [26.3 release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2) |
-| **26.2** | **26.2.x**, including betas | [26.2 release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2-mc26.2) | [26.2 release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2-mc26.2) |
+| **26.3** | **26.3.x**, including betas | [26.3 release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.0) | [26.3 release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.0) |
+| **26.2** | **26.2.x**, including betas | [26.2 release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.0-mc26.2) | [26.2 release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.0-mc26.2) |
 
 1. Use Minecraft 26.2 or 26.3 with the corresponding NeoForge family and **Java 25**.
 2. Remove the older Canvas Studio JAR from the instance's `mods` folder.
-3. Put the matching v3.1.2 JAR in that folder.
+3. Put the matching v3.2.0 JAR in that folder.
 4. For multiplayer, install the **same edition and mod version on both client and server**.
 5. Launch the game and find the **Canvas Studio+** creative tab, or craft the items below.
 
@@ -118,7 +133,9 @@ The source artwork stays **128×128 pixels**. Larger displays scale that artwork
 
 ## Edit a painting you already saved
 
-Pick up the painting, hold **one locked painting map**, then **Shift-right-click in the air**. Change its pixels or wall size, then choose **Save edited painting**.
+For a placed Canvas Studio painting, **Shift-right-click it directly**. A server session binds the edit to that wall entity and its revision; saving updates the wall painting, while other copies of its previous map keep their previous artwork. Resizing requires valid support, clearance and build permission across the new area.
+
+For a held map, pick up the painting, hold **one locked painting map**, then **Shift-right-click in the air**. Change its pixels or wall size, then choose **Save edited painting**.
 
 Saving creates a new locked map in the held hand. Other copies of the original retain their previous artwork and dimensions. Editing also supports older Canvas Studio paintings and other held locked maps.
 
@@ -128,7 +145,7 @@ A map retains finished pixels, so it reopens as **one flattened layer**. Keep a 
 
 Use **Studio menu → Save editable project** to keep your working document, or open **Projects** for the gallery.
 
-Projects preserve up to 16 named layers, their visibility/order, the active layer, pixels, brush/tool/color/mirror/grid/snap settings, wall dimensions and the fitted original image when available. Add, duplicate, reorder, rename, hide, delete or merge layers; visible layers form the final painting.
+Projects preserve up to **16 animation frames with up to 16 named layers per frame**, their visibility/order, the active layer, pixels, brush/tool/color/mirror/grid/snap settings, wall dimensions, border/layout/access settings, animation speed and the fitted original image when available. Add, duplicate, reorder, rename, hide, delete or merge layers; visible layers form the final painting.
 
 | Location inside the Minecraft instance | Contents |
 |---|---|
@@ -139,7 +156,7 @@ The gallery supports thumbnails, paging, opening, renaming, duplication, deletio
 
 A reserved recovery project is saved about every 30 seconds while the editor is active and on closing. This is **one local recovery slot shared across worlds**, separate from named projects. Undo history is not stored in project files.
 
-v3.1.2 writes **CSP format 3** and reads older formats 1 and 2 as 1×1 paintings. Full-resolution source images are not embedded; the fitted 128×128 image is retained when available. [Project-format details](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/docs/PROJECT_FORMAT.md).
+v3.2.0 writes **CSP format 4** (maximum 8 MiB). Formats 1 and 2 load as static 1×1 projects; format 3 retains its saved wall size and loads as one static frame. Older releases cannot open format-4 projects. Full-resolution source images are not embedded; the fitted 128×128 image is retained when available. [Project-format details](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/docs/PROJECT_FORMAT.md).
 
 ## Offline item matching and previews
 
@@ -161,23 +178,29 @@ Leaving bed early, interrupted sleep, swapping away the pillow or relogging does
 
 ## Server settings
 
+The public gallery is stored per server world, with a limit of **64 entries per artist and 1,000 per world**. It grants no items and does not consume a canvas when publishing. Imports become editor artwork; saving still requires a canvas or an authorized painting-edit session. Owners or administrators can delete entries.
+
+Back up the entire world, including `canvasstudio/paintings` (original palette artwork for saved maps) and `canvasstudio/gallery` (shared artwork and its index), together with Minecraft's map data. Map editing reopens flattened animation frames; local CSP projects preserve layers.
+
 Edit the generated `canvasstudio-server.toml`, then restart the world/server. Depending on the loader, it may be in `config` with a world-specific `syncedconfig` override, or in the world's `serverconfig` folder.
 
 ```toml
 maxInfinityCanvasUses = 0
 allowModdedRewards = false
 blockedRewardItems = []
+enableServerGallery = true
 ```
 
 | Setting | Meaning |
 |---|---|
 | `maxInfinityCanvasUses` | 0 = unlimited; a positive value limits successful rewards per individual Infinity Canvas |
 | `allowModdedRewards` | Enables supported modded item rewards when true |
+| `enableServerGallery` | Enables or disables the world-local public artwork gallery |
 | `blockedRewardItems` | Item IDs rejected as rewards for both Molten and Infinity |
 
 Infinity counts stay on the item through normal transfers/saves and accumulate even while unlimited. Lowering a cap below an existing count blocks further rewards; returning to zero restores unlimited eligibility. Failed requests do not spend uses. Molten remains independent of Infinity quotas. Creative/admin duplication and external item-data editing are outside normal-play quota guarantees.
 
-The server handles reward authorization, canvas permissions, drawing/item validation and wall placement. **Protocol 5** requires matching client/server releases.
+The server handles reward authorization, canvas permissions, drawing/item validation and wall placement. **Protocol 6** requires matching client/server releases.
 
 ## Upgrading and troubleshooting
 
@@ -190,7 +213,7 @@ The server handles reward authorization, canvas permissions, drawing/item valida
 | Layers disappeared when reopening a map | Maps hold flattened pixels; open the saved `.csp` project for layers |
 | Imported colors look different | Images are converted to Minecraft's map palette |
 | A finder result is unavailable | The server may block that ID, disable modded rewards or limit that Infinity Canvas |
-| Client/server connection rejects the mod | Use the same v3.1.2 edition on both sides; v3.1.0 uses a different network protocol |
+| Client/server connection rejects the mod | Use the same v3.2.0 edition on both sides; v3.1.x uses a different network protocol |
 
 For a bug report, include Minecraft, NeoForge and mod versions; the relevant log; reproduction steps; and whether it happens in singleplayer or multiplayer. [Open an issue](https://github.com/SupremeGenZ-Github/Canvas-Studio/issues).
 
@@ -212,10 +235,10 @@ Windows: `gradlew.bat build`. The JAR is written to `build/libs`. To compile aga
 
 Changing this property does not convert 26.3 source into the separate 26.2 edition.
 
-Both v3.1.2 editions passed **13 Java verification suites**, packaged-artifact checks and default/endpoint builds. API/dependency-range auditing covered **75 published NeoForge 26.3 builds** and **91 published NeoForge 26.2 builds** at release time, including betas. New size checks cover all 64 dimensions in all four horizontal directions.
+Both v3.2.0 editions are gated by **15 Java verification suites**, packaged-artifact checks and default/endpoint builds. API/dependency-range auditing covers published builds in each NeoForge family, including betas. The release-attached validation reports record the executed targets, audit counts and server-smoke results. New size checks cover all 64 dimensions in all four horizontal directions.
 
-**No interactive in-game playtest, rendered world inspection, multiplayer session or live world save/reload test was performed.** Headless checks and API audits are not proof of every loader's gameplay behavior. The release files include source ZIPs, detailed validation, logs, audit data and SHA-256 checksums.
+**A fresh headless server startup and clean save/stop are included in the release gates. No interactive client rendering, multiplayer gameplay, live painting save/reload or player sleep test was performed.** Headless checks and API audits are not proof of every loader's gameplay behavior. The release files include source ZIPs, detailed validation, logs, audit data and SHA-256 checksums.
 
-[26.3 validation and logs](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2) · [26.2 validation and logs](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.1.2-mc26.2) · [Full changelog](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/CHANGELOG.md)
+[26.3 validation and logs](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.0) · [26.2 validation and logs](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.0-mc26.2) · [Full changelog](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/CHANGELOG.md)
 
 **Canvas Studio+ — made by SuprixZ**

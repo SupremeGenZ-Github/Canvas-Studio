@@ -33,6 +33,8 @@ public final class CanvasStudio {
     public static final DeferredRegister<net.minecraft.world.entity.EntityType<?>> ENTITIES=DeferredRegister.create(Registries.ENTITY_TYPE,ID);
     public static final DeferredHolder<net.minecraft.world.entity.EntityType<?>,net.minecraft.world.entity.EntityType<WallPainting>> WALL_PAINTING=ENTITIES.register("wall_painting",()->net.minecraft.world.entity.EntityType.Builder.<WallPainting>of(WallPainting::new,net.minecraft.world.entity.MobCategory.MISC).sized(0.5f,0.5f).clientTrackingRange(10).updateInterval(1).build(net.minecraft.resources.ResourceKey.create(Registries.ENTITY_TYPE,net.minecraft.resources.Identifier.fromNamespaceAndPath(ID,"wall_painting"))));
     public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>,net.minecraft.core.component.DataComponentType<PaintingSize>> PAINTING_SIZE=COMPONENTS.register("painting_size",()->PaintingSize.TYPE);
+    public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>,net.minecraft.core.component.DataComponentType<PaintingProperties>> PAINTING_PROPERTIES=COMPONENTS.register("painting_properties",()->PaintingProperties.TYPE);
+    public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>,net.minecraft.core.component.DataComponentType<PaintingAnimation>> PAINTING_ANIMATION=COMPONENTS.register("painting_animation",()->PaintingAnimation.TYPE);
     public static final DeferredRegister<CreativeModeTab> TABS=DeferredRegister.create(Registries.CREATIVE_MODE_TAB,ID);
     public static final DeferredHolder<CreativeModeTab,CreativeModeTab> STUDIO_TAB=TABS.register("studio",()->CreativeModeTab.builder()
       .title(Component.literal("Canvas Studio+")) .icon(()->new ItemStack(INFINITY_CANVAS.get()))
@@ -58,7 +60,11 @@ public final class CanvasStudio {
         bus.addListener(CanvasStudio::network);
     }
     private static void network(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("5").executesOn(net.neoforged.neoforge.network.registration.HandlerThread.MAIN);
+        var registrar = event.registrar("6").executesOn(net.neoforged.neoforge.network.registration.HandlerThread.MAIN);
+        registrar.playToServer(ArtUpload.TYPE,ArtUpload.CODEC,ArtUpload::handle);
+        registrar.playToClient(ArtDownload.TYPE,ArtDownload.CODEC,ArtDownload::handle);
+        registrar.playToServer(GalleryRequest.TYPE,GalleryRequest.CODEC,GalleryRequest::handle);
+        registrar.playToClient(GalleryPage.TYPE,GalleryPage.CODEC,GalleryPage::handle);
         registrar.playToServer(SavePainting.TYPE, SavePainting.CODEC, SavePainting::handle);
         registrar.playToServer(DrawItem.TYPE, DrawItem.CODEC, DrawItem::handle);
         registrar.playToServer(OpenPainting.TYPE,OpenPainting.CODEC,OpenPainting::handle);
