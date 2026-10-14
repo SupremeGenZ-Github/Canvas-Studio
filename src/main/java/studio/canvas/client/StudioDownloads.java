@@ -19,7 +19,8 @@ public final class StudioDownloads {
    if(p.action()==ArtUpload.PUBLISH){if(!(mc.gui.screen() instanceof ServerGalleryScreen gallery))return;screen=gallery.parent;}
    else{screen=new CanvasScreen(p.hand());screen.editingPainting=true;screen.editingWall=p.action()==ArtUpload.WALL;screen.paintingToken=p.token();CanvasClient.paintingRequest=null;}
    if(p.action()!=ArtUpload.PUBLISH)screen.savedFrameStyle=art.options().frame();
-   load(screen,art);screen.status=p.action()==ArtUpload.PUBLISH?"Gallery artwork imported. Save it using your canvas or edit session.":"Painting loaded with its original animation and display settings.";mc.setScreenAndShow(screen);
+   load(screen,art);screen.status=p.action()==ArtUpload.PUBLISH?"Gallery artwork imported. Save it using your canvas or edit session.":"Saved painting reopened. Edit and save again; it can stay on the wall.";
+   mc.setScreenAndShow(p.action()!=ArtUpload.PUBLISH&&art.options().locked()?new PaintingAccessScreen(screen):screen);
   }catch(IllegalArgumentException e){INCOMING.remove(p.request());if(CanvasClient.activeCanvas!=null)CanvasClient.activeCanvas.status="Artwork download rejected: "+e.getMessage();}
  }
  public static void load(CanvasScreen screen,ArtBundle art){

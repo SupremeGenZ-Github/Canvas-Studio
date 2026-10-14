@@ -36,6 +36,13 @@ public final class CanvasScreen extends Screen {
  private BufferedImage original; private UUID projectId; boolean editingPainting,editingWall; UUID paintingToken=CanvasReply.NONE;
  private UUID pendingUpload;
  int savedFrameStyle;
+ private UUID pendingLock;
+ boolean changingLock(){return pendingLock!=null;}
+ void unlockAndEdit(){
+  if(changingLock()||minecraft.player==null||!editingPainting)return;
+  pendingLock=UUID.randomUUID();CanvasClient.paintingRequest=pendingLock;status="Unlocking saved painting on the server...";
+  ClientPacketDistributor.sendToServer(new PaintingLock(pendingLock,hand,paintingToken,editingWall,false));
+ }
  PixelTools.Tool tool=PixelTools.Tool.BRUSH;
  public CanvasScreen(InteractionHand hand){this(hand,CanvasTier.BLANK);}
  public CanvasScreen(InteractionHand hand,CanvasTier tier){
@@ -46,6 +53,7 @@ public final class CanvasScreen extends Screen {
  }
  String usageLabel(){return tier==CanvasTier.INFINITY?"Uses: "+uses+" / "+(maximum==0?"unlimited":maximum):tier.availability;}
  void reply(CanvasReply reply){
+  if(reply.request().equals(pendingLock)){pendingLock=null;CanvasClient.paintingRequest=null;status=reply.message();return;}
   if(saving&&reply.request().equals(pendingUpload)){
    saving=false;status=reply.message();if(reply.code()==4){draft=null;minecraft.setScreenAndShow(null);}return;
   }

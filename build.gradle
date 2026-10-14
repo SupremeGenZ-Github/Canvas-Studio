@@ -2,7 +2,7 @@ plugins {
  id 'java-library'
  id 'net.neoforged.moddev' version '2.0.147'
 }
-version = '3.2.1'
+version = '3.2.2'
 group = 'studio.canvas'
 base { archivesName = 'canvas-studio-plus-26.3' }
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
@@ -193,3 +193,12 @@ tasks.register('verifyFrameMaterials', JavaExec) {
  systemProperty 'java.awt.headless', 'true'
 }
 tasks.named('check') { dependsOn tasks.named('verifyFrameMaterials') }
+
+tasks.register('verifyPaintingAccess', JavaExec) {
+ dependsOn tasks.named('verificationClasses'), tasks.named('prepareVanillaValidation')
+ classpath = files(vanillaValidationJar) + sourceSets.verification.runtimeClasspath
+ mainClass = 'PaintingAccessChecks'
+ javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+ systemProperty 'java.awt.headless', 'true'
+}
+tasks.named('check') { dependsOn tasks.named('verifyPaintingAccess') }
