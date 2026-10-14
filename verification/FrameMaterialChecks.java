@@ -19,8 +19,10 @@ public class FrameMaterialChecks {
   SharedConstants.tryDetectVersion();Bootstrap.bootStrap();
   var defaults=DataComponentMap.builder().set(DataComponents.MAX_STACK_SIZE,64).build();
   BuiltInRegistries.ITEM.listElements().forEach(h->h.bindComponents(defaults));
-  Items.OAK_PLANKS.builtInRegistryHolder().bindTags(List.of(ItemTags.PLANKS));
-  Items.BAMBOO_PLANKS.builtInRegistryHolder().bindTags(List.of(ItemTags.PLANKS));
+  // Registry tag binding is package-private; install isolated vanilla tag fixtures.
+  var bindTags=Items.OAK_PLANKS.builtInRegistryHolder().getClass().getDeclaredMethod("bindTags",Collection.class);bindTags.setAccessible(true);
+  bindTags.invoke(Items.OAK_PLANKS.builtInRegistryHolder(),List.of(ItemTags.PLANKS));
+  bindTags.invoke(Items.BAMBOO_PLANKS.builtInRegistryHolder(),List.of(ItemTags.PLANKS));
   Item[] material={Items.AIR,Items.OAK_PLANKS,Items.GOLD_INGOT,Items.IRON_INGOT,Items.DIAMOND,Items.STONE,Items.COPPER_INGOT,Items.AMETHYST_SHARD,Items.LAPIS_LAZULI,Items.EMERALD,Items.QUARTZ,Items.NETHERITE_INGOT};
   var colors=new HashSet<Integer>();var order=new HashSet<Integer>();int next=0;
   for(int n=0;n<12;n++){check(order.add(next),"Cycle visits each style once");next=FrameMaterials.next(next);}
@@ -52,6 +54,12 @@ public class FrameMaterialChecks {
     check(saves[0]==5,"Missing material rejects before creating maps or mutating painting");
     FrameMaterials.save(frame,frame,inventory,()->saves[0]++);check(saves[0]==6,"Legacy frame can be retained without inventory material");
    }
+  }
+  for(int f=1;f<12;f++){
+   var main=new SimpleContainer(36);var offHand=new ItemStack(material[f],2);final int frame=f;
+   check(FrameMaterials.has(main,offHand,frame),"Explicit off-hand fallback is available");
+   FrameMaterials.save(0,frame,main,offHand,()->{});check(offHand.getCount()==1,"Off-hand payment with main-only inventory");
+   main.setItem(0,new ItemStack(material[f],2));FrameMaterials.save(0,frame,main,offHand,()->{});check(main.getItem(0).getCount()==1&&offHand.getCount()==1,"Only one region pays even when both contain materials");
   }
   check(FrameMaterials.matches(1,new ItemStack(Items.BAMBOO_PLANKS)),"Wood uses the planks tag");
   check(!FrameMaterials.matches(1,new ItemStack(Items.OAK_LOG))&&!FrameMaterials.matches(5,new ItemStack(Items.COBBLESTONE))&&!FrameMaterials.matches(11,new ItemStack(Items.NETHERITE_SCRAP)),"Similar but incorrect resources rejected");
