@@ -67,7 +67,7 @@ public final class StudioService {
   }
   final WallPainting target=wall;
   int existingFrame=CanvasStudio.isCanvas(old)?0:previous.options().frame();
-  FrameMaterials.save(existingFrame,art.options().frame(),p.getInventory(),()->{
+  FrameMaterials.save(existingFrame,art.options().frame(),p.getInventory(),p.getOffhandItem(),()->{
    ItemStack saved=makeMap(p,art,previous);
    if(target!=null){target.setDisplaySize(art.size());target.setItem(saved,false);}else p.setItemInHand(hand,saved);
   });

@@ -25,12 +25,16 @@ public final class FrameMaterials {
   case 9->stack.is(Items.EMERALD);case 10->stack.is(Items.QUARTZ);case 11->stack.is(Items.NETHERITE_INGOT);default->false;};}
  public static boolean costsMaterial(int existing,int requested){require(existing);require(requested);return requested!=0&&requested!=existing;}
  public static int slot(Container inventory,int frame){require(frame);for(int i=0;i<inventory.getContainerSize();i++)if(matches(frame,inventory.getItem(i)))return i;return -1;}
+ public static boolean has(Container inventory,ItemStack offHand,int frame){return slot(inventory,frame)>=0||matches(frame,offHand);}
  @FunctionalInterface public interface SaveAction {void run()throws IOException;}
  /** Called on the main server thread; a rejected or failed save cannot spend material. */
  public static void save(int existing,int requested,Container inventory,SaveAction action)throws IOException{
+  save(existing,requested,inventory,ItemStack.EMPTY,action);
+ }
+ public static void save(int existing,int requested,Container inventory,ItemStack offHand,SaveAction action)throws IOException{
   if(!costsMaterial(existing,requested)){action.run();return;}
-  int slot=slot(inventory,requested);if(slot<0)throw new IOException("A "+NAMES[requested]+" frame requires 1 "+material(requested)+" in your inventory.");
-  ItemStack payment=inventory.getItem(slot);
+  int slot=slot(inventory,requested);if(slot<0&&!matches(requested,offHand))throw new IOException("A "+NAMES[requested]+" frame requires 1 "+material(requested)+" in your inventory.");
+  ItemStack payment=slot<0?offHand:inventory.getItem(slot);
   action.run();
   payment.shrink(1);inventory.setChanged();
  }

@@ -20,7 +20,7 @@ public final class PaintingOptionsScreen extends Screen {
  @Override public void extractRenderState(GuiGraphicsExtractor g,int x,int y,float tick){
   g.fill(0,0,width,height,0xff181c26);g.centeredText(font,"DISPLAY AND ACCESS",width/2,12,0xfff5ddaa);
   int frame=parent.document.frameStyle;boolean costs=FrameMaterials.costsMaterial(parent.savedFrameStyle,frame);
-  boolean ready=!costs||(minecraft.player!=null&&FrameMaterials.slot(minecraft.player.getInventory(),frame)>=0);
+  boolean ready=!costs||(minecraft.player!=null&&FrameMaterials.has(minecraft.player.getInventory(),minecraft.player.getOffhandItem(),frame));
   String cost=costs?"Cost: 1 "+FrameMaterials.material(frame)+(ready?" (ready)":" (missing)"):"Cost: none (keep or remove the saved frame)";
   g.centeredText(font,font.plainSubstrByWidth(cost,width-12),width/2,154,ready?0xffa8dbad:0xffffa080);
   g.centeredText(font,"Material is spent only after a successful save.",width/2,171,0xffbec8d8);
