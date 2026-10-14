@@ -51,7 +51,7 @@ public final class StudioService {
   UUID owner=previous.owner().equals(PaintingProperties.NONE)?p.getUUID():previous.owner();if(previous.revision()==Integer.MAX_VALUE)throw new IOException("Painting revision limit reached");
   first.set(PaintingProperties.TYPE,new PaintingProperties(owner,art.options(),previous.revision()+1));first.set(PaintingAnimation.TYPE,new PaintingAnimation(ids));first.set(PaintingSize.TYPE,art.size());
   first.set(DataComponents.CUSTOM_NAME,Component.literal(art.title().isBlank()?"Custom Painting":art.title()));
-  first.set(DataComponents.LORE,new net.minecraft.world.item.component.ItemLore(List.of(Component.literal("Wall: "+art.size().width()+" x "+art.size().height()+" | "+PaintOptions.FRAMES[art.options().frame()]),Component.literal(art.frames().size()+" animation frame(s) | "+(art.options().locked()?"Owner locked":"Public editing")))));
+  describe(first,art);
   store(p).saveMap(ids.getFirst(),art);return first;
  }
  public static void save(ServerPlayer p,InteractionHand hand,UUID token,boolean onWall,ArtBundle art)throws IOException{
@@ -65,12 +65,17 @@ public final class StudioService {
    for(var front:art.size().cells(wall.getPos(),wall.getDirection())){var back=front.relative(wall.getDirection().getOpposite());if(!p.level().hasChunkAt(front)||!p.level().hasChunkAt(back)||!p.level().mayInteract(p,back)||!p.mayUseItemAt(front,wall.getDirection(),old))throw new IOException("The whole resized area must be loaded and allow building");}
    wall.setDisplaySize(art.size());boolean valid=wall.survives();wall.setDisplaySize(before);if(!valid)throw new IOException("The resized painting needs supported wall space without obstructions");
   }
-  ItemStack saved=makeMap(p,art,previous);
-  if(wall!=null){wall.setDisplaySize(art.size());wall.setItem(saved,false);}else{p.setItemInHand(hand,saved);p.inventoryMenu.broadcastChanges();}
+  final WallPainting target=wall;
+  int existingFrame=CanvasStudio.isCanvas(old)?0:previous.options().frame();
+  FrameMaterials.save(existingFrame,art.options().frame(),p.getInventory(),p.getOffhandItem(),()->{
+   ItemStack saved=makeMap(p,art,previous);
+   if(target!=null){target.setDisplaySize(art.size());target.setItem(saved,false);}else p.setItemInHand(hand,saved);
+  });
+  p.inventoryMenu.broadcastChanges();
   StudioSessions.close(p);OpenCanvas.SESSIONS.remove(p);
  }
  private static ArtBundle source(ServerPlayer p,ItemStack item)throws IOException{
-  var existing=store(p).readMap(StudioSessions.base(item));if(existing.isPresent())return existing.get();
+  var existing=store(p).readMap(StudioSessions.base(item));if(existing.isPresent()){var a=existing.get();return new ArtBundle(a.title(),item.getOrDefault(PaintingSize.TYPE,a.size()),StudioSessions.properties(item).options(),a.frames());}
   var data=MapItem.getSavedData(item,p.level());if(data==null||!data.locked)throw new IOException("Only locked painting maps can be edited");String name=item.getHoverName().getString();name=name.replaceAll("[\\p{Cntrl}§]","");if(name.length()>64)name=name.substring(0,64);
   return new ArtBundle(name,item.getOrDefault(PaintingSize.TYPE,PaintingSize.ONE),StudioSessions.properties(item).options(),List.of(data.colors.clone()));
  }
@@ -82,6 +87,29 @@ public final class StudioService {
   try{if(!StudioSessions.wallPermission(p,wall))throw new IOException("This painting is locked or outside your build permission");var art=source(p,wall.getItem());var session=StudioSessions.begin(p,hand,wall.getItem(),wall);send(p,UUID.randomUUID(),ArtUpload.WALL,hand,session.token(),art);}catch(IOException e){p.sendSystemMessage(Component.literal(e.getMessage()),false);}
  }
  private static void send(ServerPlayer p,UUID request,int action,InteractionHand hand,UUID token,ArtBundle art){for(int i=0;i<art.frames().size();i++)PacketDistributor.sendToPlayer(p,new ArtDownload(request,action,hand,token,art.title(),art.size(),art.options(),i,art.frames().size(),art.frames().get(i)));}
+ private static void describe(ItemStack item,ArtBundle art){
+  item.set(DataComponents.LORE,new net.minecraft.world.item.component.ItemLore(List.of(
+   Component.literal("Wall: "+art.size().width()+" x "+art.size().height()+" | "+PaintOptions.FRAMES[art.options().frame()]),
+   Component.literal(art.frames().size()+" animation frame(s) | "+(art.options().locked()?"Owner locked":"Public editing")),
+   Component.literal("Shift-right-click to edit; owners can unlock saved paintings."))));
+ }
+ public static void changeLock(PaintingLock request,IPayloadContext context){
+  if(!(context.player() instanceof ServerPlayer p))return;
+  try{
+   var session=StudioSessions.validate(p,request.hand(),request.token(),request.wall());if(session==null)throw new IOException("Painting changed or edit session expired. Reopen it to unlock.");
+   var wall=request.wall()?session.wall():null;var current=wall==null?p.getItemInHand(request.hand()):wall.getItem();
+   var raw=source(p,current);
+   var replacement=PaintingAccess.change(current,p.getUUID(),StudioSessions.admin(p),request.locked(),changed->{
+    var updated=new ArtBundle(raw.title(),raw.size(),changed.options(),raw.frames());
+    store(p).saveMap(StudioSessions.base(current),updated);
+   });
+   var updated=new ArtBundle(raw.title(),raw.size(),StudioSessions.properties(replacement).options(),raw.frames());describe(replacement,updated);
+   if(wall!=null)wall.setItem(replacement,false);else p.setItemInHand(request.hand(),replacement);
+   p.inventoryMenu.broadcastChanges();StudioSessions.close(p);OpenCanvas.SESSIONS.remove(p);
+   var fresh=StudioSessions.begin(p,request.hand(),replacement,wall);
+   send(p,request.request(),request.wall()?ArtUpload.WALL:ArtUpload.HELD,request.hand(),fresh.token(),updated);
+  }catch(IOException|IllegalArgumentException e){context.reply(new CanvasReply(request.request(),CanvasReply.NONE,3,e.getMessage()==null?"Painting access change rejected":e.getMessage()));}
+ }
  public static void gallery(GalleryRequest request,IPayloadContext c){
   if(!(c.player() instanceof ServerPlayer p))return;
   try{if(!ServerRules.GALLERY.get())throw new IOException("The server gallery is disabled");if(request.page()<0||request.page()>166)throw new IOException("Invalid gallery page");
