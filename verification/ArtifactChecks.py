@@ -2,7 +2,7 @@
 from pathlib import Path
 import json,zipfile,hashlib
 root=Path(__file__).resolve().parents[1]
-jar=root/'build/libs/canvas-studio-plus-26.3-3.2.0.jar'
+jar=root/'build/libs/canvas-studio-plus-26.3-3.2.2.jar'
 names=['canvas','molder_canvas','infinity_canvas','quill','molder_quill','infinity_quill']
 with zipfile.ZipFile(jar) as z:
  assert z.testzip() is None
@@ -33,19 +33,19 @@ with zipfile.ZipFile(jar) as z:
   assert a['rewards']['recipes']==['canvasstudio:'+name]
   assert a['criteria']['has_the_recipe']['conditions']['recipes']==['canvasstudio:'+name]
  assert len(set(textures))==6
- # v3.2.0 replaces upgrade textures only; original painting items remain unchanged.
+ # v3.2.2 replaces upgrade textures only; original painting items remain unchanged.
  texture_baseline={'canvas': '7abf44a79d555ea10ae9eea4a131dcd59a1de1f9a0b9d1fd9bd310f00e18de83', 'quill': '0c0c60c4d4f480057884d2142438309a792e779a494c43ebdda310507d97213e', 'molder_canvas': 'd93cf2fc68b222c47daa98bc19ea87b4dd41afb4e60261e83cb8c1412225c6b1', 'molder_quill': '23abffd9202a11e78a5af1f7effdc85ce9a2c7d0dce0cc8ca9e2375255b0a358', 'infinity_canvas': '13f9b484507ac7346b318be19c5ae9fa7cc889b123d393f829da4a1aea1225d6', 'infinity_quill': 'd77b3702b197fc022159a9ca25fe5539f4b8b7d4a428c6eb2623c07de9ea15dd'}
  for name,expected in texture_baseline.items():
   actual=hashlib.sha256(z.read(f"assets/canvasstudio/textures/item/{name}.png")).hexdigest()
   assert (actual==expected) if name in ('canvas','quill','infinity_canvas') else (actual!=expected)
  assert not any('canvas_with_feather' in f for f in files)
  metadata=z.read('META-INF/neoforge.mods.toml').decode()
- for required in ['version="3.2.0"','displayName="Canvas Studio+"','made by SuprixZ','[26.3-alpha,26.4-alpha)','[26.3]']:assert required in metadata
+ for required in ['version="3.2.2"','displayName="Canvas Studio+"','made by SuprixZ','[26.3-alpha,26.4-alpha)','[26.3]']:assert required in metadata
  assert lang['item.canvasstudio.kurlo_pillow']=='Kurlo Pillow'
  assert 'studio/canvas/PaintingSize.class' in files and 'studio/canvas/client/WallPaintingRenderer.class' in files
- for required in ['PaintingProperties','PaintingAnimation','ArtBundle','ArtUpload','ArtDownload','StudioSessions','StudioService','StudioStore','GalleryRequest','GalleryPage']:
+ for required in ['PaintingAccess','PaintingLock','FrameMaterials','PaintingProperties','PaintingAnimation','ArtBundle','ArtUpload','ArtDownload','StudioSessions','StudioService','StudioStore','GalleryRequest','GalleryPage']:
   assert f'studio/canvas/{required}.class' in files, 'Living Gallery component '+required
- for required in ['PlacementPreview','WallGeometry','PaintingOptionsScreen','AnimationScreen','MinecraftPaintingsScreen','ServerGalleryScreen','StudioDownloads','PaintingImport']:
+ for required in ['PaintingAccessScreen','PlacementPreview','WallGeometry','PaintingOptionsScreen','AnimationScreen','MinecraftPaintingsScreen','ServerGalleryScreen','StudioDownloads','PaintingImport']:
   assert f'studio/canvas/client/{required}.class' in files, 'Living Gallery client '+required
  assert 'studio/canvas/WallPainting.class' in files and 'studio/canvas/KurloPillow.class' in files
  pillow=json.loads(z.read('data/canvasstudio/recipe/kurlo_pillow.json'))

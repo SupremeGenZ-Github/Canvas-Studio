@@ -23,3 +23,13 @@ Each timeline frame stores layer-count byte (1–16), active-layer byte, then ea
 Timeline frames preserve their own layers and fitted reference images. The earlier top-level layer fields retain the pre-animation layout; old project versions become one static frame. Version-3 width/height are retained, while versions 1/2 default to 1×1. Network/gallery transfers send flattened palette frames instead of CSP files.
 
 Server-side raw source and gallery files use the separate bounded CSA1 format: magic int 0x43534131, title UTF, width byte, height byte, frame-style byte, layout byte, delay byte, locked boolean, frame-count byte and one 16,384-byte palette plane per frame. The file limit is 16×16,384 + 1,024 bytes. Gallery identity/ownership metadata lives in a world-local managed index; saved-map ownership and native animation map IDs use registered item components.
+
+## Material-frame IDs (3.2.1)
+
+CSP format 4 and CSA1 retain the same binary layout. The frame-style byte now accepts 0–11: 0 None, 1 Wood, 2 Gold, 3 Iron, 4 Diamond, 5 Stone, 6 Copper, 7 Amethyst, 8 Lapis, 9 Emerald, 10 Quartz, 11 Netherite. IDs 0–4 retain their v3.2.0 meanings. v3.2.0 cannot read projects/gallery files using the new IDs 5–11; use v3.2.1 to open them. The same expansion applies to saved painting components. Back up your world before upgrading; do not downgrade worlds containing new frame styles.
+
+Project/gallery settings specify a design, never a payment token. The server compares requested style with the actual held/wall painting's component and requires one matching resource on creation or material change. Existing same-style paintings do not pay again. Network protocol 7 requires matching v3.2.1 clients/servers.
+
+## Reopening access (3.2.2)
+
+Project and gallery binary layouts stay unchanged. Network protocol 8 adds an owner-authorized PaintingLock payload containing request UUID, hand, edit capability, held/wall target flag and requested lock state. Successful access changes increment the item's server revision, preserve native map IDs and source pixels, close the old capability and create a fresh bound edit session. The saved painting item's component remains authoritative for access when reopening shared/copy map sources.

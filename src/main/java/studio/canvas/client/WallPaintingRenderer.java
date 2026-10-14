@@ -23,7 +23,7 @@ public final class WallPaintingRenderer extends ItemFrameRenderer<WallPainting> 
  @Override public void submit(ItemFrameRenderState state,PoseStack pose,SubmitNodeCollector collector,CameraRenderState camera){
   var s=(State)state;
   if(!s.preview){pose.pushPose();try{scaleWall(pose,state.direction,s.width,s.height);super.submit(state,pose,collector,camera);}finally{pose.popPose();}}
-  if(s.preview||s.frame!=0){int[] colors={0,0xff976239,0xffe8bc35,0xffbbc3ce,0xff3acac4};int color=s.preview?(s.valid?0xff4bdf78:0xffef5555):colors[s.frame];
+  if(s.preview||s.frame!=0){int color=s.preview?(s.valid?0xff4bdf78:0xffef5555):studio.canvas.FrameMaterials.color(s.frame);
    var direction=state.direction;int width=s.width,height=s.height;boolean preview=s.preview;int[] pixels=s.pixels;
    collector.submitCustomGeometry(pose,net.minecraft.client.renderer.rendertype.RenderTypes.debugQuads(),(transform,out)->{if(preview&&pixels!=null)WallGeometry.ghost(transform,out,direction,width,height,pixels);WallGeometry.border(transform,out,direction,width,height,color);});
   }

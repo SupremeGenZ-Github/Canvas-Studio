@@ -1,5 +1,28 @@
 # Canvas Studio+ · Changelog
 
+## v3.2.2 — Reopen & Edit
+
+- Added a reopening menu for saved/placed locked paintings: **Edit keeping locked**, **Unlock & edit**, or **Cancel**. Shift-right-click a wall painting, or a held saved map in either hand, to reopen it.
+- Added immediate server-authorized unlocking of an existing painting. Owners/admins can reopen and edit after saving/locking; other players retain the existing permission restrictions. Public editors cannot relock another owner's painting.
+- Unlocking preserves artwork pixels, original map IDs, animation, size, name, layout and material frame. It consumes no canvas or resource; same-frame edits remain free under v3.2.1 rules.
+- Access changes persist before replacement, advance revision and issue a fresh edit capability. Expired/wrong-hand/stale-map/replayed unlock requests cannot change access, and persistence failure leaves the original item and lock intact.
+- Reopening now reads access settings from the actual saved item rather than shared source-file display settings, preserving independent locks on copies that share map pixels.
+- Renamed editor access controls to **Lock painting on save** / **Unlock painting on save** and added an editing hint to newly saved map tooltips. Wall edits keep the painting placed.
+- Added a seventeenth automated suite for access policy, immutable persistence, failure paths, preserved map/art/display metadata, old items, codecs and stale sessions. Both editions retain endpoint/API/server release gates; live gameplay/rendering is still untested.
+- Network protocol 8 requires matching v3.2.2 clients/servers. Existing CSP/gallery formats, recipes/textures and all Material Frames/Living Gallery features remain. Credit: **made by SuprixZ**.
+
+## v3.2.1 — Material Frames
+
+- Added Stone, Copper, Amethyst, Lapis, Emerald, Quartz and Netherite borders alongside Wood, Iron, Gold and Diamond; each style has a distinct color.
+- Applying/changing a frame now costs one corresponding plank, stone block, ingot, gem or shard per painting, regardless of wall size/animation count. The server checks inventory and consumes only after a successful save; Creative mode uses the same rule.
+- The display screen cycles through all eleven materials plus None and shows the resource requirement and ready/missing status.
+- Same-frame edits/resizes/animation changes are free. Existing v3.2.0 frame IDs/colors are preserved. Removal is free without refunds; reapplication costs again.
+- Gallery/project imports retain the chosen design but require materials when saved as a new painting. Publishing, previewing, placing and picking up an existing painting have no additional frame cost.
+- Kept both-hand/wall edit validation and upload replay protection; missing resources and failed persistence preserve the original painting and inventory materials.
+- Extended frame codec range to 0–11 while preserving CSP4/CSA1 layouts. Network protocol 7 requires matching v3.2.1 clients/servers. Do not downgrade worlds/projects with new frame styles to v3.2.0.
+- Added a sixteenth automated suite for material matching/payment, every old/new style transition, inventory regions, rejection/failure paths and old/new file/packet persistence. Default/endpoint builds, artifact checks, family audits and headless-server gates are recorded in release validation. Interactive gameplay/rendering remains untested.
+- Preserved all Living Gallery features, existing crafting recipes, saved art and **made by SuprixZ** credit. Separate builds support Minecraft 26.2 / NeoForge 26.2.x and Minecraft 26.3 / NeoForge 26.3.x, including betas.
+
 ## Canvas Studio+ v3.2.0 — Living Gallery
 
 **made by SuprixZ**
