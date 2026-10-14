@@ -1,5 +1,17 @@
 # Canvas Studio+ · Changelog
 
+## v3.2.1 — Material Frames
+
+- Added Stone, Copper, Amethyst, Lapis, Emerald, Quartz and Netherite borders alongside Wood, Iron, Gold and Diamond; each style has a distinct color.
+- Applying/changing a frame now costs one corresponding plank, stone block, ingot, gem or shard per painting, regardless of wall size/animation count. The server checks inventory and consumes only after a successful save; Creative mode uses the same rule.
+- The display screen cycles through all eleven materials plus None and shows the resource requirement and ready/missing status.
+- Same-frame edits/resizes/animation changes are free. Existing v3.2.0 frame IDs/colors are preserved. Removal is free without refunds; reapplication costs again.
+- Gallery/project imports retain the chosen design but require materials when saved as a new painting. Publishing, previewing, placing and picking up an existing painting have no additional frame cost.
+- Kept both-hand/wall edit validation and upload replay protection; missing resources and failed persistence preserve the original painting and inventory materials.
+- Extended frame codec range to 0–11 while preserving CSP4/CSA1 layouts. Network protocol 7 requires matching v3.2.1 clients/servers. Do not downgrade worlds/projects with new frame styles to v3.2.0.
+- Added a sixteenth automated suite for material matching/payment, every old/new style transition, inventory regions, rejection/failure paths and old/new file/packet persistence. Default/endpoint builds, artifact checks, family audits and headless-server gates are recorded in release validation. Interactive gameplay/rendering remains untested.
+- Preserved all Living Gallery features, existing crafting recipes, saved art and **made by SuprixZ** credit. Separate builds support Minecraft 26.2 / NeoForge 26.2.x and Minecraft 26.3 / NeoForge 26.3.x, including betas.
+
 ## Canvas Studio+ v3.2.0 — Living Gallery
 
 **made by SuprixZ**

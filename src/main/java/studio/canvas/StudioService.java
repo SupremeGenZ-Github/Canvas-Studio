@@ -65,8 +65,13 @@ public final class StudioService {
    for(var front:art.size().cells(wall.getPos(),wall.getDirection())){var back=front.relative(wall.getDirection().getOpposite());if(!p.level().hasChunkAt(front)||!p.level().hasChunkAt(back)||!p.level().mayInteract(p,back)||!p.mayUseItemAt(front,wall.getDirection(),old))throw new IOException("The whole resized area must be loaded and allow building");}
    wall.setDisplaySize(art.size());boolean valid=wall.survives();wall.setDisplaySize(before);if(!valid)throw new IOException("The resized painting needs supported wall space without obstructions");
   }
-  ItemStack saved=makeMap(p,art,previous);
-  if(wall!=null){wall.setDisplaySize(art.size());wall.setItem(saved,false);}else{p.setItemInHand(hand,saved);p.inventoryMenu.broadcastChanges();}
+  final WallPainting target=wall;
+  int existingFrame=CanvasStudio.isCanvas(old)?0:previous.options().frame();
+  FrameMaterials.save(existingFrame,art.options().frame(),p.getInventory(),()->{
+   ItemStack saved=makeMap(p,art,previous);
+   if(target!=null){target.setDisplaySize(art.size());target.setItem(saved,false);}else p.setItemInHand(hand,saved);
+  });
+  p.inventoryMenu.broadcastChanges();
   StudioSessions.close(p);OpenCanvas.SESSIONS.remove(p);
  }
  private static ArtBundle source(ServerPlayer p,ItemStack item)throws IOException{

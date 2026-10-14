@@ -33,6 +33,7 @@ public final class CanvasScreen extends Screen {
  int zoom=1,panX,panY,preset; String status="Left: draw | Right: erase | Shift: constrain | Middle: pan";
  private BufferedImage original; private UUID projectId; boolean editingPainting,editingWall; UUID paintingToken=CanvasReply.NONE;
  private UUID pendingUpload;
+ int savedFrameStyle;
  PixelTools.Tool tool=PixelTools.Tool.BRUSH;
  public CanvasScreen(InteractionHand hand){this(hand,CanvasTier.BLANK);}
  public CanvasScreen(InteractionHand hand,CanvasTier tier){
