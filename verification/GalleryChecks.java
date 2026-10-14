@@ -28,7 +28,7 @@ public class GalleryChecks {
    var animation=new PaintingAnimation(List.of(12,19,43));PaintingAnimation.STREAM.encode(buffer,animation);check(animation.equals(PaintingAnimation.STREAM.decode(buffer)),"Map sequence codec");check(animation.index(0,10)==0&&animation.index(10,10)==1&&animation.index(30,10)==0,"Animation clock and wrap");
    buffer.clear();buffer.writeByte(17);try{PaintingAnimation.STREAM.decode(buffer);throw new AssertionError("Unbounded maps");}catch(IllegalArgumentException expected){}
   }finally{buffer.release();}
-  reject(()->new PaintOptions(5,0,20,false),"Unknown border");reject(()->new PaintOptions(0,3,20,false),"Unknown layout");reject(()->new PaintOptions(0,0,9,false),"Too-fast animation");reject(()->new ArtAssembly(token,17,0),"Too many frames");
+  reject(()->new PaintOptions(12,0,20,false),"Unknown border");reject(()->new PaintOptions(0,3,20,false),"Unknown layout");reject(()->new PaintOptions(0,0,9,false),"Too-fast animation");reject(()->new ArtAssembly(token,17,0),"Too many frames");
   byte[] pattern=new byte[Artwork.PIXELS];for(int y=0;y<128;y++)for(int x=0;x<128;x++)pattern[y*128+x]=(byte)(4+x);
   for(int w=1;w<=8;w++)for(int h=1;h<=8;h++){var size=new PaintingSize(w,h);check(Arrays.equals(PaintLayout.apply(pattern,size,0),pattern),"Stretch preserves raster");for(int mode=1;mode<=2;mode++)ArtBundle.validatePixels(PaintLayout.apply(pattern,size,mode));}
   var fit=PaintLayout.apply(pattern,new PaintingSize(8,2),1);check(fit[0]==34&&fit[64*128+64]!=34,"Fit letterboxes and preserves center");var crop=PaintLayout.apply(pattern,new PaintingSize(2,8),2);check(Byte.toUnsignedInt(crop[0])>4&&Byte.toUnsignedInt(crop[127])<131,"Crop trims source edges");

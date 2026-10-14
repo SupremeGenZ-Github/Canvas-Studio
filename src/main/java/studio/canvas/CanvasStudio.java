@@ -60,7 +60,7 @@ public final class CanvasStudio {
         bus.addListener(CanvasStudio::network);
     }
     private static void network(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("6").executesOn(net.neoforged.neoforge.network.registration.HandlerThread.MAIN);
+        var registrar = event.registrar("7").executesOn(net.neoforged.neoforge.network.registration.HandlerThread.MAIN);
         registrar.playToServer(ArtUpload.TYPE,ArtUpload.CODEC,ArtUpload::handle);
         registrar.playToClient(ArtDownload.TYPE,ArtDownload.CODEC,ArtDownload::handle);
         registrar.playToServer(GalleryRequest.TYPE,GalleryRequest.CODEC,GalleryRequest::handle);
