@@ -1,4 +1,4 @@
-# Canvas Studio+ · v3.2.1 — Material Frames
+# Canvas Studio+ · v3.2.2 — Reopen & Edit
 
 **Draw. Import. Edit. Hang.** Turn your artwork into Minecraft paintings, or draw an item/block and find its closest supported visual match.
 
@@ -21,7 +21,21 @@
 
 Frames are decorative and require the matching material when applied or changed. Painting size is still limited to **8×8 blocks**, and each animation frame remains **128×128 pixels**.
 
-## Material frames in v3.2.1
+## Reopen, unlock and edit saved paintings (v3.2.2)
+
+A saved or locked painting remains editable by its **owner or an administrator**. Place it on the wall, then **Shift-right-click it** to reopen. You can also hold the saved painting map in either hand and **Shift-right-click in the air**.
+
+For locked paintings, the reopening menu offers:
+
+- **Edit keeping locked:** change the artwork while retaining owner/admin protection.
+- **Unlock & edit:** the server immediately makes the existing painting publicly editable and opens a fresh editor session. No new canvas or frame material is used.
+- **Cancel:** leave the painting as it is.
+
+Draw, import, resize or adjust animation, then choose **Save edited painting**. Wall edits update that same placed painting; no item frame or breaking/replacing is required. In **Studio menu → Display / access**, choose **Lock painting on save** or **Unlock painting on save**. Only the owner/admin can change access; public editors cannot take ownership or relock another player's art.
+
+Unlocking preserves the painting's name, pixels, animation map IDs, wall dimensions, display layout and frame material. Keeping the same frame remains free; changing it uses v3.2.1's one-material rule. The server checks the bound hand/painting/revision/session and invalidates the old capability after a successful unlock. If persistence fails, the original item and lock stay intact.
+
+## Material frames (introduced in v3.2.1)
 
 Choose a frame in **Studio menu → Display / access**, then save the painting. Applying or changing a frame consumes **one** matching resource from your inventory, hotbar or off-hand. This cost is per painting, independent of wall size and animation length.
 
@@ -66,14 +80,14 @@ Creative tools and matching run locally; no cloud account or image-upload servic
 
 **Choose the JAR that matches your Minecraft version.** This is shared documentation for two separate builds.
 
-| Minecraft Java | NeoForge family | v3.2.1 release | Source and validation |
+| Minecraft Java | NeoForge family | v3.2.2 release | Source and validation |
 |---|---|---|---|
-| **26.3** | **26.3.x**, including betas | [26.3 release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.1) | [26.3 release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.1) |
-| **26.2** | **26.2.x**, including betas | [26.2 release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.1-mc26.2) | [26.2 release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.1-mc26.2) |
+| **26.3** | **26.3.x**, including betas | [26.3 release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.2) | [26.3 release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.2) |
+| **26.2** | **26.2.x**, including betas | [26.2 release page](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.2-mc26.2) | [26.2 release files](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.2-mc26.2) |
 
 1. Use Minecraft 26.2 or 26.3 with the corresponding NeoForge family and **Java 25**.
 2. Remove the older Canvas Studio JAR from the instance's `mods` folder.
-3. Put the matching v3.2.1 JAR in that folder.
+3. Put the matching v3.2.2 JAR in that folder.
 4. For multiplayer, install the **same edition and mod version on both client and server**.
 5. Launch the game and find the **Canvas Studio+** creative tab, or craft the items below.
 
@@ -180,7 +194,7 @@ The gallery supports thumbnails, paging, opening, renaming, duplication, deletio
 
 A reserved recovery project is saved about every 30 seconds while the editor is active and on closing. This is **one local recovery slot shared across worlds**, separate from named projects. Undo history is not stored in project files.
 
-v3.2.1 writes **CSP format 4** (maximum 8 MiB). Formats 1 and 2 load as static 1×1 projects; format 3 retains its saved wall size and loads as one static frame. Older releases cannot open format-4 projects. Full-resolution source images are not embedded; the fitted 128×128 image is retained when available. [Project-format details](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/docs/PROJECT_FORMAT.md).
+v3.2.2 writes **CSP format 4** (maximum 8 MiB). Formats 1 and 2 load as static 1×1 projects; format 3 retains its saved wall size and loads as one static frame. Releases before v3.2.0 cannot open format-4 projects; v3.2.0 cannot open the new frame styles introduced in v3.2.1. Full-resolution source images are not embedded; the fitted 128×128 image is retained when available. [Project-format details](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/docs/PROJECT_FORMAT.md).
 
 ## Offline item matching and previews
 
@@ -237,7 +251,7 @@ The server handles reward authorization, canvas permissions, drawing/item valida
 | Layers disappeared when reopening a map | Maps hold flattened pixels; open the saved `.csp` project for layers |
 | Imported colors look different | Images are converted to Minecraft's map palette |
 | A finder result is unavailable | The server may block that ID, disable modded rewards or limit that Infinity Canvas |
-| Client/server connection rejects the mod | Use the same v3.2.1 edition on both sides; v3.2.0 and earlier use a different network protocol |
+| Client/server connection rejects the mod | Use the same v3.2.2 edition on both sides; v3.2.1 and earlier use a different network protocol |
 
 For a bug report, include Minecraft, NeoForge and mod versions; the relevant log; reproduction steps; and whether it happens in singleplayer or multiplayer. [Open an issue](https://github.com/SupremeGenZ-Github/Canvas-Studio/issues).
 
@@ -259,10 +273,10 @@ Windows: `gradlew.bat build`. The JAR is written to `build/libs`. To compile aga
 
 Changing this property does not convert 26.3 source into the separate 26.2 edition.
 
-Both v3.2.1 editions are gated by **16 Java verification suites**, packaged-artifact checks and default/endpoint builds. API/dependency-range auditing covers published builds in each NeoForge family, including betas. The release-attached validation reports record the executed targets, audit counts and server-smoke results. New size checks cover all 64 dimensions in all four horizontal directions.
+Both v3.2.2 editions are gated by **17 Java verification suites**, packaged-artifact checks and default/endpoint builds. API/dependency-range auditing covers published builds in each NeoForge family, including betas. The release-attached validation reports record the executed targets, audit counts and server-smoke results. New size checks cover all 64 dimensions in all four horizontal directions.
 
 **A fresh headless server startup and clean save/stop are included in the release gates. No interactive client rendering, multiplayer gameplay, live painting save/reload or player sleep test was performed.** Headless checks and API audits are not proof of every loader's gameplay behavior. The release files include source ZIPs, detailed validation, logs, audit data and SHA-256 checksums.
 
-[26.3 validation and logs](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.1) · [26.2 validation and logs](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.1-mc26.2) · [Full changelog](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/CHANGELOG.md)
+[26.3 validation and logs](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.2) · [26.2 validation and logs](https://github.com/SupremeGenZ-Github/Canvas-Studio/releases/tag/v3.2.2-mc26.2) · [Full changelog](https://github.com/SupremeGenZ-Github/Canvas-Studio/blob/main/CHANGELOG.md)
 
 **Canvas Studio+ — made by SuprixZ**

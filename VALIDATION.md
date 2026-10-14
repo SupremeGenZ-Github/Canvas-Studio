@@ -1,9 +1,9 @@
-# Canvas Studio+ 3.2.1 validation — Minecraft 26.2
+# Canvas Studio+ 3.2.2 validation — Minecraft 26.2
 
-Baseline: Living Gallery v3.2.0, main commit 3b29ab9421ed97585f8e49a2c99671003fcadccd. Credit: **made by SuprixZ**.
+Baseline: Material Frames v3.2.1. Credit: **made by SuprixZ**.
 
 ## Release gates
-- JDK 25 Gradle build/check, all 16 Java verification suites and packaged JAR checks.
+- JDK 25 Gradle build/check, all 17 Java verification suites and packaged JAR checks.
 - Default and tested endpoint NeoForge dependency builds.
 - Referenced class/member API audit and dependency-range checks across published family builds.
 - A fresh headless dedicated server must reach readiness, accept an authenticated local stop command, save its world and exit cleanly.
@@ -25,3 +25,6 @@ An API audit establishes referenced binary-member availability, not complete beh
 FrameMaterialChecks calls the same payment transaction used by StudioService with real vanilla ItemStacks and a headless container. It covers every material, planks tag membership, all 144 old/new style transitions, hotbar/main/off-hand slots, exact one-item spending, missing/wrong resources, simulated persistence failure, free same-frame edits/removal, legacy colors/IDs and wire/persistent/CSP/gallery roundtrips. The requirement also applies in Creative mode and to gallery/project imports when saved as a new painting. Spending happens after the successful save callback on the main server thread.
 
 Interactive frame appearance, live player inventory updates, Creative-mode interactions and actual gallery-to-wall exchanges remain manual checks; the headless payment adapter does not emulate a connected player.
+
+## Saved-painting access verification
+PaintingAccessChecks calls the production access policy and immutable persistence transaction with real vanilla map ItemStacks. For all frame materials, it tests owner/admin unlock, owner-only relock after public editing, editing while locked, preserved owner/pixels/size/display/animation/map IDs/name, disk source reload, failure retention, first-owner claiming on unowned legacy art, revision overflow, both-hand/held-wall packet roundtrips and stale token/revision rejection. The new packet handler validates a live server session before changing anything and sends a fresh capability after success. Manual tests of the reopening screen, actual placed-entity edits, live multiplayer locks and material accounting remain unperformed.

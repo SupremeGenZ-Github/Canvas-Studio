@@ -20,4 +20,11 @@ public record PaintingProperties(UUID owner, PaintOptions options, int revision)
  public static final DataComponentType<PaintingProperties> TYPE=DataComponentType.<PaintingProperties>builder().persistent(CODEC).networkSynchronized(STREAM).build();
  public boolean mayEdit(UUID player,boolean admin){return !options.locked()||owner.equals(NONE)||owner.equals(player)||admin;}
  public boolean mayChangeLock(UUID player,boolean admin){return owner.equals(NONE)||owner.equals(player)||admin;}
+ public PaintingProperties changeLock(UUID player,boolean admin,boolean locked){
+  if(!mayChangeLock(player,admin))throw new IllegalArgumentException("Only the owner or an administrator can lock or unlock this painting");
+  if(options.locked()==locked&&!owner.equals(NONE))return this;
+  if(revision==Integer.MAX_VALUE)throw new IllegalArgumentException("Painting revision limit reached");
+  var changed=new PaintOptions(options.frame(),options.fit(),options.delay(),locked);
+  return new PaintingProperties(owner.equals(NONE)?player:owner,changed,revision+1);
+ }
 }

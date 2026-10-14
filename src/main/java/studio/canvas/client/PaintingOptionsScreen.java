@@ -11,7 +11,7 @@ public final class PaintingOptionsScreen extends Screen {
  @Override protected void init(){
   button(42,"Frame: "+PaintOptions.FRAMES[parent.document.frameStyle],()->parent.document.frameStyle=FrameMaterials.next(parent.document.frameStyle));
   button(68,"Layout: "+PaintOptions.FITS[parent.document.fitMode],()->parent.document.fitMode=(parent.document.fitMode+1)%3);
-  button(94,parent.document.locked?"Access: owner / admins only":"Access: public editing",()->parent.document.locked=!parent.document.locked);
+  button(94,parent.document.locked?"Unlock painting on save":"Lock painting on save",()->parent.document.locked=!parent.document.locked);
   button(120,"Change wall size",()->minecraft.setScreenAndShow(new PaintingSizeScreen(parent)));
   addRenderableWidget(Button.builder(Component.literal("Back to drawing"),b->onClose()).bounds(width/2-70,height-28,140,20).build());
  }

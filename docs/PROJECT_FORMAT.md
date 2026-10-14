@@ -29,3 +29,7 @@ Server-side raw source and gallery files use the separate bounded CSA1 format: m
 CSP format 4 and CSA1 retain the same binary layout. The frame-style byte now accepts 0–11: 0 None, 1 Wood, 2 Gold, 3 Iron, 4 Diamond, 5 Stone, 6 Copper, 7 Amethyst, 8 Lapis, 9 Emerald, 10 Quartz, 11 Netherite. IDs 0–4 retain their v3.2.0 meanings. v3.2.0 cannot read projects/gallery files using the new IDs 5–11; use v3.2.1 to open them. The same expansion applies to saved painting components. Back up your world before upgrading; do not downgrade worlds containing new frame styles.
 
 Project/gallery settings specify a design, never a payment token. The server compares requested style with the actual held/wall painting's component and requires one matching resource on creation or material change. Existing same-style paintings do not pay again. Network protocol 7 requires matching v3.2.1 clients/servers.
+
+## Reopening access (3.2.2)
+
+Project and gallery binary layouts stay unchanged. Network protocol 8 adds an owner-authorized PaintingLock payload containing request UUID, hand, edit capability, held/wall target flag and requested lock state. Successful access changes increment the item's server revision, preserve native map IDs and source pixels, close the old capability and create a fresh bound edit session. The saved painting item's component remains authoritative for access when reopening shared/copy map sources.

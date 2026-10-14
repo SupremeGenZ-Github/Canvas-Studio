@@ -1,5 +1,16 @@
 # Canvas Studio+ · Changelog
 
+## v3.2.2 — Reopen & Edit
+
+- Added a reopening menu for saved/placed locked paintings: **Edit keeping locked**, **Unlock & edit**, or **Cancel**. Shift-right-click a wall painting, or a held saved map in either hand, to reopen it.
+- Added immediate server-authorized unlocking of an existing painting. Owners/admins can reopen and edit after saving/locking; other players retain the existing permission restrictions. Public editors cannot relock another owner's painting.
+- Unlocking preserves artwork pixels, original map IDs, animation, size, name, layout and material frame. It consumes no canvas or resource; same-frame edits remain free under v3.2.1 rules.
+- Access changes persist before replacement, advance revision and issue a fresh edit capability. Expired/wrong-hand/stale-map/replayed unlock requests cannot change access, and persistence failure leaves the original item and lock intact.
+- Reopening now reads access settings from the actual saved item rather than shared source-file display settings, preserving independent locks on copies that share map pixels.
+- Renamed editor access controls to **Lock painting on save** / **Unlock painting on save** and added an editing hint to newly saved map tooltips. Wall edits keep the painting placed.
+- Added a seventeenth automated suite for access policy, immutable persistence, failure paths, preserved map/art/display metadata, old items, codecs and stale sessions. Both editions retain endpoint/API/server release gates; live gameplay/rendering is still untested.
+- Network protocol 8 requires matching v3.2.2 clients/servers. Existing CSP/gallery formats, recipes/textures and all Material Frames/Living Gallery features remain. Credit: **made by SuprixZ**.
+
 ## v3.2.1 — Material Frames
 
 - Added Stone, Copper, Amethyst, Lapis, Emerald, Quartz and Netherite borders alongside Wood, Iron, Gold and Diamond; each style has a distinct color.
